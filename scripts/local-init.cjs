@@ -21,7 +21,8 @@ async function preflight() {
 
 async function composeUp() {
   console.log("[local-init] Starting docker compose services...");
-  const serviceSet = ["mysql", "redis", "elasticsearch", "logstash", "kibana"];
+  // Keep CDN up for UI access during long-running sync/hydration phases.
+  const serviceSet = ["mysql", "redis", "elasticsearch", "logstash", "kibana", "cdn"];
   const maxAttempts = 3;
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
@@ -54,9 +55,10 @@ async function waitInfra() {
 
   // ELK companions are best-effort; do not block setup chain if they are slow.
   try {
-    console.log("[local-init] Checking optional services (logstash, kibana)...");
+    console.log("[local-init] Checking optional services (logstash, kibana, cdn)...");
     await waitForHealthy("logstash", 60000);
     await waitForHealthy("kibana", 60000);
+    await waitForHealthy("cdn", 60000);
   } catch (error) {
     console.warn(`[local-init] Optional service check skipped: ${error.message}`);
   }

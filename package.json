@@ -8,7 +8,7 @@
     "copy-files": "cp -r src/templates dist/templates && cp -r src/documents/assets/ dist/documents/assets/",
     "dev": "nodemon --exec ts-node src/index.ts",
     "dev:watch": "nodemon --exec ts-node src/index.ts",
-    "setup:local": "node scripts/local-init.cjs --reset --skip-es-sync --skip-cdn && npm run es:sync && npm run cdn:hydrate:async",
+    "setup:local": "node scripts/setup-local.cjs",
     "init:local": "node scripts/local-init.cjs",
     "init:local:reset": "node scripts/local-init.cjs --reset",
     "seed:local": "node scripts/seed-local-launcher.cjs",

@@ -345,7 +345,7 @@ async function extractUris(client, index, limitPerIndex, scrollBatchSize) {
 }
 
 async function ensureCdnContainerExists() {
-  // Start CDN only when we are ready to hydrate (after ES sync in setup flow).
+  // Keep CDN available so UI can reflect hydrate progress in real time.
   await run("docker", ["compose", "up", "-d", "cdn"], { cwd: ROOT });
 
   const { stdout } = await runCapture("docker", ["ps", "--format", "{{.Names}}"]);
@@ -372,6 +372,10 @@ async function main() {
   const progressEvery = Math.max(
     1,
     Number(getArgValue("progress-every", "10000")) || 10000
+  );
+  const publishEveryItems = Math.max(
+    1,
+    Number(getArgValue("publish-every-items", "100")) || 100
   );
   const publishEveryChunks = Math.max(
     1,
@@ -454,6 +458,7 @@ async function main() {
   console.log(`[cdn-hydrate] Chunk size: ${chunkSize}`);
   console.log(`[cdn-hydrate] Concurrency: ${concurrency}`);
   console.log(`[cdn-hydrate] Progress interval: ${progressEvery}`);
+  console.log(`[cdn-hydrate] Publish interval (items): ${publishEveryItems}`);
   console.log(`[cdn-hydrate] Publish interval (chunks): ${publishEveryChunks}`);
   console.log(`[cdn-hydrate] Auth headers: ${authHeaders.length > 0 ? "enabled" : "none"}`);
   if (dryRun) {
@@ -481,6 +486,33 @@ async function main() {
   const skipped = [];
   const totalChunks = Math.ceil(uriList.length / chunkSize) || 0;
   let processed = 0;
+  let lastPublishedProcessed = -1;
+  let publishInFlight = Promise.resolve();
+
+  async function schedulePublish(force = false) {
+    if (!force && processed - lastPublishedProcessed < publishEveryItems) {
+      return publishInFlight;
+    }
+    if (processed === lastPublishedProcessed && !force) {
+      return publishInFlight;
+    }
+    lastPublishedProcessed = processed;
+    const publishAt = processed;
+    publishInFlight = publishInFlight
+      .then(async () => {
+        const index = await publishImageIndex(tmpDir, downloaded);
+        console.log(
+          `[cdn-hydrate] Published image-index.json (${index.totalImages} images, processed=${publishAt}/${uriList.length})`
+        );
+      })
+      .catch((error) => {
+        console.warn(`[cdn-hydrate] Publish warning: ${error.message}`);
+      });
+    return publishInFlight;
+  }
+
+  // Ensure UI has an index immediately (avoid 404 until first batch completes).
+  await schedulePublish(true);
 
   async function processSourceUri(sourceUri) {
     if (shouldSkipUri(sourceUri)) {
@@ -571,18 +603,19 @@ async function main() {
               `[cdn-hydrate] Progress ${processed}/${uriList.length} (downloaded=${downloaded.length}, skipped=${skipped.length})`
             );
           }
+          if (processed % publishEveryItems === 0 || processed === uriList.length) {
+            void schedulePublish(false);
+          }
         }
       })()
     );
     await Promise.all(workers);
 
     if (chunkIndex % publishEveryChunks === 0 || chunkIndex === totalChunks) {
-      const index = await publishImageIndex(tmpDir, downloaded);
-      console.log(
-        `[cdn-hydrate] Published image-index.json with ${index.totalImages} images`
-      );
+      await schedulePublish(true);
     }
   }
+  await publishInFlight;
 
   const manifestPath = path.join(manifestDir, "cdn-hydration.json");
   await fs.writeFile(
