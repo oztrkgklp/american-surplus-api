@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const fs = require("node:fs/promises");
 const { Client } = require("@elastic/elasticsearch");
 const path = require("node:path");
 const dotenv = require("dotenv");
@@ -40,6 +41,33 @@ function chunkArray(items, chunkSize) {
     chunks.push(items.slice(i, i + chunkSize));
   }
   return chunks;
+}
+
+function normalizeIcn(value) {
+  if (value === null || value === undefined) return "";
+  return String(value).trim();
+}
+
+function compareIcn(a, b) {
+  return normalizeIcn(a).localeCompare(normalizeIcn(b), undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
+}
+
+function maxIcn(a, b) {
+  if (!a) return b || "";
+  if (!b) return a || "";
+  return compareIcn(a, b) >= 0 ? a : b;
+}
+
+async function writeJsonAtomic(filePath, payload) {
+  if (!filePath) return;
+  const dir = path.dirname(filePath);
+  await fs.mkdir(dir, { recursive: true });
+  const tmpPath = `${filePath}.tmp-${process.pid}-${Date.now()}`;
+  await fs.writeFile(tmpPath, JSON.stringify(payload, null, 2), "utf8");
+  await fs.rename(tmpPath, filePath);
 }
 
 function isRetryableBulkResult(bulkResult) {
@@ -180,7 +208,8 @@ async function syncIndexSlice(
   sliceId,
   sliceCount,
   options,
-  writeSemaphore
+  writeSemaphore,
+  resumeAfterIcn
 ) {
   let response;
   try {
@@ -197,15 +226,54 @@ async function syncIndexSlice(
       throw error;
     }
     console.warn(`[es-sync] Source index disappeared during slice search: ${index} [slice ${sliceId}/${sliceCount}]`);
-    return 0;
+    return {
+      totalSeen: 0,
+      totalImported: 0,
+      totalSkippedBeforeCheckpoint: 0,
+      totalSkippedMissingIcn: 0,
+      highestIcn: "",
+    };
   }
 
-  let total = 0;
+  let totalSeen = 0;
+  let totalImported = 0;
+  let totalSkippedBeforeCheckpoint = 0;
+  let totalSkippedMissingIcn = 0;
+  let highestIcn = "";
   while (true) {
     const hits = response.hits?.hits || [];
     if (hits.length === 0) break;
+    totalSeen += hits.length;
 
-    for (const chunk of chunkArray(hits, options.bulkSize)) {
+    const effectiveHits = [];
+    for (const hit of hits) {
+      if (!resumeAfterIcn) {
+        effectiveHits.push(hit);
+        continue;
+      }
+      const icn = normalizeIcn(hit?._source?.icn);
+      if (!icn) {
+        totalSkippedMissingIcn += 1;
+        continue;
+      }
+      if (compareIcn(icn, resumeAfterIcn) <= 0) {
+        totalSkippedBeforeCheckpoint += 1;
+        continue;
+      }
+      highestIcn = maxIcn(highestIcn, icn);
+      effectiveHits.push(hit);
+    }
+
+    if (effectiveHits.length === 0) {
+      if (!response._scroll_id) break;
+      response = await remoteClient.scroll({
+        scroll_id: response._scroll_id,
+        scroll: "2m",
+      });
+      continue;
+    }
+
+    for (const chunk of chunkArray(effectiveHits, options.bulkSize)) {
       const operations = [];
       for (const hit of chunk) {
         operations.push({ index: { _index: index, _id: hit._id } });
@@ -214,7 +282,7 @@ async function syncIndexSlice(
       const context = `${index} slice ${sliceId + 1}/${sliceCount}, docs=${chunk.length}`;
       await bulkWithRetry(localClient, operations, context, options, writeSemaphore);
     }
-    total += hits.length;
+    totalImported += effectiveHits.length;
 
     if (!response._scroll_id) break;
     response = await remoteClient.scroll({
@@ -227,10 +295,26 @@ async function syncIndexSlice(
     await remoteClient.clearScroll({ scroll_id: response._scroll_id }).catch(() => {});
   }
 
-  return total;
+  return {
+    totalSeen,
+    totalImported,
+    totalSkippedBeforeCheckpoint,
+    totalSkippedMissingIcn,
+    highestIcn,
+  };
 }
 
-async function syncIndex(remoteClient, localClient, index, mode, batchSize, slices, options, writeSemaphore) {
+async function syncIndex(
+  remoteClient,
+  localClient,
+  index,
+  mode,
+  batchSize,
+  slices,
+  options,
+  writeSemaphore,
+  resumeAfterIcn
+) {
   const sourceExists = await ensureIndex(localClient, remoteClient, index, mode);
   if (mode === "replace") {
     await localClient.deleteByQuery({
@@ -244,7 +328,15 @@ async function syncIndex(remoteClient, localClient, index, mode, batchSize, slic
   if (!sourceExists) {
     await localClient.indices.refresh({ index }).catch(() => {});
     console.log(`[es-sync] Skipped import for missing source index: ${index}`);
-    return;
+    return {
+      index,
+      sourceExists: false,
+      totalSeen: 0,
+      totalImported: 0,
+      totalSkippedBeforeCheckpoint: 0,
+      totalSkippedMissingIcn: 0,
+      highestIcn: "",
+    };
   }
 
   const effectiveSlices = Math.max(1, slices || 1);
@@ -258,14 +350,42 @@ async function syncIndex(remoteClient, localClient, index, mode, batchSize, slic
         sliceIndex,
         effectiveSlices,
         options,
-        writeSemaphore
+        writeSemaphore,
+        resumeAfterIcn
       )
     )
   );
-  const total = totals.reduce((sum, value) => sum + value, 0);
+  const aggregate = totals.reduce(
+    (acc, value) => ({
+      totalSeen: acc.totalSeen + value.totalSeen,
+      totalImported: acc.totalImported + value.totalImported,
+      totalSkippedBeforeCheckpoint:
+        acc.totalSkippedBeforeCheckpoint + value.totalSkippedBeforeCheckpoint,
+      totalSkippedMissingIcn:
+        acc.totalSkippedMissingIcn + value.totalSkippedMissingIcn,
+      highestIcn: maxIcn(acc.highestIcn, value.highestIcn),
+    }),
+    {
+      totalSeen: 0,
+      totalImported: 0,
+      totalSkippedBeforeCheckpoint: 0,
+      totalSkippedMissingIcn: 0,
+      highestIcn: "",
+    }
+  );
 
   await localClient.indices.refresh({ index });
-  console.log(`[es-sync] Synced ${total} docs into ${index}`);
+  console.log(`[es-sync] Synced ${aggregate.totalImported} docs into ${index}`);
+  if (resumeAfterIcn) {
+    console.log(
+      `[es-sync] Resume checkpoint=${resumeAfterIcn}, skipped-before-checkpoint=${aggregate.totalSkippedBeforeCheckpoint}, skipped-missing-icn=${aggregate.totalSkippedMissingIcn}`
+    );
+  }
+  return {
+    index,
+    sourceExists: true,
+    ...aggregate,
+  };
 }
 
 async function main() {
@@ -291,20 +411,31 @@ async function main() {
   );
 
   const indicesArg = getArgValue("indices", "");
+  const startAfterIcn = normalizeIcn(getArgValue("start-after-icn", ""));
+  const checkpointManifest = getArgValue(
+    "checkpoint-manifest",
+    path.join(ROOT, ".runtime", "manifests", "es-sync-manifest.json")
+  );
   const indices = indicesArg
     ? indicesArg.split(",").map((v) => v.trim()).filter(Boolean)
     : APP_INDICES;
+  const effectiveSlices = startAfterIcn ? 1 : slices;
 
   console.log(`[es-sync] Remote: ${remoteNode}`);
   console.log(`[es-sync] Local: ${localNode}`);
   console.log(`[es-sync] Mode: ${mode}`);
   console.log(`[es-sync] Batch size: ${batchSize}`);
   console.log(`[es-sync] Slices per index: ${slices}`);
+  if (startAfterIcn && slices !== 1) {
+    console.log("[es-sync] start-after-icn enabled; forcing slices per index to 1 for deterministic checkpointing.");
+  }
   console.log(`[es-sync] Bulk size: ${bulkSize}`);
   console.log(`[es-sync] Write concurrency: ${writeConcurrency}`);
   console.log(`[es-sync] Max bulk retries: ${maxBulkRetries}`);
   console.log(`[es-sync] Bulk retry backoff ms: ${backoffMs}`);
   console.log(`[es-sync] Indices: ${indices.join(", ")}`);
+  console.log(`[es-sync] Start after ICN: ${startAfterIcn || "none"}`);
+  console.log(`[es-sync] Checkpoint manifest: ${checkpointManifest}`);
 
   if (dryRun) {
     console.log("[es-sync] Dry run complete.");
@@ -329,20 +460,57 @@ async function main() {
     baseBackoffMs: backoffMs,
   };
 
-  await Promise.all(
+  const indexSummaries = await Promise.all(
     indices.map(async (index) => {
-      await syncIndex(
+      return syncIndex(
         remoteClient,
         localClient,
         index,
         mode,
         batchSize,
-        slices,
+        effectiveSlices,
         options,
-        writeSemaphore
+        writeSemaphore,
+        startAfterIcn
       );
     })
   );
+
+  const runSummary = indexSummaries.reduce(
+    (acc, item) => ({
+      totalSeen: acc.totalSeen + item.totalSeen,
+      totalImported: acc.totalImported + item.totalImported,
+      totalSkippedBeforeCheckpoint:
+        acc.totalSkippedBeforeCheckpoint + item.totalSkippedBeforeCheckpoint,
+      totalSkippedMissingIcn:
+        acc.totalSkippedMissingIcn + item.totalSkippedMissingIcn,
+      lastSyncedPropertyIcn: maxIcn(acc.lastSyncedPropertyIcn, item.highestIcn),
+    }),
+    {
+      totalSeen: 0,
+      totalImported: 0,
+      totalSkippedBeforeCheckpoint: 0,
+      totalSkippedMissingIcn: 0,
+      lastSyncedPropertyIcn: "",
+    }
+  );
+
+  await writeJsonAtomic(checkpointManifest, {
+    generatedAt: new Date().toISOString(),
+    mode,
+    startAfterIcn: startAfterIcn || null,
+    totalIndices: indices.length,
+    ...runSummary,
+    indices: indexSummaries.map((summary) => ({
+      index: summary.index,
+      sourceExists: summary.sourceExists,
+      totalSeen: summary.totalSeen,
+      totalImported: summary.totalImported,
+      totalSkippedBeforeCheckpoint: summary.totalSkippedBeforeCheckpoint,
+      totalSkippedMissingIcn: summary.totalSkippedMissingIcn,
+      highestIcn: summary.highestIcn || null,
+    })),
+  });
 
   await remoteClient.close();
   await localClient.close();

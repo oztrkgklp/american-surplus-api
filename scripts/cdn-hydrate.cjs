@@ -56,6 +56,32 @@ function isImagePath(value) {
   return IMAGE_EXTENSION_RE.test(value.trim());
 }
 
+function normalizeIcn(value) {
+  if (value === null || value === undefined) return "";
+  return String(value).trim();
+}
+
+function compareIcn(a, b) {
+  return normalizeIcn(a).localeCompare(normalizeIcn(b), undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
+}
+
+function maxIcn(a, b) {
+  if (!a) return b || "";
+  if (!b) return a || "";
+  return compareIcn(a, b) >= 0 ? a : b;
+}
+
+async function writeJsonAtomic(filePath, payload) {
+  if (!filePath) return;
+  await fs.mkdir(path.dirname(filePath), { recursive: true });
+  const tmpPath = `${filePath}.tmp-${process.pid}-${Date.now()}`;
+  await fs.writeFile(tmpPath, JSON.stringify(payload, null, 2), "utf8");
+  await fs.rename(tmpPath, filePath);
+}
+
 function buildImageIndex(downloaded) {
   const imageItems = downloaded
     .filter((item) => isImagePath(item.cdnPath))
@@ -294,8 +320,11 @@ async function looksLikeImageFile(filePath) {
   return false;
 }
 
-async function extractUris(client, index, limitPerIndex, scrollBatchSize) {
-  const uris = new Set();
+async function extractUris(client, index, limitPerIndex, scrollBatchSize, startAfterIcn) {
+  const uris = new Map();
+  let skippedBeforeCheckpoint = 0;
+  let skippedMissingIcn = 0;
+  let maxSeenIcn = "";
   let response = await client.search({
     index,
     scroll: "2m",
@@ -315,6 +344,18 @@ async function extractUris(client, index, limitPerIndex, scrollBatchSize) {
     if (hits.length === 0) break;
 
     for (const hit of hits) {
+      const icn = normalizeIcn(hit?._source?.icn);
+      if (startAfterIcn) {
+        if (!icn) {
+          skippedMissingIcn += 1;
+          continue;
+        }
+        if (compareIcn(icn, startAfterIcn) <= 0) {
+          skippedBeforeCheckpoint += 1;
+          continue;
+        }
+      }
+      maxSeenIcn = maxIcn(maxSeenIcn, icn);
       const uploadList = hit?._source?.property_data?.uploadItemList || [];
       for (const item of uploadList) {
         if (item?.deleted === true) {
@@ -325,7 +366,7 @@ async function extractUris(client, index, limitPerIndex, scrollBatchSize) {
           if (shouldSkipUri(normalized)) {
             continue;
           }
-          uris.add(normalized);
+          uris.set(normalized, { sourceUri: normalized, icn });
           if (limitPerIndex > 0 && uris.size >= limitPerIndex) break;
         }
       }
@@ -341,7 +382,12 @@ async function extractUris(client, index, limitPerIndex, scrollBatchSize) {
     await client.clearScroll({ scroll_id: response._scroll_id }).catch(() => {});
   }
 
-  return [...uris];
+  return {
+    items: [...uris.values()],
+    skippedBeforeCheckpoint,
+    skippedMissingIcn,
+    maxSeenIcn,
+  };
 }
 
 async function ensureCdnContainerExists() {
@@ -386,6 +432,11 @@ async function main() {
   const remoteAuthEmail = getArgValue("remote-auth-email", process.env.REMOTE_AUTH_EMAIL || "");
   const remoteAuthPassword = getArgValue("remote-auth-password", process.env.REMOTE_AUTH_PASSWORD || "");
   const manifestDir = path.join(ROOT, ".runtime", "manifests");
+  const startAfterIcn = normalizeIcn(getArgValue("start-after-icn", ""));
+  const checkpointManifest = getArgValue(
+    "checkpoint-manifest",
+    path.join(manifestDir, "cdn-hydration.json")
+  );
   const dryRun = hasFlag("dry-run");
   let remoteBearer = remoteBearerArg;
   let remoteCookie = getArgValue("remote-cookie", process.env.REMOTE_AUTH_COOKIE || "");
@@ -461,6 +512,8 @@ async function main() {
   console.log(`[cdn-hydrate] Publish interval (items): ${publishEveryItems}`);
   console.log(`[cdn-hydrate] Publish interval (chunks): ${publishEveryChunks}`);
   console.log(`[cdn-hydrate] Auth headers: ${authHeaders.length > 0 ? "enabled" : "none"}`);
+  console.log(`[cdn-hydrate] Start after ICN: ${startAfterIcn || "none"}`);
+  console.log(`[cdn-hydrate] Checkpoint manifest: ${checkpointManifest}`);
   if (dryRun) {
     console.log("[cdn-hydrate] Dry run complete.");
     return;
@@ -469,21 +522,45 @@ async function main() {
   await ensureCdnContainerExists();
 
   const client = new Client({ node: localNode });
-  const allUris = new Set();
+  const allUris = new Map();
+  let totalSkippedBeforeCheckpoint = 0;
+  let totalSkippedMissingIcn = 0;
+  let maxDiscoveredIcn = "";
   for (const index of APP_INDICES) {
-    const uris = await extractUris(client, index, limitPerIndex, scrollBatchSize);
-    uris.forEach((u) => allUris.add(u));
+    const result = await extractUris(
+      client,
+      index,
+      limitPerIndex,
+      scrollBatchSize,
+      startAfterIcn
+    );
+    totalSkippedBeforeCheckpoint += result.skippedBeforeCheckpoint;
+    totalSkippedMissingIcn += result.skippedMissingIcn;
+    maxDiscoveredIcn = maxIcn(maxDiscoveredIcn, result.maxSeenIcn);
+    result.items.forEach((item) => {
+      const existing = allUris.get(item.sourceUri);
+      if (!existing || compareIcn(item.icn, existing.icn) > 0) {
+        allUris.set(item.sourceUri, item);
+      }
+    });
   }
   await client.close();
 
-  const allUriList = [...allUris];
+  const allUriList = [...allUris.values()];
   const uriList = maxFiles > 0 ? allUriList.slice(0, maxFiles) : allUriList;
   console.log(`[cdn-hydrate] Candidate URIs: ${uriList.length}`);
+  if (startAfterIcn) {
+    console.log(
+      `[cdn-hydrate] Resume checkpoint=${startAfterIcn}, skipped-before-checkpoint=${totalSkippedBeforeCheckpoint}, skipped-missing-icn=${totalSkippedMissingIcn}`
+    );
+  }
 
   await fs.mkdir(manifestDir, { recursive: true });
   const tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "as-cdn-hydrate-"));
   const downloaded = [];
   const skipped = [];
+  const processedIcns = new Set();
+  let highestProcessedIcn = "";
   const totalChunks = Math.ceil(uriList.length / chunkSize) || 0;
   let processed = 0;
   let lastPublishedProcessed = -1;
@@ -514,16 +591,18 @@ async function main() {
   // Ensure UI has an index immediately (avoid 404 until first batch completes).
   await schedulePublish(true);
 
-  async function processSourceUri(sourceUri) {
+  async function processSourceUri(item) {
+    const sourceUri = item.sourceUri;
+    const sourceIcn = normalizeIcn(item.icn);
     if (shouldSkipUri(sourceUri)) {
-      skipped.push({ sourceUri, remoteUrl: null, reason: "blocked-uri-pattern" });
+      skipped.push({ sourceUri, icn: sourceIcn || null, remoteUrl: null, reason: "blocked-uri-pattern" });
       return;
     }
     const candidateUrls = getCandidateRemoteUrls(sourceUri, remotePrefix).filter(
       (url) => !shouldSkipUri(url)
     );
     if (candidateUrls.length === 0) {
-      skipped.push({ sourceUri, remoteUrl: null, reason: "blocked-uri-pattern" });
+      skipped.push({ sourceUri, icn: sourceIcn || null, remoteUrl: null, reason: "blocked-uri-pattern" });
       return;
     }
 
@@ -575,9 +654,23 @@ async function main() {
 
       await run("docker", ["exec", CDN_CONTAINER, "mkdir", "-p", path.posix.dirname(`/usr/share/nginx/html/${safeRel}`)]);
       await run("docker", ["cp", localFile, `${CDN_CONTAINER}:/usr/share/nginx/html/${safeRel}`]);
-      downloaded.push({ sourceUri, remoteUrl: successfulRemoteUrl, cdnPath: `/${safeRel}` });
+      downloaded.push({
+        sourceUri,
+        icn: sourceIcn || null,
+        remoteUrl: successfulRemoteUrl,
+        cdnPath: `/${safeRel}`,
+      });
+      if (sourceIcn) {
+        processedIcns.add(sourceIcn);
+        highestProcessedIcn = maxIcn(highestProcessedIcn, sourceIcn);
+      }
     } catch (error) {
-      skipped.push({ sourceUri, remoteUrl: candidateUrls[0], reason: error.message });
+      skipped.push({
+        sourceUri,
+        icn: sourceIcn || null,
+        remoteUrl: candidateUrls[0],
+        reason: error.message,
+      });
     }
   }
 
@@ -617,24 +710,22 @@ async function main() {
   }
   await publishInFlight;
 
-  const manifestPath = path.join(manifestDir, "cdn-hydration.json");
-  await fs.writeFile(
-    manifestPath,
-    JSON.stringify(
-      {
-        generatedAt: new Date().toISOString(),
-        remotePrefix,
-        totalCandidates: uriList.length,
-        downloadedCount: downloaded.length,
-        skippedCount: skipped.length,
-        downloaded,
-        skipped,
-      },
-      null,
-      2
-    ),
-    "utf8"
-  );
+  const manifestPath = checkpointManifest;
+  await writeJsonAtomic(manifestPath, {
+    generatedAt: new Date().toISOString(),
+    remotePrefix,
+    startAfterIcn: startAfterIcn || null,
+    lastSyncedPropertyIcn: highestProcessedIcn || null,
+    discoveredMaxPropertyIcn: maxDiscoveredIcn || null,
+    totalCandidates: uriList.length,
+    totalProcessedProperties: processedIcns.size,
+    skippedBeforeCheckpoint: totalSkippedBeforeCheckpoint,
+    skippedMissingIcn: totalSkippedMissingIcn,
+    downloadedCount: downloaded.length,
+    skippedCount: skipped.length,
+    downloaded,
+    skipped,
+  });
   const finalIndex = await publishImageIndex(tmpDir, downloaded);
 
   console.log(`[cdn-hydrate] Downloaded: ${downloaded.length}`);
