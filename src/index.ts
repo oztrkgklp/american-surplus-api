@@ -6,7 +6,7 @@ import envvars from '@/config/envvars';
 import { getLogger } from '@/utils/logger';
 import { setupRoutes } from '@/orchestration/routes';
 import { startConsumer } from '@/kafka';
-import { database } from '@/utils/database';
+import { database, syncDatabaseForLocalDevelopment } from '@/utils/database';
 import { elasticsearchClient } from '@/utils/elasticsearch';
 import * as rateLimiter from '@/utils/rateLimiter';
 import { setupAssociations as setupModelAssociations } from '@/utils/modelAssociations';
@@ -113,6 +113,8 @@ const bootstrap = async () => {
 
     // Sequelize model associations
     setupModelAssociations();
+
+    await syncDatabaseForLocalDevelopment();
 
     // Routes
     setupRoutes(app);

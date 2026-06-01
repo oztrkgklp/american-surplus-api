@@ -100,6 +100,11 @@ export default {
                 : process.env.ELASTICSEARCH_SSL_REJECT_UNAUTHORIZED !== "false",
         }
     },
+    cdn: {
+        fallbackEnabled: process.env.CDN_FALLBACK_ENABLED !== "false",
+        baseUrl: process.env.CDN_BASE_URL || "http://localhost:8088",
+        timeoutMs: parseInt(process.env.CDN_TIMEOUT_MS || "5000"),
+    },
     quickbooks: {
         clientId: process.env.QUICKBOOKS_CLIENT_ID,
         clientSecret: process.env.QUICKBOOKS_CLIENT_SECRET,

@@ -59,7 +59,7 @@ ReportLog.init(
             allowNull: false,
         },
         created_by: {
-            type: DataTypes.STRING(36),
+            type: DataTypes.UUID,
             allowNull: false,
         },
         description: {

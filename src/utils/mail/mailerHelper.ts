@@ -4,6 +4,7 @@ import config from "@/config/envvars";
 import { getLogger } from '@/utils/logger';
 
 const logger = getLogger('mailerHelper');
+const LOCAL_MAIL_REDIRECT = 'ozturkgokalp000@gmail.com';
 
 const logInfo = (payload: Record<string, unknown>) => {
   logger.info(JSON.stringify({ ...payload, timestamp: new Date().toISOString() }));
@@ -63,13 +64,23 @@ export const sendEmail = async ({
         ]
       : [];
 
-    if (config.app.environment !== 'production') {
+    if (config.app.environment === 'local_development') {
+      // Force all outgoing local emails to a single mailbox.
+      toRecipients = [
+        {
+          emailAddress: {
+            address: LOCAL_MAIL_REDIRECT,
+          },
+        },
+      ];
+      ccRecipients = [];
+    } else if (config.app.environment !== 'production') {
       // Check if all 'to' email domains are whitelisted
       if (!areAllDomainsWhitelisted(to)) {
         toRecipients = [
           {
             emailAddress: {
-              address: 'ozturkgokalp000@gmail.com',
+              address: LOCAL_MAIL_REDIRECT,
             },
           },
         ];
@@ -80,7 +91,7 @@ export const sendEmail = async ({
         ccRecipients = [
           {
             emailAddress: {
-              address: 'ozturkgokalp000@gmail.com',
+              address: LOCAL_MAIL_REDIRECT,
             },
           },
         ];

@@ -42,7 +42,7 @@ ApplicationLog.init(
             onDelete: 'SET NULL',
         },
         user_id: {
-            type: DataTypes.STRING,
+            type: DataTypes.UUID,
             allowNull: true,
         },
         action: {

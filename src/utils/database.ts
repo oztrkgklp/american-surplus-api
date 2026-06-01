@@ -104,13 +104,20 @@ class DatabaseUtility {
 }
 
 export const database = new DatabaseUtility();
-if (envvars.app.environment === 'local_development') {
-    database.sequelize.sync({
-        force: false,
-        alter: true,
-    }).then(() => {
+
+export const syncDatabaseForLocalDevelopment = async (): Promise<void> => {
+    if (envvars.app.environment !== 'local_development') {
+        return;
+    }
+
+    try {
+        await database.sequelize.sync({
+            force: false,
+            alter: true,
+        });
         logger.info("Database synchronized successfully.");
-    }).catch((error) => {
+    } catch (error) {
         logger.error("Error synchronizing database:", error);
-    })
-}
+        throw error;
+    }
+};

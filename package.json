@@ -11,6 +11,8 @@
     "setup:local": "node scripts/setup-local.cjs",
     "init:local": "node scripts/local-init.cjs",
     "init:local:reset": "node scripts/local-init.cjs --reset",
+    "db:sync:local": "node scripts/db-sync-local.cjs",
+    "seed:db:local": "node scripts/db-seed-local.cjs",
     "seed:local": "node scripts/seed-local-launcher.cjs",
     "seed:local:status": "node scripts/job-status.cjs --job=seed-local",
     "seed:local:logs": "node scripts/job-logs.cjs --job=seed-local --lines=200",

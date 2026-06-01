@@ -7,8 +7,6 @@ const { waitForHealthy } = require("./lib/docker.cjs");
 
 const ROOT = path.resolve(__dirname, "..");
 dotenv.config({ path: path.join(ROOT, ".env") });
-const LOCAL_DB_NAME =
-  process.env.LOCAL_DB_NAME || process.env.MYSQL_DATABASE || "americansurplus";
 
 function hasFlag(name) {
   return process.argv.includes(`--${name}`);
@@ -65,27 +63,11 @@ async function waitInfra() {
 }
 
 async function initializeDatabase() {
-  const sqlSteps = [
-    { file: "db/0_db_schema.sql", withDatabase: false },
-    { file: "db/1_db_data.sql", withDatabase: true },
-    { file: "db/2_mfa_migration.sql", withDatabase: true },
-  ];
-  console.log("[local-init] Initializing database from SQL files...");
-  console.log(`[local-init] Target database: ${LOCAL_DB_NAME}`);
-  for (const step of sqlSteps) {
-    const abs = path.join(ROOT, step.file);
-    const dbArg = step.withDatabase ? ` --database=${LOCAL_DB_NAME}` : "";
-    console.log(`[local-init] Applying SQL: ${step.file}`);
-    await run(
-      "sh",
-      [
-        "-lc",
-        `docker exec -i american-surplus-mysql mysql -uroot -pamerican_surplus_pass123${dbArg} < "${abs}"`,
-      ],
-      { shell: false }
-    );
-    console.log(`[local-init] Applied SQL: ${step.file}`);
-  }
+  console.log("[local-init] Syncing database schema from Sequelize models...");
+  await run("node", ["scripts/db-sync-local.cjs"]);
+  console.log("[local-init] Running local DB seeds...");
+  await run("node", ["scripts/db-seed-local.cjs"]);
+  console.log("[local-init] Local DB seed completed.");
 }
 
 async function printSummary() {

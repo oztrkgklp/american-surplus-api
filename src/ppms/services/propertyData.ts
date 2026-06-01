@@ -1,5 +1,5 @@
 import path from 'path';
-import mime from 'mime';
+import { URL } from 'url';
 
 import { newStoragePaths, StoragePaths } from '@/utils/storage/paths';
 import { listDirectory, readFile, getFileMimeType } from '@/utils/storage/fileSystem';
@@ -11,10 +11,70 @@ import { PaginatedResponse } from '@/utils/pagination/interfaces';
 import { PropertyDetails } from '@/ppms/types/propertyDetails';
 import { PropertyDiskFile, PropertySearchResult, SummarySearchOptions } from '@/ppms/types/summary';
 import { getLogger } from '@/utils/logger';
+import envvars from '@/config/envvars';
 import { propertyDetailsRepository } from '../../elasticsearch/repositories/propertyDetails.repository';
 const logger = getLogger('PropertDataService');
 
 export class PropertyDataService {
+    private static readonly IMAGE_FILE_RE = /\.(jpe?g|png|webp|gif)$/i;
+
+    private static sanitizePathPart(value: string): string {
+        const trimmed = String(value || '').trim();
+        if (!trimmed || trimmed.includes('..') || trimmed.includes('/') || trimmed.includes('\\')) {
+            throw new AppError(400, 'Invalid image path parameter');
+        }
+        return trimmed;
+    }
+
+    private static normalizeMimeType(rawMimeType?: string, fileName?: string): string {
+        const cleaned = (rawMimeType || '').split(';')[0].trim().toLowerCase();
+        if (cleaned.startsWith('image/')) {
+            return cleaned;
+        }
+        if (fileName) {
+            const guessed = getFileMimeType(fileName);
+            if (guessed && guessed.startsWith('image/')) {
+                return guessed;
+            }
+        }
+        return 'application/octet-stream';
+    }
+
+    private static async fetchImageFromCdn(icn: string, imageName: string): Promise<{ buffer: Buffer; mimeType: string } | null> {
+        if (!envvars.cdn.fallbackEnabled) {
+            return null;
+        }
+
+        const safeIcn = this.sanitizePathPart(icn);
+        const safeImageName = this.sanitizePathPart(imageName);
+        const cdnBase = envvars.cdn.baseUrl.replace(/\/+$/, '');
+        const cdnPath = `/property-uploads/${encodeURIComponent(safeIcn)}/${encodeURIComponent(safeImageName)}`;
+        const cdnUrl = new URL(cdnPath, `${cdnBase}/`).toString();
+        const controller = new AbortController();
+        const timeoutHandle = setTimeout(() => controller.abort(), envvars.cdn.timeoutMs);
+
+        try {
+            const response = await fetch(cdnUrl, { signal: controller.signal });
+            if (!response.ok) {
+                return null;
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            if (buffer.length === 0) {
+                return null;
+            }
+
+            const mimeType = this.normalizeMimeType(response.headers.get('content-type') || undefined, safeImageName);
+            return { buffer, mimeType };
+        } catch (error) {
+            logger.warn(`[PropertyImage] CDN fallback fetch failed for ${icn}/${imageName}: ${error}`);
+            return null;
+        } finally {
+            clearTimeout(timeoutHandle);
+        }
+    }
+
 
     static async getAllPropertiesSummary(page: number, limit: number, options?: SummarySearchOptions): Promise<PaginatedResponse<PropertySearchResult>> {
         const cacheIdentifier = cacheKeys.propertiesSummary;
@@ -267,7 +327,7 @@ export class PropertyDataService {
 
             // Exclude the icn.json and return only image files
             const imageFiles = files.filter(
-                (file) => file !== 'icn.json' && /\.(jpe?g|png|webp|gif)$/i.test(file)
+                (file) => file !== 'icn.json' && this.IMAGE_FILE_RE.test(file)
             );
 
             await cache.set(cacheKey, imageFiles, cacheKeys.propertyImages.ttl);
@@ -294,7 +354,7 @@ export class PropertyDataService {
         } catch {
             try {
                 const files = await listDirectory(basePath);
-                const imageFiles = files.filter((file) => /\.(jpe?g|png|webp|gif)$/i.test(file));
+                const imageFiles = files.filter((file) => this.IMAGE_FILE_RE.test(file));
                 if (imageFiles.length === 0) throw new AppError(404, `No image files found for ICN '${icn}'`);
 
                 const firstImageName = imageFiles[0];
@@ -303,6 +363,10 @@ export class PropertyDataService {
                 const mimeType = getFileMimeType(firstImagePath);
                 return { buffer, mimeType };
             } catch (error) {
+                const cdnFallback = await this.fetchImageFromCdn(icn, imageName);
+                if (cdnFallback) {
+                    return cdnFallback;
+                }
                 throw new AppError(404, `Image not found: ${imageName}`);
             }
         }

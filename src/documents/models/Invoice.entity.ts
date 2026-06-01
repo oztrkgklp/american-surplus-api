@@ -119,7 +119,7 @@ Invoice.init(
             defaultValue: 0,
         },
         total_amount_pennies: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.BIGINT,
             allowNull: false,
             defaultValue: 0,
         },
@@ -129,7 +129,7 @@ Invoice.init(
             defaultValue: 0,
         },
         american_surplus_amount_pennies: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.BIGINT,
             allowNull: false,
             defaultValue: 0,
         },
@@ -139,7 +139,7 @@ Invoice.init(
             defaultValue: 0,
         },
         sasp_net_amount_pennies: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.BIGINT,
             allowNull: false,
             defaultValue: 0,
         },

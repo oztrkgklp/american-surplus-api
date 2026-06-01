@@ -52,7 +52,7 @@ ComplianceActivityLog.init({
         allowNull: true
     },
     activator: {
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
         allowNull: false
     },
 }, {

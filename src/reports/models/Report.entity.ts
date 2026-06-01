@@ -81,7 +81,7 @@ Report.init(
             allowNull: true,
         },
         created_by: {
-            type: DataTypes.STRING(36),
+            type: DataTypes.UUID,
             allowNull: true,
         },
     },

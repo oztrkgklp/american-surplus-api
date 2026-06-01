@@ -95,7 +95,7 @@ Application.init(
             allowNull: true,
         },
         approved_by: {
-            type: DataTypes.STRING,
+            type: DataTypes.UUID,
             allowNull: true,
         },
         approved_date: {
@@ -107,7 +107,7 @@ Application.init(
             allowNull: true,
         },
         created_by: {
-            type: DataTypes.STRING,
+            type: DataTypes.UUID,
             allowNull: false,
         },
     },
