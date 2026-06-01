@@ -40,39 +40,105 @@ export class PropertyDataService {
         return 'application/octet-stream';
     }
 
+    private static normalizeCdnPath(value: string): string | null {
+        const raw = String(value || '').trim();
+        if (!raw) return null;
+        if (raw.includes('..')) return null;
+        try {
+            if (/^https?:\/\//i.test(raw)) {
+                const pathname = new URL(raw).pathname;
+                return pathname.startsWith('/') ? pathname : `/${pathname}`;
+            }
+        } catch {
+            return null;
+        }
+        return raw.startsWith('/') ? raw : `/${raw}`;
+    }
+
+    private static async getCdnCandidatePaths(icn: string, imageName: string): Promise<string[]> {
+        const safeIcn = this.sanitizePathPart(icn);
+        const safeImageName = this.sanitizePathPart(imageName);
+        const byName = `/property-uploads/${encodeURIComponent(safeIcn)}/${encodeURIComponent(safeImageName)}`;
+        const candidates = [byName];
+
+        try {
+            const entity = await propertyDetailsRepository.getPropertyDetailsByIcn(safeIcn);
+            const uploadItems = entity?.property_data?.uploadItemList || [];
+            if (!Array.isArray(uploadItems) || uploadItems.length === 0) {
+                return [...new Set(candidates)];
+            }
+
+            const sameName = uploadItems.find((item: any) => String(item?.name || '') === safeImageName);
+            if (sameName?.uri) {
+                const normalized = this.normalizeCdnPath(String(sameName.uri));
+                if (normalized) candidates.push(normalized);
+            }
+
+            const matchingBasename = uploadItems.find((item: any) => {
+                const uri = String(item?.uri || '');
+                const basename = path.posix.basename(uri.split('?')[0] || '');
+                return basename === safeImageName;
+            });
+            if (matchingBasename?.uri) {
+                const normalized = this.normalizeCdnPath(String(matchingBasename.uri));
+                if (normalized) candidates.push(normalized);
+            }
+
+            // Modal requests often use ICN-letter aliases (e.g. ICNA.jpg),
+            // while CDN stores numeric filenames from uploadItemList.uri.
+            const aliasMatch = safeImageName.match(new RegExp(`^${safeIcn}([A-Z])\\.(jpe?g|png|webp|gif)$`, 'i'));
+            if (aliasMatch) {
+                const letter = aliasMatch[1].toUpperCase();
+                const index = letter.charCodeAt(0) - 65;
+                if (index >= 0 && index < uploadItems.length) {
+                    const mapped = uploadItems[index];
+                    if (mapped?.uri) {
+                        const normalized = this.normalizeCdnPath(String(mapped.uri));
+                        if (normalized) candidates.push(normalized);
+                    }
+                }
+            }
+        } catch (error) {
+            logger.warn(`[PropertyImage] Could not build mapped CDN candidates for ${icn}/${imageName}: ${error}`);
+        }
+
+        return [...new Set(candidates)];
+    }
+
     private static async fetchImageFromCdn(icn: string, imageName: string): Promise<{ buffer: Buffer; mimeType: string } | null> {
         if (!envvars.cdn.fallbackEnabled) {
             return null;
         }
 
-        const safeIcn = this.sanitizePathPart(icn);
         const safeImageName = this.sanitizePathPart(imageName);
         const cdnBase = envvars.cdn.baseUrl.replace(/\/+$/, '');
-        const cdnPath = `/property-uploads/${encodeURIComponent(safeIcn)}/${encodeURIComponent(safeImageName)}`;
-        const cdnUrl = new URL(cdnPath, `${cdnBase}/`).toString();
-        const controller = new AbortController();
-        const timeoutHandle = setTimeout(() => controller.abort(), envvars.cdn.timeoutMs);
+        const candidates = await this.getCdnCandidatePaths(icn, imageName);
 
-        try {
-            const response = await fetch(cdnUrl, { signal: controller.signal });
-            if (!response.ok) {
-                return null;
+        for (const cdnPath of candidates) {
+            const cdnUrl = new URL(cdnPath, `${cdnBase}/`).toString();
+            const controller = new AbortController();
+            const timeoutHandle = setTimeout(() => controller.abort(), envvars.cdn.timeoutMs);
+            try {
+                const response = await fetch(cdnUrl, { signal: controller.signal });
+                if (!response.ok) {
+                    continue;
+                }
+
+                const arrayBuffer = await response.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
+                if (buffer.length === 0) {
+                    continue;
+                }
+
+                const mimeType = this.normalizeMimeType(response.headers.get('content-type') || undefined, safeImageName);
+                return { buffer, mimeType };
+            } catch (error) {
+                logger.warn(`[PropertyImage] CDN fallback fetch failed for ${icn}/${imageName} via ${cdnPath}: ${error}`);
+            } finally {
+                clearTimeout(timeoutHandle);
             }
-
-            const arrayBuffer = await response.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-            if (buffer.length === 0) {
-                return null;
-            }
-
-            const mimeType = this.normalizeMimeType(response.headers.get('content-type') || undefined, safeImageName);
-            return { buffer, mimeType };
-        } catch (error) {
-            logger.warn(`[PropertyImage] CDN fallback fetch failed for ${icn}/${imageName}: ${error}`);
-            return null;
-        } finally {
-            clearTimeout(timeoutHandle);
         }
+        return null;
     }
 
 
