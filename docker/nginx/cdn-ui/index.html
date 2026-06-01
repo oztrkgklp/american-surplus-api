@@ -60,6 +60,28 @@
         color: var(--muted);
         font-size: 14px;
       }
+      .pager {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .pager-controls {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      select {
+        background: #0b1220;
+        color: var(--text);
+        border: 1px solid #2d3a54;
+        border-radius: 8px;
+        padding: 8px 10px;
+      }
       .grid {
         margin-top: 16px;
         display: grid;
@@ -114,16 +136,45 @@
         <button id="refresh">Refresh Index</button>
       </div>
       <div id="meta" class="meta">Loading...</div>
+      <div id="pager" class="pager" hidden>
+        <div id="pagerSummary"></div>
+        <div class="pager-controls">
+          <label for="pageSize">Page size</label>
+          <select id="pageSize">
+            <option value="24">24</option>
+            <option value="48" selected>48</option>
+            <option value="96">96</option>
+            <option value="200">200</option>
+          </select>
+          <button id="prevPage" type="button">Prev</button>
+          <span id="pageLabel">Page 1 / 1</span>
+          <button id="nextPage" type="button">Next</button>
+        </div>
+      </div>
       <div id="grid" class="grid"></div>
       <div id="empty" class="empty" hidden>No images match your search.</div>
     </div>
     <script>
-      const state = { rows: [], filtered: [], generatedAt: null, pollTimer: null };
+      const state = {
+        rows: [],
+        filtered: [],
+        paged: [],
+        generatedAt: null,
+        pollTimer: null,
+        page: 1,
+        pageSize: 48,
+      };
       const q = document.getElementById("q");
       const grid = document.getElementById("grid");
       const empty = document.getElementById("empty");
       const meta = document.getElementById("meta");
       const refresh = document.getElementById("refresh");
+      const pager = document.getElementById("pager");
+      const pagerSummary = document.getElementById("pagerSummary");
+      const pageSize = document.getElementById("pageSize");
+      const prevPage = document.getElementById("prevPage");
+      const nextPage = document.getElementById("nextPage");
+      const pageLabel = document.getElementById("pageLabel");
 
       function rowTemplate(row) {
         const safePath = row.cdnPath || "/";
@@ -151,12 +202,32 @@
               return text.includes(term);
             });
 
+        const total = state.filtered.length;
+        const totalPages = Math.max(1, Math.ceil(total / state.pageSize));
+        if (state.page > totalPages) {
+          state.page = totalPages;
+        }
+        if (state.page < 1) {
+          state.page = 1;
+        }
+        const start = (state.page - 1) * state.pageSize;
+        const end = start + state.pageSize;
+        state.paged = state.filtered.slice(start, end);
+
         const updated = state.generatedAt
           ? ` Last update: ${new Date(state.generatedAt).toLocaleTimeString()}.`
           : "";
         meta.textContent = `Indexed ${state.rows.length} images. Showing ${state.filtered.length}.${updated}`;
-        grid.innerHTML = state.filtered.map(rowTemplate).join("");
+        grid.innerHTML = state.paged.map(rowTemplate).join("");
         empty.hidden = state.filtered.length !== 0;
+
+        pager.hidden = total === 0;
+        const shownStart = total === 0 ? 0 : start + 1;
+        const shownEnd = Math.min(end, total);
+        pagerSummary.textContent = `Showing ${shownStart}-${shownEnd} of ${total}`;
+        pageLabel.textContent = `Page ${state.page} / ${totalPages}`;
+        prevPage.disabled = state.page <= 1;
+        nextPage.disabled = state.page >= totalPages;
       }
 
       async function load(silent = false) {
@@ -188,7 +259,24 @@
         }, 3000);
       }
 
-      q.addEventListener("input", render);
+      q.addEventListener("input", () => {
+        state.page = 1;
+        render();
+      });
+      pageSize.addEventListener("change", () => {
+        state.pageSize = Number(pageSize.value) || 48;
+        state.page = 1;
+        render();
+      });
+      prevPage.addEventListener("click", () => {
+        state.page = Math.max(1, state.page - 1);
+        render();
+      });
+      nextPage.addEventListener("click", () => {
+        const totalPages = Math.max(1, Math.ceil(state.filtered.length / state.pageSize));
+        state.page = Math.min(totalPages, state.page + 1);
+        render();
+      });
       refresh.addEventListener("click", () => load(false));
       window.addEventListener("beforeunload", () => {
         if (state.pollTimer) {
