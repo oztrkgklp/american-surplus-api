@@ -1,16 +1,16 @@
 {
   "status": "running",
   "step": "cdn-hydrate",
-  "pid": 53688,
-  "startedAt": "2026-06-01T07:32:53.819Z",
+  "pid": 7303,
+  "startedAt": "2026-06-01T10:25:05.919Z",
   "endedAt": null,
   "exitCode": null,
   "parentJob": "seed-local",
   "logPath": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/.runtime/logs/cdn-hydrate.log",
   "job": "cdn-hydrate",
-  "updatedAt": "2026-06-01T07:32:53.819Z",
+  "updatedAt": "2026-06-01T10:25:05.919Z",
   "reason": null,
-  "queuedAt": "2026-06-01T07:32:53.816Z",
+  "queuedAt": "2026-06-01T10:25:05.916Z",
   "script": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/scripts/cdn-hydrate.cjs",
   "error": null
 }

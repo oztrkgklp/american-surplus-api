@@ -50,6 +50,14 @@ async function tableExists(connection, tableName) {
   return Array.isArray(rows) && rows.length > 0;
 }
 
+async function deleteIfTableExists(connection, tableName, whereClause, params = []) {
+  const exists = await tableExists(connection, tableName);
+  if (!exists) {
+    return;
+  }
+  await connection.query(`DELETE FROM ${tableName} WHERE ${whereClause}`, params);
+}
+
 async function ensureSchema(connection) {
   const requiredTables = ["users", "states", "request_statuses"];
   for (const tableName of requiredTables) {
@@ -118,11 +126,11 @@ async function seedStateAndUser(connection) {
   }
 
   // Reset prior auth/scope rows for this local user so seed is deterministic.
-  await connection.query("DELETE FROM user_scopes WHERE user_id = ?", [userId]);
-  await connection.query("DELETE FROM user_sessions WHERE userId = ?", [userId]);
-  await connection.query("DELETE FROM mfa_audit_logs WHERE user_id = ?", [userId]);
-  await connection.query("DELETE FROM password_reset_tokens WHERE user_id = ?", [userId]);
-  await connection.query("DELETE FROM sasp_users WHERE userId = ?", [userId]);
+  await deleteIfTableExists(connection, "user_scopes", "user_id = ?", [userId]);
+  await deleteIfTableExists(connection, "user_sessions", "userId = ?", [userId]);
+  await deleteIfTableExists(connection, "mfa_audit_logs", "user_id = ?", [userId]);
+  await deleteIfTableExists(connection, "password_reset_tokens", "user_id = ?", [userId]);
+  await deleteIfTableExists(connection, "sasp_users", "userId = ?", [userId]);
 
   const [scopeRows] = await connection.query(
     "SELECT scope_id FROM scopes WHERE type = 'sasp' LIMIT 1"
