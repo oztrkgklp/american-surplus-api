@@ -1,0 +1,31 @@
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+    <p>
+        A new eligibility application has been submitted and requires your review.
+    </p>
+    <table style="margin:20px 0; border-collapse:collapse;">
+        <tr>
+            <td style="padding:4px 8px;"><strong>Application ID:</strong></td>
+            <td style="padding:4px 8px;"><%= application.id %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Organization:</strong></td>
+            <td style="padding:4px 8px;"><%= organization %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>State:</strong></td>
+            <td style="padding:4px 8px;"><%= state %></td>
+        </tr>
+        <tr style="background-color:#e8f5e9;">
+            <td style="padding:4px 8px;"><strong>Current Status:</strong></td>
+            <td style="padding:4px 8px;"><strong><%= status %></strong></td>
+        </tr>
+    </table>
+    
+    <p style="background-color:#e3f2fd; padding:15px; border-left:4px solid #1976d2;">
+        <strong>Action Required:</strong> Please log in to American Surplus to review the application and make a decision.
+    </p>
+    
+    <p>If you have any questions, please contact us.</p>
+    <p>Thanks,<br />American Surplus Team</p>
+</div>

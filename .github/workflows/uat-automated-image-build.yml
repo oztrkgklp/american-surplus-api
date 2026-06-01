@@ -1,0 +1,113 @@
+name: Automated - skynetacr Create Image/Deploy UAT
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited]
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  uat-build:
+    runs-on: ubuntu-latest
+    environment: uat
+
+    env:
+      ENV_NAME: uat
+      ENV_REPO: "ENV_uat-american-surplus"
+      HELM_REPO: "american-surplus-helm"
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+
+    - name: Create image variable
+      run: | 
+        REPO_NAME=${GITHUB_REPOSITORY##*/}
+        PR_HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+        IMAGE_TAG="tag-${PR_HEAD_SHA::7}"
+        IMAGE_PATH="skynetacr.azurecr.io/${REPO_NAME}:${IMAGE_TAG}"
+
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+        echo "IMAGE_PATH=$IMAGE_PATH" >> $GITHUB_ENV
+        echo "REGISTRY_NAME=skynetacr" >> $GITHUB_ENV
+
+    - name: Azure Authentication
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Log in to ACR
+      run: | 
+        az acr login --name $REGISTRY_NAME
+
+    - name: Docker Build
+      run: | 
+        docker build --build-arg ENVIRONMENT=uat . -t $IMAGE_PATH
+
+    - name: Push image
+      run: | 
+        docker push $IMAGE_PATH
+
+    - name: Generate UAT GitHub App Token
+      id: generate-token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ secrets.GH_APP_ID }}
+        owner: AmericanSurplus
+        repositories: ${{ env.ENV_REPO }}
+        private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+    - name: Check out Env repo
+      uses: actions/checkout@v4
+      with:
+        repository: AmericanSurplus/${{ env.ENV_REPO }}
+        path: ${{ env.ENV_REPO }}
+        token: ${{ steps.generate-token.outputs.token }}
+
+    - name: Install yq
+      run: |
+        sudo wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+        sudo chmod +x /usr/bin/yq
+
+    - name: Update acr_tag in values.yaml
+      run: |
+        yq eval ".american_surplus_api.acr_tag = \"${{ env.IMAGE_TAG }}\"" -i $ENV_REPO/helm/$ENV_NAME-values.yaml
+
+    - name: Update and push env file
+      run: |
+        cd $ENV_REPO
+        git config user.name "github-actions"
+        git config user.email "ozturkgokalp000@gmail.com"
+        git add -u
+        git commit -m "Update american_surplus_api acr_tag to ${{ env.IMAGE_TAG }}" || echo "Nothing to commit."
+        git push || echo "Nothing to push."
+
+    - name: Generate Helm GitHub App Token
+      id: helm-generate-token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ secrets.GH_APP_ID }}
+        owner: AmericanSurplus
+        repositories: ${{ env.HELM_REPO }}
+        private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+    - name: Automatic Helm Upgrade Workflow
+      uses: peter-evans/repository-dispatch@v3
+      with:
+        token: ${{ steps.helm-generate-token.outputs.token }}
+        repository: AmericanSurplus/${{ env.HELM_REPO }}
+        event-type: automatic-helm-upgrade-uat
+        client-payload: >-
+          {
+            "environment": "uat"
+          }

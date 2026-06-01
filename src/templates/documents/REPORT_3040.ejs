@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= reportTitle %></title>
+  <style>
+    @page {
+      size: A4;
+      margin: 0.6in;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 11pt;
+      color: #111827;
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    .header {
+      border-top: 2px solid #111827;
+      border-bottom: 2px solid #111827;
+      padding: 14px 0;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 18pt;
+      letter-spacing: 0.03em;
+    }
+
+    .header .subtitle {
+      margin-top: 6px;
+      font-size: 10.5pt;
+    }
+
+    .section {
+      margin-bottom: 22px;
+      page-break-inside: avoid;
+    }
+
+    .section-title {
+      font-size: 12.5pt;
+      font-weight: bold;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #d1d5db;
+    }
+
+    th {
+      text-align: left;
+      background: #f3f4f6;
+      font-size: 10pt;
+    }
+
+    td.amount {
+      text-align: right;
+      white-space: nowrap;
+      width: 180px;
+    }
+
+    tr.total-row td {
+      font-weight: bold;
+      border-top: 2px solid #111827;
+      background: #f9fafb;
+    }
+
+    .grand-total {
+      margin-top: 26px;
+      padding-top: 10px;
+      border-top: 3px solid #111827;
+      display: flex;
+      justify-content: space-between;
+      font-size: 13pt;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 24px;
+      font-size: 9.5pt;
+      color: #4b5563;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div><%= stateName %></div>
+    <h1><%= reportTitle %></h1>
+    <div class="subtitle"><%= dateRangeLabel %></div>
+  </div>
+
+  <% sections.forEach((section) => { %>
+    <div class="section">
+      <div class="section-title"><%= section.title %></div>
+      <table>
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th style="text-align: right;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% section.rows.forEach((row) => { %>
+            <tr>
+              <td><%= row.label %></td>
+              <td class="amount"><%= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(row.amount) %></td>
+            </tr>
+          <% }) %>
+          <tr class="total-row">
+            <td><%= section.totalLabel %></td>
+            <td class="amount"><%= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(section.totalAmount) %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <% }) %>
+
+  <div class="grand-total">
+    <span>Grand Total</span>
+    <span><%= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(grandTotal) %></span>
+  </div>
+
+  <div class="footer">Generated at <%= generatedAt %></div>
+</body>
+</html>

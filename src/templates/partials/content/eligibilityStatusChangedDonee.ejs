@@ -1,0 +1,76 @@
+<%# SDN-1295: display labels only. Underlying status values ('Rejected', 'Denied', etc.) unchanged. %>
+<% const STATUS_DISPLAY_LABELS = {
+    'Rejected': 'Returned',
+    'Application Renewal Rejected': 'Application Renewal Returned',
+    'Form Renewal Rejected': 'Form Renewal Returned',
+    'Denied': 'Not Eligible',
+}; %>
+<% const displayOldStatus = STATUS_DISPLAY_LABELS[oldStatus] || oldStatus; %>
+<% const displayNewStatus = STATUS_DISPLAY_LABELS[newStatus] || newStatus; %>
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+    <p>
+        The status of your eligibility application has been updated.
+    </p>
+    <table style="margin:20px 0; border-collapse:collapse;">
+        <tr>
+            <td style="padding:4px 8px;"><strong>Application ID:</strong></td>
+            <td style="padding:4px 8px;"><%= application.id %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>State:</strong></td>
+            <td style="padding:4px 8px;"><%= state %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Previous Status:</strong></td>
+            <td style="padding:4px 8px;"><%= displayOldStatus %></td>
+        </tr>
+        <tr style="background-color:#e8f5e9;">
+            <td style="padding:4px 8px;"><strong>New Status:</strong></td>
+            <td style="padding:4px 8px;"><strong><%= displayNewStatus %></strong></td>
+        </tr>
+    </table>
+
+    <% if (newStatus === 'Submitted' || newStatus === 'On Application Renewal' || newStatus === 'On Form Renewal') { %>
+        <p style="background-color:#e3f2fd; padding:15px; border-left:4px solid #1976d2;">
+            <strong>Next Steps:</strong> Your application has been submitted and is under review by the SASP. You will receive an additional notification once a decision has been made.
+        </p>
+    <% } else if (newStatus === 'Rejected' || newStatus === 'Application Renewal Rejected' || newStatus === 'Form Renewal Rejected') { %>
+        <p style="background-color:#fff3e0; padding:15px; border-left:4px solid #f57c00;">
+            <strong>Action Required:</strong> Your application has been returned. Please log in to American Surplus to review the return reasons, make the necessary updates to your application, and resubmit.
+        </p>
+        <% if (denyReason) { %>
+        <div style="background-color:#fafafa; padding:15px; margin-top:10px; border-left:4px solid #f57c00;">
+            <strong>Reason:</strong><br/>
+            <%= denyReason %>
+        </div>
+        <% } %>
+    <% } else if (newStatus === 'Approved') { %>
+        <p style="background-color:#e8f5e9; padding:15px; border-left:4px solid #2e7d32;">
+            <strong>Congratulations!</strong> Your application has been approved. You may now log in to American Surplus and start submitting property requests.
+        </p>
+    <% } else if (newStatus === 'Application Renewal Required' || newStatus === 'Form Renewal Required') { %>
+        <p style="background-color:#fff3e0; padding:15px; border-left:4px solid #f57c00;">
+            <strong>Action Required:</strong> Your application requires renewal. Please log in to American Surplus to review the requirements, update your application, and resubmit.
+        </p>
+    <% } else if (newStatus === 'Application Expired' || newStatus === 'Form Expired') { %>
+        <p style="background-color:#ffebee; padding:15px; border-left:4px solid #c62828;">
+            <strong>Action Required:</strong> Your application has expired. Please log in to American Surplus to renew your application and resubmit.
+        </p>
+    <% } else if (newStatus === 'Denied') { %>
+        <p style="background-color:#ffebee; padding:15px; border-left:4px solid #c62828;">
+            <strong>Application Not Eligible:</strong> Your application has been marked Not Eligible. If you believe this decision was made in error, please contact your SASP directly for further clarification.
+        </p>
+        <% if (denyReason) { %>
+        <div style="background-color:#fafafa; padding:15px; margin-top:10px; border-left:4px solid #c62828;">
+            <strong>Reason:</strong><br/>
+            <%= denyReason %>
+        </div>
+        <% } %>
+    <% } else { %>
+        <p>Please log in to American Surplus to view the details and take any necessary actions.</p>
+    <% } %>
+
+    <p>If you have any questions, please contact us.</p>
+    <p>Thanks,<br />American Surplus Team</p>
+</div>

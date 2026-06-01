@@ -1,0 +1,6 @@
+{
+  "whitelistedEmails": [
+    "ozturkgokalp000@gmail.com"
+  ],
+  "notes": "Local bootstrap seed data used by init:local for deterministic setup."
+}

@@ -1,0 +1,565 @@
+export enum OrganizationType {
+  PUBLIC_AGENCY = 'Public Agency',
+  NONPROFIT = 'Nonprofit',
+  NOT_FOR_PROFIT = 'Not-for-Profit',
+  FOR_PROFIT = 'For-Profit',
+}
+
+export enum OrganizationSubType {
+  // Public Agency subtypes
+  LOCAL = 'Local',
+  STATE = 'State',
+  FEDERAL = 'Federal',
+  PUBLIC_AUTHORITY = 'Public Authority',
+  PUBLIC_INSTRUMENTALITY = 'Public Instrumentality',
+  MULTI_JURISDICTIONAL_DISTRICT = 'Multi-jurisdictional District',
+  SPECIAL_DISTRICT = 'Special District',
+  TRIBAL_OR_SOVEREIGN_NATION = 'Tribal or Sovereign Nation',
+
+  // Nonprofit subtypes
+  PUBLIC_BENEFIT_NONPROFIT = 'Public Benefit Nonprofit',
+  RELIGIOUS_ORGANIZATION = 'Religious Organization',
+  VETERANS_SERVICE_ORGANIZATION = 'Veterans Service Organization',
+  FISCALLY_SPONSORED_PROJECT = 'Fiscally Sponsored Project',
+  MEMBERSHIP_BASED_NONPROFIT = 'Membership-Based Nonprofit',
+  UNINCORPORATED_NONPROFIT_ASSOCIATION = 'Unincorporated Nonprofit Association',
+
+  // Not-for-Profit subtypes (same as Nonprofit)
+  // PUBLIC_BENEFIT_NONPROFIT = 'Public Benefit Nonprofit',
+  // RELIGIOUS_ORGANIZATION = 'Religious Organization',
+  // VETERANS_SERVICE_ORGANIZATION = 'Veterans Service Organization',
+  // FISCALLY_SPONSORED_PROJECT = 'Fiscally Sponsored Project',
+  // MEMBERSHIP_BASED_NONPROFIT = 'Membership-Based Nonprofit',
+  // UNINCORPORATED_NONPROFIT_ASSOCIATION = 'Unincorporated Nonprofit Association',
+
+  // For-Profit subtypes
+  PRIVATELY_HELD_BUSINESS = 'Privately Held Business (For example: LLC, LLP, PC, etc.)',
+  PUBLIC_BENEFIT_CORPORATION = 'Public Benefit Corporation',
+  FRANCHISE_BUSINESS = 'Franchise Business',
+  PUBLICLY_TRADED_COMPANY = 'Publicly Traded Company',
+  HOLDING_COMPANY = 'Holding Company',
+  JOINT_VENTURE = 'Joint Venture',
+  STARTUP_BUSINESS = 'Startup Business',
+}
+
+export enum PublicPurpose {
+  CIVIC_INFRASTRUCTURE = 'Civic Infrastructure',
+  CONSERVATION = 'Conservation',
+  DIGITAL_ACCESS = 'Digital Access',
+  DISASTER_AND_EMERGENCY = 'Disaster and Emergency',
+  ECONOMIC_DEVELOPMENT = 'Economic Development',
+  EDUCATION = 'Education',
+  ENERGY_AND_UTILITIES = 'Energy and Utilities',
+  HOUSING_AND_DEVELOPMENT = 'Housing and Development',
+  LEGAL_AID_AND_JUSTICE = 'Legal Aid and Justice',
+  PARKS_AND_RECREATION = 'Parks and Recreation',
+  POVERTY_AND_HOMELESSNESS = 'Poverty and Homelessness',
+  PUBLIC_HEALTH = 'Public Health',
+  PUBLIC_SAFETY = 'Public Safety',
+  TRANSPORTATION_AND_INFRASTRUCTURE = 'Transportation and Infrastructure',
+  VETERANS_SERVICES = 'Veterans Services',
+  WORKFORCE_DEVELOPMENT = 'Workforce Development',
+}
+
+export enum PrimaryActivity {
+  // Civic Infrastructure
+  HISTORIC_LIGHT_STATION = 'Historic Light Station',
+  AIRPORT = 'Airport',
+  LIBRARY = 'Library',
+
+  // Conservation
+  CONSERVATION_PROGRAM = 'Conservation Program',
+  ENVIRONMENTAL_PROTECTION_PROGRAM = 'Environmental Protection Program',
+  NATURAL_RESOURCE_MANAGEMENT = 'Natural Resource Management',
+
+  // Economic Development
+  ECONOMIC_DEVELOPMENT_PROGRAM = 'Economic Development Program',
+
+  // Parks and Recreation
+  PARKS_AND_RECREATION_PROGRAM = 'Parks and Recreation Program',
+
+  // Education
+  CHILD_CARE_CENTER = 'Child Care Center',
+  COLLEGE = 'College',
+  EDUCATION_PROGRAM = 'Education Program',
+  EDUCATIONAL_BROADCAST_STATION = 'Educational Broadcast Station',
+  EDUCATIONAL_INSTITUTION = 'Educational Institution',
+  MUSEUM = 'Museum',
+  SCHOOL = 'School',
+  SCHOOL_FOR_MENTALLY_OR_PHYSICALLY_DISABLED = 'School for the Mentally or Physically Disabled',
+  UNIVERSITY = 'University',
+  SERVICE_EDUCATIONAL_ACTIVITY = 'Service Educational Activity (SEA)',
+
+  // Poverty and Homelessness
+  ANTI_POVERTY_SERVICES_PROVIDER = 'Anti-Poverty Services Provider',
+  EDUCATIONAL_ASSISTANCE_ORGANIZATION = 'Educational Assistance Organization',
+  FAMILY_SUPPORT_SERVICES_PROVIDER = 'Family Support Services Provider',
+  FOOD_ASSISTANCE_PROVIDER = 'Food Assistance Provider',
+  HEALTH_ACCESS_SERVICES_PROVIDER = 'Health Access Services Provider',
+  HOMELESS_SERVICES_PROVIDER = 'Homeless Services Provider',
+  LEGAL_AID_AND_SUPPORT_PROVIDER = 'Legal Aid and Support Provider',
+  SELF_HELP_HOUSING_GROUP = 'Self-Help Housing Group',
+  WORKFORCE_SUPPORT_SERVICES_PROVIDER = 'Workforce Support Services Provider',
+
+  // Public Health
+  CLINIC = 'Clinic',
+  DENTAL_SCHOOL = 'Dental School',
+  GERIATRIC_CENTER = 'Geriatric Center',
+  HEALTH_CENTER = 'Health Center',
+  HOSPITAL = 'Hospital',
+  MEDICAL_LABORATORY = 'Medical Laboratory',
+  MEDICAL_RESEARCH_CENTER = 'Medical Research Center',
+  MEDICAL_SCHOOL = 'Medical School',
+  NURSING_SCHOOL = 'Nursing School',
+  PUBLIC_HEALTH_INSTITUTION = 'Public Health Institution',
+  PUBLIC_HEALTH_PROGRAM = 'Public Health Program',
+  SUBSTANCE_ABUSE_TREATMENT_CENTER = 'Substance Abuse Treatment Center',
+  ENVIRONMENTAL_HEALTH = 'Environmental Health',
+  SANITATION_AND_SEWAGE = 'Sanitation and Sewage',
+  DISEASE_CONTROL = 'Disease Control',
+
+  // Public Safety
+  POLICE_DEPARTMENT = 'Police Department',
+  SHERIFFS_OFFICE = "Sheriff's Office",
+  COURT_SYSTEM = 'Court System',
+  CORRECTIONAL_INSTITUTION = 'Correctional Institution',
+  CIVIL_DEFENSE_ORGANIZATION = 'Civil Defense Organization',
+  FIRE_DEPARTMENT = 'Fire Department',
+  RESCUE_SQUAD = 'Rescue Squad',
+  VOLUNTEER_FIRE_DEPARTMENT = 'Volunteer Fire Department',
+  VOLUNTEER_RESCUE_SQUAD = 'Volunteer Rescue Squad',
+
+  // Veterans Services
+  VETERAN_SERVICE_ORGANIZATIONS = 'Veteran Service Organizations (VSO)',
+
+  // For-Profit activities
+  SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED = 'SBA 8(a) Small Business (Economically/Socially Disadvantaged)',
+  VETERAN_OWNED_SMALL_BUSINESS = 'Veteran Owned Small Business (VOSB)',
+  SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS = 'Service-Disabled Veteran Owned Small Business (SDVOSB)',
+}
+
+export interface OrganizationTypeConfig {
+  label: OrganizationType;
+  subTypes: OrganizationSubType[];
+}
+
+export interface PublicPurposeConfig {
+  label: PublicPurpose;
+  primaryActivities: PrimaryActivity[];
+}
+
+export const ORGANIZATION_TYPES: OrganizationTypeConfig[] = [
+  {
+    label: OrganizationType.PUBLIC_AGENCY,
+    subTypes: [
+      OrganizationSubType.LOCAL,
+      OrganizationSubType.STATE,
+      OrganizationSubType.FEDERAL,
+      OrganizationSubType.PUBLIC_AUTHORITY,
+      OrganizationSubType.PUBLIC_INSTRUMENTALITY,
+      OrganizationSubType.MULTI_JURISDICTIONAL_DISTRICT,
+      OrganizationSubType.SPECIAL_DISTRICT,
+      OrganizationSubType.TRIBAL_OR_SOVEREIGN_NATION,
+    ],
+  },
+  {
+    label: OrganizationType.NONPROFIT,
+    subTypes: [
+      OrganizationSubType.PUBLIC_BENEFIT_NONPROFIT,
+      OrganizationSubType.RELIGIOUS_ORGANIZATION,
+      OrganizationSubType.VETERANS_SERVICE_ORGANIZATION,
+      OrganizationSubType.FISCALLY_SPONSORED_PROJECT,
+      OrganizationSubType.MEMBERSHIP_BASED_NONPROFIT,
+      OrganizationSubType.UNINCORPORATED_NONPROFIT_ASSOCIATION,
+    ],
+  },
+  {
+    label: OrganizationType.NOT_FOR_PROFIT,
+    subTypes: [
+      OrganizationSubType.PUBLIC_BENEFIT_NONPROFIT,
+      OrganizationSubType.RELIGIOUS_ORGANIZATION,
+      OrganizationSubType.VETERANS_SERVICE_ORGANIZATION,
+      OrganizationSubType.FISCALLY_SPONSORED_PROJECT,
+      OrganizationSubType.MEMBERSHIP_BASED_NONPROFIT,
+      OrganizationSubType.UNINCORPORATED_NONPROFIT_ASSOCIATION,
+    ],
+  },
+  {
+    label: OrganizationType.FOR_PROFIT,
+    subTypes: [
+      OrganizationSubType.PRIVATELY_HELD_BUSINESS,
+      OrganizationSubType.PUBLIC_BENEFIT_CORPORATION,
+      OrganizationSubType.FRANCHISE_BUSINESS,
+      OrganizationSubType.PUBLICLY_TRADED_COMPANY,
+      OrganizationSubType.HOLDING_COMPANY,
+      OrganizationSubType.JOINT_VENTURE,
+      OrganizationSubType.STARTUP_BUSINESS,
+    ],
+  },
+];
+
+// Public Purpose options based on organization type
+export const PUBLIC_PURPOSES = {
+  [OrganizationType.PUBLIC_AGENCY]: [
+    PublicPurpose.CIVIC_INFRASTRUCTURE,
+    PublicPurpose.CONSERVATION,
+    PublicPurpose.DIGITAL_ACCESS,
+    PublicPurpose.DISASTER_AND_EMERGENCY,
+    PublicPurpose.ECONOMIC_DEVELOPMENT,
+    PublicPurpose.EDUCATION,
+    PublicPurpose.ENERGY_AND_UTILITIES,
+    PublicPurpose.HOUSING_AND_DEVELOPMENT,
+    PublicPurpose.LEGAL_AID_AND_JUSTICE,
+    PublicPurpose.PARKS_AND_RECREATION,
+    PublicPurpose.POVERTY_AND_HOMELESSNESS,
+    PublicPurpose.PUBLIC_HEALTH,
+    PublicPurpose.PUBLIC_SAFETY,
+    PublicPurpose.TRANSPORTATION_AND_INFRASTRUCTURE,
+    PublicPurpose.VETERANS_SERVICES,
+    PublicPurpose.WORKFORCE_DEVELOPMENT,
+  ],
+  [OrganizationType.NONPROFIT]: [
+    PublicPurpose.CIVIC_INFRASTRUCTURE,
+    PublicPurpose.CONSERVATION,
+    PublicPurpose.DIGITAL_ACCESS,
+    PublicPurpose.DISASTER_AND_EMERGENCY,
+    PublicPurpose.ECONOMIC_DEVELOPMENT,
+    PublicPurpose.EDUCATION,
+    PublicPurpose.ENERGY_AND_UTILITIES,
+    PublicPurpose.HOUSING_AND_DEVELOPMENT,
+    PublicPurpose.LEGAL_AID_AND_JUSTICE,
+    PublicPurpose.PARKS_AND_RECREATION,
+    PublicPurpose.POVERTY_AND_HOMELESSNESS,
+    PublicPurpose.PUBLIC_HEALTH,
+    PublicPurpose.PUBLIC_SAFETY,
+    PublicPurpose.TRANSPORTATION_AND_INFRASTRUCTURE,
+    PublicPurpose.VETERANS_SERVICES,
+    PublicPurpose.WORKFORCE_DEVELOPMENT,
+  ],
+  [OrganizationType.NOT_FOR_PROFIT]: [
+    PublicPurpose.CIVIC_INFRASTRUCTURE,
+    PublicPurpose.CONSERVATION,
+    PublicPurpose.DIGITAL_ACCESS,
+    PublicPurpose.DISASTER_AND_EMERGENCY,
+    PublicPurpose.ECONOMIC_DEVELOPMENT,
+    PublicPurpose.EDUCATION,
+    PublicPurpose.ENERGY_AND_UTILITIES,
+    PublicPurpose.HOUSING_AND_DEVELOPMENT,
+    PublicPurpose.LEGAL_AID_AND_JUSTICE,
+    PublicPurpose.PARKS_AND_RECREATION,
+    PublicPurpose.POVERTY_AND_HOMELESSNESS,
+    PublicPurpose.PUBLIC_HEALTH,
+    PublicPurpose.PUBLIC_SAFETY,
+    PublicPurpose.TRANSPORTATION_AND_INFRASTRUCTURE,
+    PublicPurpose.VETERANS_SERVICES,
+    PublicPurpose.WORKFORCE_DEVELOPMENT,
+  ],
+  [OrganizationType.FOR_PROFIT]: [
+    PublicPurpose.CONSERVATION,
+    PublicPurpose.DIGITAL_ACCESS,
+    PublicPurpose.DISASTER_AND_EMERGENCY,
+    PublicPurpose.ECONOMIC_DEVELOPMENT,
+    PublicPurpose.EDUCATION,
+    PublicPurpose.ENERGY_AND_UTILITIES,
+    PublicPurpose.HOUSING_AND_DEVELOPMENT,
+    PublicPurpose.LEGAL_AID_AND_JUSTICE,
+    PublicPurpose.PARKS_AND_RECREATION,
+    PublicPurpose.POVERTY_AND_HOMELESSNESS,
+    PublicPurpose.PUBLIC_HEALTH,
+    PublicPurpose.PUBLIC_SAFETY,
+    PublicPurpose.TRANSPORTATION_AND_INFRASTRUCTURE,
+    PublicPurpose.VETERANS_SERVICES,
+    PublicPurpose.WORKFORCE_DEVELOPMENT,
+  ],
+};
+
+// Primary Activity options based on public purpose and organization type
+export const PRIMARY_ACTIVITIES = {
+  [PublicPurpose.CIVIC_INFRASTRUCTURE]: {
+    [OrganizationType.PUBLIC_AGENCY]: [PrimaryActivity.HISTORIC_LIGHT_STATION, PrimaryActivity.AIRPORT, PrimaryActivity.LIBRARY],
+    [OrganizationType.NONPROFIT]: [PrimaryActivity.HISTORIC_LIGHT_STATION, PrimaryActivity.LIBRARY],
+    [OrganizationType.NOT_FOR_PROFIT]: [PrimaryActivity.HISTORIC_LIGHT_STATION, PrimaryActivity.LIBRARY],
+    [OrganizationType.FOR_PROFIT]: [],
+  },
+  [PublicPurpose.CONSERVATION]: {
+    [OrganizationType.PUBLIC_AGENCY]: [
+      PrimaryActivity.CONSERVATION_PROGRAM,
+      PrimaryActivity.ENVIRONMENTAL_PROTECTION_PROGRAM,
+      PrimaryActivity.HISTORIC_LIGHT_STATION,
+      PrimaryActivity.NATURAL_RESOURCE_MANAGEMENT,
+    ],
+    [OrganizationType.NONPROFIT]: [PrimaryActivity.HISTORIC_LIGHT_STATION],
+    [OrganizationType.NOT_FOR_PROFIT]: [PrimaryActivity.HISTORIC_LIGHT_STATION],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.DIGITAL_ACCESS]: {
+    [OrganizationType.PUBLIC_AGENCY]: [],
+    [OrganizationType.NONPROFIT]: [],
+    [OrganizationType.NOT_FOR_PROFIT]: [],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.DISASTER_AND_EMERGENCY]: {
+    [OrganizationType.PUBLIC_AGENCY]: [],
+    [OrganizationType.NONPROFIT]: [],
+    [OrganizationType.NOT_FOR_PROFIT]: [],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.ECONOMIC_DEVELOPMENT]: {
+    [OrganizationType.PUBLIC_AGENCY]: [PrimaryActivity.ECONOMIC_DEVELOPMENT_PROGRAM],
+    [OrganizationType.NONPROFIT]: [],
+    [OrganizationType.NOT_FOR_PROFIT]: [],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.EDUCATION]: {
+    [OrganizationType.PUBLIC_AGENCY]: [
+      PrimaryActivity.CHILD_CARE_CENTER,
+      PrimaryActivity.COLLEGE,
+      PrimaryActivity.EDUCATION_PROGRAM,
+      PrimaryActivity.EDUCATIONAL_BROADCAST_STATION,
+      PrimaryActivity.EDUCATIONAL_INSTITUTION,
+      PrimaryActivity.MUSEUM,
+      PrimaryActivity.SCHOOL,
+      PrimaryActivity.SCHOOL_FOR_MENTALLY_OR_PHYSICALLY_DISABLED,
+      PrimaryActivity.UNIVERSITY,
+    ],
+    [OrganizationType.NONPROFIT]: [
+      PrimaryActivity.CHILD_CARE_CENTER,
+      PrimaryActivity.SCHOOL,
+      PrimaryActivity.SCHOOL_FOR_MENTALLY_OR_PHYSICALLY_DISABLED,
+      PrimaryActivity.COLLEGE,
+      PrimaryActivity.UNIVERSITY,
+      PrimaryActivity.EDUCATIONAL_INSTITUTION,
+      PrimaryActivity.EDUCATION_PROGRAM,
+      PrimaryActivity.EDUCATIONAL_BROADCAST_STATION,
+      PrimaryActivity.MUSEUM,
+      PrimaryActivity.SERVICE_EDUCATIONAL_ACTIVITY,
+    ],
+    [OrganizationType.NOT_FOR_PROFIT]: [
+      PrimaryActivity.CHILD_CARE_CENTER,
+      PrimaryActivity.SCHOOL,
+      PrimaryActivity.SCHOOL_FOR_MENTALLY_OR_PHYSICALLY_DISABLED,
+      PrimaryActivity.COLLEGE,
+      PrimaryActivity.UNIVERSITY,
+      PrimaryActivity.EDUCATIONAL_INSTITUTION,
+      PrimaryActivity.EDUCATION_PROGRAM,
+      PrimaryActivity.EDUCATIONAL_BROADCAST_STATION,
+      PrimaryActivity.MUSEUM,
+      PrimaryActivity.SERVICE_EDUCATIONAL_ACTIVITY,
+    ],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.ENERGY_AND_UTILITIES]: {
+    [OrganizationType.PUBLIC_AGENCY]: [],
+    [OrganizationType.NONPROFIT]: [],
+    [OrganizationType.NOT_FOR_PROFIT]: [],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.HOUSING_AND_DEVELOPMENT]: {
+    [OrganizationType.PUBLIC_AGENCY]: [],
+    [OrganizationType.NONPROFIT]: [],
+    [OrganizationType.NOT_FOR_PROFIT]: [],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.LEGAL_AID_AND_JUSTICE]: {
+    [OrganizationType.PUBLIC_AGENCY]: [],
+    [OrganizationType.NONPROFIT]: [],
+    [OrganizationType.NOT_FOR_PROFIT]: [],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.PARKS_AND_RECREATION]: {
+    [OrganizationType.PUBLIC_AGENCY]: [PrimaryActivity.HISTORIC_LIGHT_STATION, PrimaryActivity.PARKS_AND_RECREATION_PROGRAM],
+    [OrganizationType.NONPROFIT]: [PrimaryActivity.HISTORIC_LIGHT_STATION],
+    [OrganizationType.NOT_FOR_PROFIT]: [PrimaryActivity.HISTORIC_LIGHT_STATION],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.POVERTY_AND_HOMELESSNESS]: {
+    [OrganizationType.PUBLIC_AGENCY]: [
+      PrimaryActivity.ANTI_POVERTY_SERVICES_PROVIDER,
+      PrimaryActivity.EDUCATIONAL_ASSISTANCE_ORGANIZATION,
+      PrimaryActivity.FAMILY_SUPPORT_SERVICES_PROVIDER,
+      PrimaryActivity.FOOD_ASSISTANCE_PROVIDER,
+      PrimaryActivity.HEALTH_ACCESS_SERVICES_PROVIDER,
+      PrimaryActivity.HOMELESS_SERVICES_PROVIDER,
+      PrimaryActivity.LEGAL_AID_AND_SUPPORT_PROVIDER,
+      PrimaryActivity.SELF_HELP_HOUSING_GROUP,
+      PrimaryActivity.WORKFORCE_SUPPORT_SERVICES_PROVIDER,
+    ],
+    [OrganizationType.NONPROFIT]: [
+      PrimaryActivity.HOMELESS_SERVICES_PROVIDER,
+      PrimaryActivity.ANTI_POVERTY_SERVICES_PROVIDER,
+      PrimaryActivity.FOOD_ASSISTANCE_PROVIDER,
+      PrimaryActivity.SELF_HELP_HOUSING_GROUP,
+      PrimaryActivity.HEALTH_ACCESS_SERVICES_PROVIDER,
+      PrimaryActivity.EDUCATIONAL_ASSISTANCE_ORGANIZATION,
+      PrimaryActivity.WORKFORCE_SUPPORT_SERVICES_PROVIDER,
+      PrimaryActivity.FAMILY_SUPPORT_SERVICES_PROVIDER,
+      PrimaryActivity.LEGAL_AID_AND_SUPPORT_PROVIDER,
+    ],
+    [OrganizationType.NOT_FOR_PROFIT]: [
+      PrimaryActivity.HOMELESS_SERVICES_PROVIDER,
+      PrimaryActivity.ANTI_POVERTY_SERVICES_PROVIDER,
+      PrimaryActivity.FOOD_ASSISTANCE_PROVIDER,
+      PrimaryActivity.SELF_HELP_HOUSING_GROUP,
+      PrimaryActivity.HEALTH_ACCESS_SERVICES_PROVIDER,
+      PrimaryActivity.EDUCATIONAL_ASSISTANCE_ORGANIZATION,
+      PrimaryActivity.WORKFORCE_SUPPORT_SERVICES_PROVIDER,
+      PrimaryActivity.FAMILY_SUPPORT_SERVICES_PROVIDER,
+      PrimaryActivity.LEGAL_AID_AND_SUPPORT_PROVIDER,
+    ],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.PUBLIC_HEALTH]: {
+    [OrganizationType.PUBLIC_AGENCY]: [
+      PrimaryActivity.CHILD_CARE_CENTER,
+      PrimaryActivity.CLINIC,
+      PrimaryActivity.DENTAL_SCHOOL,
+      PrimaryActivity.GERIATRIC_CENTER,
+      PrimaryActivity.HEALTH_CENTER,
+      PrimaryActivity.HOSPITAL,
+      PrimaryActivity.MEDICAL_LABORATORY,
+      PrimaryActivity.MEDICAL_RESEARCH_CENTER,
+      PrimaryActivity.MEDICAL_SCHOOL,
+      PrimaryActivity.MUSEUM,
+      PrimaryActivity.NURSING_SCHOOL,
+      PrimaryActivity.PUBLIC_HEALTH_INSTITUTION,
+      PrimaryActivity.PUBLIC_HEALTH_PROGRAM,
+      PrimaryActivity.SUBSTANCE_ABUSE_TREATMENT_CENTER,
+      PrimaryActivity.ENVIRONMENTAL_HEALTH,
+      PrimaryActivity.SANITATION_AND_SEWAGE,
+      PrimaryActivity.DISEASE_CONTROL,
+    ],
+    [OrganizationType.NONPROFIT]: [
+      PrimaryActivity.CHILD_CARE_CENTER,
+      PrimaryActivity.HOSPITAL,
+      PrimaryActivity.CLINIC,
+      PrimaryActivity.HEALTH_CENTER,
+      PrimaryActivity.SUBSTANCE_ABUSE_TREATMENT_CENTER,
+      PrimaryActivity.PUBLIC_HEALTH_INSTITUTION,
+      PrimaryActivity.PUBLIC_HEALTH_PROGRAM,
+      PrimaryActivity.MEDICAL_RESEARCH_CENTER,
+      PrimaryActivity.GERIATRIC_CENTER,
+      PrimaryActivity.MEDICAL_LABORATORY,
+      PrimaryActivity.MEDICAL_SCHOOL,
+      PrimaryActivity.DENTAL_SCHOOL,
+      PrimaryActivity.NURSING_SCHOOL,
+      PrimaryActivity.MUSEUM,
+      PrimaryActivity.ENVIRONMENTAL_HEALTH,
+      PrimaryActivity.SANITATION_AND_SEWAGE,
+      PrimaryActivity.DISEASE_CONTROL,
+    ],
+    [OrganizationType.NOT_FOR_PROFIT]: [
+      PrimaryActivity.CHILD_CARE_CENTER,
+      PrimaryActivity.HOSPITAL,
+      PrimaryActivity.CLINIC,
+      PrimaryActivity.HEALTH_CENTER,
+      PrimaryActivity.SUBSTANCE_ABUSE_TREATMENT_CENTER,
+      PrimaryActivity.PUBLIC_HEALTH_INSTITUTION,
+      PrimaryActivity.PUBLIC_HEALTH_PROGRAM,
+      PrimaryActivity.MEDICAL_RESEARCH_CENTER,
+      PrimaryActivity.GERIATRIC_CENTER,
+      PrimaryActivity.MEDICAL_LABORATORY,
+      PrimaryActivity.MEDICAL_SCHOOL,
+      PrimaryActivity.DENTAL_SCHOOL,
+      PrimaryActivity.NURSING_SCHOOL,
+      PrimaryActivity.MUSEUM,
+      PrimaryActivity.ENVIRONMENTAL_HEALTH,
+      PrimaryActivity.SANITATION_AND_SEWAGE,
+      PrimaryActivity.DISEASE_CONTROL,
+    ],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.PUBLIC_SAFETY]: {
+    [OrganizationType.PUBLIC_AGENCY]: [
+      PrimaryActivity.POLICE_DEPARTMENT,
+      PrimaryActivity.SHERIFFS_OFFICE,
+      PrimaryActivity.COURT_SYSTEM,
+      PrimaryActivity.CORRECTIONAL_INSTITUTION,
+      PrimaryActivity.CIVIL_DEFENSE_ORGANIZATION,
+      PrimaryActivity.FIRE_DEPARTMENT,
+      PrimaryActivity.RESCUE_SQUAD,
+      PrimaryActivity.VOLUNTEER_FIRE_DEPARTMENT,
+      PrimaryActivity.VOLUNTEER_RESCUE_SQUAD,
+    ],
+    [OrganizationType.NONPROFIT]: [PrimaryActivity.VOLUNTEER_FIRE_DEPARTMENT, PrimaryActivity.VOLUNTEER_RESCUE_SQUAD],
+    [OrganizationType.NOT_FOR_PROFIT]: [PrimaryActivity.VOLUNTEER_FIRE_DEPARTMENT, PrimaryActivity.VOLUNTEER_RESCUE_SQUAD],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.TRANSPORTATION_AND_INFRASTRUCTURE]: {
+    [OrganizationType.PUBLIC_AGENCY]: [],
+    [OrganizationType.NONPROFIT]: [],
+    [OrganizationType.NOT_FOR_PROFIT]: [],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.VETERANS_SERVICES]: {
+    [OrganizationType.PUBLIC_AGENCY]: [],
+    [OrganizationType.NONPROFIT]: [PrimaryActivity.VETERAN_SERVICE_ORGANIZATIONS],
+    [OrganizationType.NOT_FOR_PROFIT]: [PrimaryActivity.VETERAN_SERVICE_ORGANIZATIONS],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+  [PublicPurpose.WORKFORCE_DEVELOPMENT]: {
+    [OrganizationType.PUBLIC_AGENCY]: [],
+    [OrganizationType.NONPROFIT]: [],
+    [OrganizationType.NOT_FOR_PROFIT]: [],
+    [OrganizationType.FOR_PROFIT]: [
+      PrimaryActivity.SBA_8A_SMALL_BUSINESS_ECONOMICALLY_OR_SOCIALLY_DISADVANTAGED,
+      PrimaryActivity.VETERAN_OWNED_SMALL_BUSINESS,
+      PrimaryActivity.SERVICE_DISABLED_VETERAN_OWNED_SMALL_BUSINESS,
+    ],
+  },
+};

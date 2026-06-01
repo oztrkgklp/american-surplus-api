@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CDN Image Browser</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f172a;
+        --panel: #111827;
+        --card: #1f2937;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --accent: #38bdf8;
+      }
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: center;
+        background: var(--panel);
+        border: 1px solid #253047;
+        border-radius: 12px;
+        padding: 12px;
+      }
+      input[type="search"] {
+        flex: 1 1 340px;
+        min-width: 260px;
+        background: #0b1220;
+        color: var(--text);
+        border: 1px solid #2d3a54;
+        border-radius: 8px;
+        padding: 10px 12px;
+      }
+      button {
+        background: #0b1220;
+        color: var(--text);
+        border: 1px solid #2d3a54;
+        border-radius: 8px;
+        padding: 10px 14px;
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--accent);
+      }
+      .meta {
+        margin: 10px 2px 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .grid {
+        margin-top: 16px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 12px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid #2a364d;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .thumb {
+        width: 100%;
+        height: 170px;
+        object-fit: cover;
+        display: block;
+        background: #0b1220;
+      }
+      .body {
+        padding: 10px;
+      }
+      .path {
+        color: var(--muted);
+        font-size: 12px;
+        word-break: break-all;
+        line-height: 1.4;
+      }
+      .actions {
+        margin-top: 8px;
+        display: flex;
+        gap: 8px;
+      }
+      .empty {
+        margin-top: 24px;
+        color: var(--muted);
+      }
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>CDN Image Browser</h1>
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Search by file name, ICN, or path..." />
+        <button id="refresh">Refresh Index</button>
+      </div>
+      <div id="meta" class="meta">Loading...</div>
+      <div id="grid" class="grid"></div>
+      <div id="empty" class="empty" hidden>No images match your search.</div>
+    </div>
+    <script>
+      const state = { rows: [], filtered: [], generatedAt: null, pollTimer: null };
+      const q = document.getElementById("q");
+      const grid = document.getElementById("grid");
+      const empty = document.getElementById("empty");
+      const meta = document.getElementById("meta");
+      const refresh = document.getElementById("refresh");
+
+      function rowTemplate(row) {
+        const safePath = row.cdnPath || "/";
+        return `
+          <article class="card">
+            <img class="thumb" loading="lazy" src="${safePath}" alt="${row.fileName || "CDN image"}" />
+            <div class="body">
+              <div>${row.fileName || "(unnamed)"}</div>
+              <div class="path">${safePath}</div>
+              <div class="actions">
+                <a href="${safePath}" target="_blank" rel="noopener noreferrer">Open</a>
+                <a href="${safePath}" download>Download</a>
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function render() {
+        const term = q.value.trim().toLowerCase();
+        state.filtered = !term
+          ? state.rows
+          : state.rows.filter((row) => {
+              const text = `${row.fileName || ""} ${row.cdnPath || ""}`.toLowerCase();
+              return text.includes(term);
+            });
+
+        const updated = state.generatedAt
+          ? ` Last update: ${new Date(state.generatedAt).toLocaleTimeString()}.`
+          : "";
+        meta.textContent = `Indexed ${state.rows.length} images. Showing ${state.filtered.length}.${updated}`;
+        grid.innerHTML = state.filtered.map(rowTemplate).join("");
+        empty.hidden = state.filtered.length !== 0;
+      }
+
+      async function load(silent = false) {
+        if (!silent) {
+          meta.textContent = "Loading image-index.json...";
+        }
+        try {
+          const res = await fetch("/image-index.json", { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const json = await res.json();
+          state.rows = Array.isArray(json.images) ? json.images : [];
+          state.generatedAt = typeof json.generatedAt === "string" ? json.generatedAt : null;
+          render();
+        } catch (err) {
+          state.rows = [];
+          state.generatedAt = null;
+          grid.innerHTML = "";
+          empty.hidden = false;
+          meta.textContent = `Failed to load image index (${err.message}). Run cdn hydrate first.`;
+        }
+      }
+
+      function startPolling() {
+        if (state.pollTimer) {
+          clearInterval(state.pollTimer);
+        }
+        state.pollTimer = setInterval(() => {
+          load(true).catch(() => {});
+        }, 3000);
+      }
+
+      q.addEventListener("input", render);
+      refresh.addEventListener("click", () => load(false));
+      window.addEventListener("beforeunload", () => {
+        if (state.pollTimer) {
+          clearInterval(state.pollTimer);
+        }
+      });
+
+      load(false);
+      startPolling();
+    </script>
+  </body>
+</html>

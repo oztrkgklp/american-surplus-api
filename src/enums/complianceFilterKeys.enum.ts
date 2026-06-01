@@ -1,0 +1,15 @@
+export enum ComplianceFilterKeys {
+  PROPERTY_NAME = 'property_name',
+  PROPERTY_CONTROL_NUMBER = 'property_control_number',
+  PROPERTY_STATUS = 'property_status',
+  PROPERTY_TYPE = 'property_type',
+  PROPERTY_QUANTITY = 'property_quantity',
+  COMPLIANCE_STATUS = 'compliance_status',
+  PROPERTY_SURPLUS_RELEASE_DATE = 'property_surplus_release_date',
+  PROPERTY_ALLOCATED_DATE = 'property_allocated_date',
+  TERM_START = 'term_start',
+  TERM_END = 'term_end',
+  TERM_MONTHS = 'term_months',
+  PERIOD_MONTHS = 'period_months',
+  CREATED_AT = 'createdAt',
+}

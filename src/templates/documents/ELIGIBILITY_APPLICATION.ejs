@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Eligibility Application - <%= organizationName %></title>
+    <style>
+        @page {
+            size: a4;
+            margin: 0.5in;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            color: #000;
+            background: white;
+            margin: 0;
+            padding: 0;
+            line-height: 1.4;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            margin: 0;
+            color: #1a365d;
+        }
+
+        .header .subtitle {
+            font-size: 12pt;
+            margin-top: 5px;
+            color: #4a5568;
+        }
+
+        .organization-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #f8f9fa;
+        }
+
+        .organization-info h2 {
+            font-size: 14pt;
+            margin: 0 0 10px 0;
+            color: #2d3748;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .info-item {
+            margin-bottom: 8px;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .info-value {
+            margin-left: 5px;
+        }
+
+        .info-item .info-value.info-value-multiline {
+            display: inline-block;
+            vertical-align: top;
+            line-height: 1.35;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            page-break-inside: avoid;
+        }
+
+        .form-section h3 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            color: #2d3748;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-item {
+            margin-bottom: 10px;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #4a5568;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .form-value {
+            padding: 5px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            min-height: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .checkbox {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
+            border: 2px solid #000;
+            display: inline-block;
+            text-align: center;
+            line-height: 12px;
+            font-weight: bold;
+        }
+
+        .checkbox.checked::after {
+            content: "✓";
+        }
+
+        .address-section {
+            margin-bottom: 15px;
+        }
+
+        .address-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #4a5568;
+        }
+
+        .address-content {
+            padding: 8px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+        }
+
+        .representatives-section {
+            margin-bottom: 20px;
+        }
+
+        .representative-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .representative-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2d3748;
+        }
+
+        .attestations-section {
+            margin-bottom: 20px;
+        }
+
+        .attestation-item {
+            margin-bottom: 8px;
+            padding: 5px 0;
+        }
+
+        .training-modules {
+            margin-bottom: 20px;
+        }
+
+        .module-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f8f9fa;
+        }
+
+        .module-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2d3748;
+        }
+
+        .module-description {
+            font-size: 9pt;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .documents-section {
+            margin-bottom: 20px;
+        }
+
+        .document-item {
+            border: 1px solid #ddd;
+            padding: 8px;
+            margin-bottom: 5px;
+            background-color: #f8f9fa;
+        }
+
+        .document-name {
+            font-weight: bold;
+            color: #2d3748;
+        }
+
+        .document-details {
+            font-size: 9pt;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+            font-size: 9pt;
+            color: #666;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .signature-block {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            background-color: #f8f9fa;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            padding: 15px;
+        }
+
+        .signature-block-sasp {
+            margin-top: 24px;
+        }
+
+        .sasp-determination-top-row {
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .sasp-determination-lh {
+            flex: 1;
+            min-width: 160px;
+        }
+
+        .sasp-determination-rh {
+            flex: 1;
+            text-align: right;
+            min-width: 200px;
+        }
+
+        .sasp-processor-row {
+            margin-top: 16px;
+        }
+
+        .signature-subheading {
+            font-size: 11pt;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            color: #2d3748;
+        }
+
+        .signature-row-two {
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .signature-row-two .sig-col-main {
+            flex: 3;
+        }
+
+        .signature-row-two .sig-col-date {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #000;
+            height: 14px;
+            margin: 4px 0;
+        }
+
+        .signature-label {
+            font-size: 9pt;
+            color: #666;
+            text-align: center;
+        }
+
+        .sig-field-label {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .sig-field-value {
+            font-size: 9pt;
+            color: #333;
+            min-height: 14px;
+            margin-bottom: 2px;
+        }
+
+        .donee-head-sig-row {
+            margin-bottom: 10px;
+        }
+
+        .signature-digital-note {
+            font-size: 9pt;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .date-section {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .date-line {
+            border-bottom: 1px solid #000;
+            width: 200px;
+            height: 20px;
+            margin: 5px 0;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>FEDERAL SURPLUS PROPERTY PROGRAM ELIGIBILITY APPLICATION</h1>
+        <div class="subtitle"><%= stateName %> State Agency for Surplus Property (SASP)</div>
+        <div class="subtitle"><%= stateAddressLine1 %><br><%= stateAddressLine2 %><br><%= stateCity %>, <%= stateCode %></div>
+        <div class="subtitle"><%= statePhone %></div>
+        <div class="subtitle">Application ID: <%= applicationId %> | Submitted: <%= submittedDate %> | <% if (typeof showRenewalApplicationLabel !== 'undefined' && showRenewalApplicationLabel) { %>Renewal Application<% } else { %>New Application<% } %> | <%= applicationStatusLabel %></div>
+    </div>
+    <div style="margin-bottom: 16px; color: #b91c1c; font-weight: bold;">
+        Please choose only ONE among the following (Public Agency, Nonprofit Organization, SEA, VSO, SBA, or VOSB) which BEST describes your entity. See instructions and notes below for eligibility and documentation requirements.
+    </div>
+    <div style="margin-bottom: 16px; color: #222; font-size: 10pt;">
+        <strong>Note:</strong> If your organization was not listed above and you wish to discuss, please contact the SASP at: [Point of contact, phone, fax, and email]
+    </div>
+
+    <div class="organization-info">
+        <h2>Organization Information</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <span class="info-label">Organization Name:</span>
+                <span class="info-value"><%= organizationName %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">TIN/EIN:</span>
+                <span class="info-value"><%= organizationTinEin %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Organization Type:</span>
+                <span class="info-value"><%= typeof organizationTypeDisplay !== 'undefined' ? organizationTypeDisplay : 'N/A' %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Primary Activity:</span>
+                <span class="info-value"><%= typeof organizationPrimaryActivityDisplay !== 'undefined' ? organizationPrimaryActivityDisplay : 'N/A' %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Donee Account No.:</span>
+                <span class="info-value"><%= typeof doneeAccountNumber !== 'undefined' ? doneeAccountNumber : 'N/A' %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Eligibility Expiration Date:</span>
+                <span class="info-value"><%= typeof applicationExpiryDate !== 'undefined' ? applicationExpiryDate : 'N/A' %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">HAO Name:</span>
+                <span class="info-value"><%= organizationalIdentityLegalProfile ? organizationalIdentityLegalProfile.headAuthorizedOfficialName : 'N/A' %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">HAO Title:</span>
+                <span class="info-value"><%= organizationalIdentityLegalProfile ? organizationalIdentityLegalProfile.headAuthorizedOfficialTitle : 'N/A' %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Primary Contact Name:</span>
+                <span class="info-value"><%= typeof organizationContactNameDisplay !== 'undefined' ? organizationContactNameDisplay : 'N/A' %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Physical Mailing Address:</span>
+                <span class="info-value info-value-multiline"><% if (typeof organizationMailingLine1 !== 'undefined' && organizationMailingLine1) { %><%= organizationMailingLine1 %><br><% if (organizationMailingLine2 && String(organizationMailingLine2).trim()) { %><%= organizationMailingLine2 %><br><% } %><%= organizationMailingCity %>, <%= organizationMailingState %> <%= organizationMailingZip %><% } else { %>N/A<% } %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Phone:</span>
+                <span class="info-value"><%= organizationPhone %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Email:</span>
+                <span class="info-value"><%= organizationEmail %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Fax:</span>
+                <span class="info-value"><%= organizationFaxNumber %></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Website:</span>
+                <span class="info-value"><%= organizationWebsiteAddress %></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form 1: Organizational Identity Legal Profile -->
+    <% if (organizationalIdentityLegalProfile) { %>
+    <div class="form-section">
+        <h3>1. ORGANIZATIONAL IDENTITY LEGAL PROFILE</h3>
+        
+        <div class="form-grid">
+            <div class="form-item">
+                <span class="form-label">Head Authorized Official Name:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.headAuthorizedOfficialName %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Head Authorized Official Title:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.headAuthorizedOfficialTitle %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Head Authorized Official Phone:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.headAuthorizedOfficialPhone %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Head Authorized Official Email:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.headAuthorizedOfficialEmail %></div>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-item">
+                <span class="form-label">Primary Contact Name:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.primaryContactName %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Primary Contact Title:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.primaryContactTitle %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Primary Contact Phone:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.primaryContactPhone %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Primary Contact Email:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.primaryContactEmail %></div>
+            </div>
+        </div>
+
+        <div class="address-section">
+            <div class="address-title">Headquarters Address:</div>
+            <div class="address-content">
+                <%= organizationalIdentityLegalProfile.headquartersAddress.addressLine1 %><br>
+                <% if (organizationalIdentityLegalProfile.headquartersAddress.addressLine2) { %>
+                <%= organizationalIdentityLegalProfile.headquartersAddress.addressLine2 %><br>
+                <% } %>
+                <%= organizationalIdentityLegalProfile.headquartersAddress.city %>, 
+                <%= organizationalIdentityLegalProfile.headquartersAddress.state %> 
+                <%= organizationalIdentityLegalProfile.headquartersAddress.zipCode %>
+            </div>
+        </div>
+
+        <div class="address-section">
+            <div class="address-title">Mailing Address:</div>
+            <div class="address-content">
+                <%= organizationalIdentityLegalProfile.mailingAddress.addressLine1 %><br>
+                <% if (organizationalIdentityLegalProfile.mailingAddress.addressLine2) { %>
+                <%= organizationalIdentityLegalProfile.mailingAddress.addressLine2 %><br>
+                <% } %>
+                <%= organizationalIdentityLegalProfile.mailingAddress.city %>, 
+                <%= organizationalIdentityLegalProfile.mailingAddress.state %> 
+                <%= organizationalIdentityLegalProfile.mailingAddress.zipCode %>
+            </div>
+        </div>
+
+        <div class="address-section">
+            <div class="address-title">Office Location Address:</div>
+            <div class="address-content">
+                <%= organizationalIdentityLegalProfile.officeLocationAddress.addressLine1 %><br>
+                <% if (organizationalIdentityLegalProfile.officeLocationAddress.addressLine2) { %>
+                <%= organizationalIdentityLegalProfile.officeLocationAddress.addressLine2 %><br>
+                <% } %>
+                <%= organizationalIdentityLegalProfile.officeLocationAddress.city %>, 
+                <%= organizationalIdentityLegalProfile.officeLocationAddress.state %> 
+                <%= organizationalIdentityLegalProfile.officeLocationAddress.zipCode %>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-item">
+                <span class="form-label">Organization Type:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.organizationType %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Organization Sub-Type:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.organizationSubType %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Public Purpose:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.publicPurpose %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Primary Activity:</span>
+                <div class="form-value"><%= organizationalIdentityLegalProfile.primaryActivity %></div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Form 2: Public Purpose Primary Program Activity -->
+    <% if (publicPurposePrimaryProgramActivity) { %>
+    <div class="form-section">
+        <h3>2. PUBLIC PURPOSE PRIMARY PROGRAM ACTIVITY</h3>
+        
+        <div class="form-grid">
+            <div class="form-item">
+                <span class="form-label">Organization Type:</span>
+                <div class="form-value"><%= publicPurposePrimaryProgramActivity.organizationType %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Organization Sub-Type:</span>
+                <div class="form-value"><%= publicPurposePrimaryProgramActivity.organizationSubType %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Public Purpose:</span>
+                <div class="form-value"><%= publicPurposePrimaryProgramActivity.publicPurpose %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Primary Activity:</span>
+                <div class="form-value">
+                    <% if (publicPurposePrimaryProgramActivity.primaryActivityNotListed) { %>
+                        <%= publicPurposePrimaryProgramActivity.customPrimaryActivity %>
+                    <% } else { %>
+                        <%= publicPurposePrimaryProgramActivity.primaryActivity %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-item">
+            <span class="form-label">Program Narrative:</span>
+            <div class="form-value" style="white-space: pre-wrap;"><%= publicPurposePrimaryProgramActivity.programNarrative %></div>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Form 3: Capacity Oversight Program Funding -->
+    <% if (capacityOversightProgramFunding) { %>
+    <div class="form-section">
+        <h3>3. CAPACITY OVERSIGHT PROGRAM FUNDING</h3>
+        
+        <div class="form-grid">
+            <div class="form-item">
+                <span class="form-label">Full-Time Employees:</span>
+                <div class="form-value"><%= capacityOversightProgramFunding.fullTimeEmployees %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Part-Time Employees:</span>
+                <div class="form-value"><%= capacityOversightProgramFunding.partTimeEmployees %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Relies on Volunteers:</span>
+                <div class="checkbox-item">
+                    <span class="checkbox <%= capacityOversightProgramFunding.reliesOnVolunteers ? 'checked' : '' %>"></span>
+                    <span>Organization relies on volunteers</span>
+                </div>
+            </div>
+            <% if (capacityOversightProgramFunding.reliesOnVolunteers && capacityOversightProgramFunding.numberOfVolunteers) { %>
+            <div class="form-item">
+                <span class="form-label">Number of Volunteers:</span>
+                <div class="form-value"><%= capacityOversightProgramFunding.numberOfVolunteers %></div>
+            </div>
+            <% } %>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-item">
+                <span class="form-label">Facility Ownership:</span>
+                <div class="form-value"><%= capacityOversightProgramFunding.facilityOwnership %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Number of Facilities:</span>
+                <div class="form-value"><%= capacityOversightProgramFunding.numberOfFacilities %></div>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-item">
+                <span class="form-label">Primary Funding Sources:</span>
+                <div class="form-value"><%= capacityOversightProgramFunding.primaryFundingSources %></div>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-item">
+                <span class="form-label">Has Inventory System:</span>
+                <div class="checkbox-item">
+                    <span class="checkbox <%= capacityOversightProgramFunding.hasInventorySystem ? 'checked' : '' %>"></span>
+                    <span>Organization has an inventory system</span>
+                </div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Can Transport/Store/Utilize:</span>
+                <div class="checkbox-item">
+                    <span class="checkbox <%= capacityOversightProgramFunding.canTransportStoreUtilize ? 'checked' : '' %>"></span>
+                    <span>Organization can transport, store, and utilize property</span>
+                </div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Has Governing Body:</span>
+                <div class="checkbox-item">
+                    <span class="checkbox <%= capacityOversightProgramFunding.hasGoverningBody ? 'checked' : '' %>"></span>
+                    <span>Organization has a governing body</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h4>Public Funding Sources:</h4>
+            <div class="form-grid">
+                <div class="form-item">
+                    <div class="checkbox-item">
+                        <span class="checkbox <%= capacityOversightProgramFunding.olderAmericansAct ? 'checked' : '' %>"></span>
+                        <span>Older Americans Act</span>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <div class="checkbox-item">
+                        <span class="checkbox <%= capacityOversightProgramFunding.socialSecurityAct ? 'checked' : '' %>"></span>
+                        <span>Social Security Act</span>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <div class="checkbox-item">
+                        <span class="checkbox <%= capacityOversightProgramFunding.economicOpportunityAct ? 'checked' : '' %>"></span>
+                        <span>Economic Opportunity Act</span>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <div class="checkbox-item">
+                        <span class="checkbox <%= capacityOversightProgramFunding.communityServicesBlockGrant ? 'checked' : '' %>"></span>
+                        <span>Community Services Block Grant</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-item">
+            <span class="form-label">Public Purpose Spending Affirmation:</span>
+            <div class="checkbox-item">
+                <span class="checkbox <%= capacityOversightProgramFunding.publicPurposeSpendingAffirmation ? 'checked' : '' %>"></span>
+                <span>Public Purpose Spending Affirmation</span>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Form 4: Designated Signers Attestations -->
+    <% if (designatedSignersAttestations) { %>
+    <div class="form-section">
+        <h3>4. DESIGNATED SIGNERS ATTESTATIONS</h3>
+        
+        <div class="representatives-section">
+            <h4>Authorized Representatives:</h4>
+            <% designatedSignersAttestations.authorizedRepresentatives.forEach(function(rep, index) { %>
+            <div class="representative-item">
+                <div class="representative-title">Authorized Representative <%= index + 1 %></div>
+                <div class="form-grid">
+                    <div class="form-item">
+                        <span class="form-label">Name:</span>
+                        <div class="form-value"><%= rep.name %></div>
+                    </div>
+                    <div class="form-item">
+                        <span class="form-label">Title:</span>
+                        <div class="form-value"><%= rep.title %></div>
+                    </div>
+                    <div class="form-item">
+                        <span class="form-label">Phone:</span>
+                        <div class="form-value"><%= rep.phoneNumber %></div>
+                    </div>
+                    <div class="form-item">
+                        <span class="form-label">Email:</span>
+                        <div class="form-value"><%= rep.email %></div>
+                    </div>
+                </div>
+                <div class="form-item">
+                    <span class="form-label">Signature:</span>
+                    <div class="form-value"><%= rep.signature %></div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+
+        <div class="form-item">
+            <span class="form-label">Property Needs List:</span>
+            <div class="form-value" style="white-space: pre-wrap;"><%= designatedSignersAttestations.propertyNeedsList %></div>
+        </div>
+
+        <div class="form-item">
+            <span class="form-label">Is Museum:</span>
+            <div class="checkbox-item">
+                <span class="checkbox <%= designatedSignersAttestations.isMuseum ? 'checked' : '' %>"></span>
+                <span>Is this a museum?</span>
+            </div>
+        </div>
+
+        <% if (designatedSignersAttestations.isMuseum) { %>
+        <div class="form-grid">
+            <div class="form-item">
+                <span class="form-label">Museum Official Name:</span>
+                <div class="form-value"><%= designatedSignersAttestations.museumOfficialName %></div>
+            </div>
+            <div class="form-item">
+                <span class="form-label">Museum Official Signature:</span>
+                <div class="form-value"><%= designatedSignersAttestations.museumOfficialSignature %></div>
+            </div>
+        </div>
+        <% } %>
+
+        <div class="attestations-section">
+            <h4>Required Attestations:</h4>
+            <div class="attestation-item">
+                <div class="checkbox-item">
+                    <span class="checkbox <%= designatedSignersAttestations.certificationAgreementStatement ? 'checked' : '' %>"></span>
+                    <span>Certification and Agreement Statement</span>
+                </div>
+            </div>
+            <div class="attestation-item">
+                <div class="checkbox-item">
+                    <span class="checkbox <%= designatedSignersAttestations.singleAuditAct ? 'checked' : '' %>"></span>
+                    <span>Single Audit Act</span>
+                </div>
+            </div>
+            <div class="attestation-item">
+                <div class="checkbox-item">
+                    <span class="checkbox <%= designatedSignersAttestations.sampleRestrictionPeriods ? 'checked' : '' %>"></span>
+                    <span>Sample Restriction Periods</span>
+                </div>
+            </div>
+            <div class="attestation-item">
+                <div class="checkbox-item">
+                    <span class="checkbox <%= designatedSignersAttestations.nondiscriminationAssuranceAgreement ? 'checked' : '' %>"></span>
+                    <span>Nondiscrimination Assurance Agreement</span>
+                </div>
+            </div>
+            <div class="attestation-item">
+                <div class="checkbox-item">
+                    <span class="checkbox <%= designatedSignersAttestations.certificationDebarmentSuspension ? 'checked' : '' %>"></span>
+                    <span>Certification Regarding Debarment, Suspension, and Other Responsibility Matters</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Form 5: Welcome Platform Training -->
+    <% if (welcomePlatformTraining) { %>
+    <div class="form-section">
+        <h3>5. WELCOME PLATFORM TRAINING</h3>
+        
+        <div class="training-modules">
+            <h4>Training Modules:</h4>
+            <div class="module-item">
+                <div class="module-title">Manage My Organization and Users</div>
+                <div class="module-description">As an approved organization administrator, I need to update our contact details and add new users to our American Surplus account, so our team members can access and request property appropriately.</div>
+                <div class="checkbox-item">
+                    <span class="checkbox <%= welcomePlatformTraining.manageOrganizationModuleCompleted ? 'checked' : '' %>"></span>
+                    <span>Mark as completed</span>
+                </div>
+            </div>
+            <div class="module-item">
+                <div class="module-title">Search for Property and Submit Requests</div>
+                <div class="module-description">As a Donee user, I want to search for available surplus property and submit a request form through American Surplus, so our organization can acquire items that support our public service programs.</div>
+                <div class="checkbox-item">
+                    <span class="checkbox <%= welcomePlatformTraining.searchPropertyModuleCompleted ? 'checked' : '' %>"></span>
+                    <span>Mark as completed</span>
+                </div>
+            </div>
+            <div class="module-item">
+                <div class="module-title">Join the Mattermost Communication Hub</div>
+                <div class="module-description">As a new platform user, I want to register for Mattermost so I can receive real-time updates, announcements, and interact with SASP staff or peers in the surplus community.</div>
+                <div class="checkbox-item">
+                    <span class="checkbox <%= welcomePlatformTraining.mattermostModuleCompleted ? 'checked' : '' %>"></span>
+                    <span>Mark as completed</span>
+                </div>
+            </div>
+            <div class="module-item">
+                <div class="module-title">Access Helpdesk Support</div>
+                <div class="module-description">As a user experiencing issues or needing clarification, I want to visit the American Surplus helpdesk to submit a support ticket and review FAQs, so I can resolve my issue quickly.</div>
+                <div class="checkbox-item">
+                    <span class="checkbox <%= welcomePlatformTraining.helpdeskModuleCompleted ? 'checked' : '' %>"></span>
+                    <span>Mark as completed</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-item">
+            <span class="form-label">Training Completed:</span>
+            <div class="checkbox-item">
+                <span class="checkbox <%= welcomePlatformTraining.trainingCompleted ? 'checked' : '' %>"></span>
+                <span>Training Completed</span>
+            </div>
+        </div>
+
+        <% if (welcomePlatformTraining.trainingCompleted && welcomePlatformTraining.trainingCompletionDate) { %>
+        <div class="form-item">
+            <span class="form-label">Training Completion Date:</span>
+            <div class="form-value"><%= welcomePlatformTraining.trainingCompletionDate %></div>
+        </div>
+        <% } %>
+
+        <% if (welcomePlatformTraining.trainingFeedback) { %>
+        <div class="form-item">
+            <span class="form-label">Training Feedback:</span>
+            <div class="form-value" style="white-space: pre-wrap;"><%= welcomePlatformTraining.trainingFeedback %></div>
+        </div>
+        <% } %>
+    </div>
+    <% } %>
+
+    <!-- Required Documents Section -->
+    <% if (requiredDocuments && requiredDocuments.length > 0) { %>
+    <div class="form-section">
+        <h3>REQUIRED DOCUMENTS</h3>
+        <div class="documents-section">
+            <% requiredDocuments.forEach(function(doc) { %>
+            <div class="document-item">
+                <div class="document-name"><%= doc.fileName %></div>
+                <div class="document-details">
+                    Description: <%= doc.description %> | 
+                    Submitted: <%= doc.submittedDate %> | 
+                    Status: <%= doc.status %>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+    <% } %>
+
+    <!-- Donee signature -->
+    <div class="signature-block signature-block-donee">
+        <div class="signature-subheading">Donee — Head Authorized Official</div>
+        <div style="margin-bottom: 12px; color: #222; font-size: 10pt;">
+            <strong>My signature below represents that I have read and understand all of the information contained in this application (including the fine print). My signature below represents that I have accurately completed this form to the best of my ability and that my agency, organization, business and representatives will abide by the aforementioned agreements, certifications, assurances and statements.</strong>
+        </div>
+        <div class="donee-head-sig-row">
+            <div class="sig-field-label">Head Authorized Official Name</div>
+            <div class="sig-field-value"><% if (headAuthRepresentativeName && signedDate) { %><%= headAuthRepresentativeName %><% } else if (organizationalIdentityLegalProfile && organizationalIdentityLegalProfile.headAuthorizedOfficialName && organizationalIdentityLegalProfile.headAuthorizedOfficialName !== 'N/A') { %><%= organizationalIdentityLegalProfile.headAuthorizedOfficialName %><% } %></div>
+            <div class="signature-line"></div>
+        </div>
+        <div class="donee-head-sig-row">
+            <div class="sig-field-label">Title</div>
+            <div class="sig-field-value"><%= organizationalIdentityLegalProfile && organizationalIdentityLegalProfile.headAuthorizedOfficialTitle ? organizationalIdentityLegalProfile.headAuthorizedOfficialTitle : '' %></div>
+            <div class="signature-line"></div>
+        </div>
+        <div class="donee-head-sig-row">
+            <div class="sig-field-label">Signature</div>
+            <% if (headAuthRepresentativeName && signedDate) { %>
+            <div class="signature-digital-note">Digitally signed by <%= headAuthRepresentativeName %> on <%= signedDate %></div>
+            <% } %>
+            <div class="signature-line"></div>
+            <div class="signature-label" style="margin-top: 2px;">Signature of Head Authorized Official</div>
+        </div>
+        <div class="donee-head-sig-row">
+            <div class="sig-field-label">Date Signed</div>
+            <div class="sig-field-value"><% if (signedDate) { %><%= signedDate %><% } %></div>
+            <div class="signature-line"></div>
+        </div>
+    </div>
+
+    <!-- SASP application determination -->
+    <div class="signature-block signature-block-sasp">
+        <div class="signature-subheading">State Agency for Surplus Property Application Determination</div>
+        <div class="sasp-determination-top-row">
+            <div class="sasp-determination-lh">
+                <div class="checkbox-item" style="margin-bottom: 8px;">
+                    <span class="checkbox <%= typeof saspDeterminationEligibleChecked !== 'undefined' && saspDeterminationEligibleChecked ? 'checked' : '' %>"></span>
+                    <span>Eligible</span>
+                </div>
+                <div class="checkbox-item">
+                    <span class="checkbox <%= typeof saspDeterminationIneligibleChecked !== 'undefined' && saspDeterminationIneligibleChecked ? 'checked' : '' %>"></span>
+                    <span>Ineligible</span>
+                </div>
+            </div>
+            <div class="sasp-determination-rh">
+                <div class="sig-field-label">Eligibility Expiration Date</div>
+                <div class="sig-field-value"><%= applicationExpiryDate %></div>
+            </div>
+        </div>
+        <div class="sasp-processor-row" style="display: flex; gap: 20px;">
+            <div style="flex: 1;">
+                <div class="sig-field-label">SASP Processor Official Name</div>
+                <div class="sig-field-value"><%= typeof saspApprovingOfficialName !== 'undefined' && saspApprovingOfficialName ? saspApprovingOfficialName : '' %></div>
+                <div class="signature-line"></div>
+            </div>
+            <div style="flex: 1;">
+                <div class="sig-field-label">Title</div>
+                <div class="sig-field-value"><%= typeof saspApprovingOfficialTitle !== 'undefined' && saspApprovingOfficialTitle ? saspApprovingOfficialTitle : '' %></div>
+                <div class="signature-line"></div>
+            </div>
+        </div>
+        <div class="sasp-processor-row" style="display: flex; gap: 20px; align-items: flex-end;">
+            <div style="flex: 1;">
+                <div class="sig-field-label">Signature</div>
+                <% if (typeof saspApprovingOfficialDigitalLine !== 'undefined' && saspApprovingOfficialDigitalLine) { %>
+                <div class="signature-digital-note"><%= saspApprovingOfficialDigitalLine %></div>
+                <% } %>
+                <div class="signature-line"></div>
+            </div>
+            <div style="flex: 1;">
+                <div class="sig-field-label">Date</div>
+                <div class="sig-field-value"><%= typeof saspApprovingOfficialSignedDate !== 'undefined' && saspApprovingOfficialSignedDate ? saspApprovingOfficialSignedDate : '' %></div>
+                <div class="signature-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-section" style="margin-top: 32px;">
+        <h3>Certification & Agreement Statement (Including Conditions, Reservations and Restrictions)</h3>
+        <div style="font-size: 10pt; color: #222;">
+            <ol style="padding-left: 18px;">
+                <li><strong>The Donee certifies that:</strong>
+                    <ol type="a">
+                        <li>It is a public agency or a nonprofit institution or organization exempt from taxation under section 501 of the Internal Revenue Code of 1954 within the meaning of section 203(j) of the Federal Property and Administrative Services Act of 1949, as amended, and/or the regulations of the General Services Administration (GSA).</li>
+                        <li>If a public agency, the property is needed and will be used by the recipient for carrying out or promoting the recipient's purposes, or in a nonprofit, tax-exempt institution or organization, the property is needed for and will be used by the recipient for educational or public health purposes, including research for any such purpose, or for programs for older individuals. The property is not being acquired for any other use or purpose, or for sale or other distribution or for permanent use outside the State, except with prior written approval of the SASP.</li>
+                        <li>Funds are available to pay all costs and charges incident to donation, including but not limited to shipping fees, repairs, costs relating to making a donated item serviceable.</li>
+                        <li>This transaction shall be subject to the nondiscrimination regulations governing the donation of surplus property issued under Title VI of the Civil Rights Act of 1964, Section 606 of Title VI of the Federal Property and Administrative Services Act of 1949, as amended, Section 504 of the Rehabilitation Act of 1973, as amended, and Section 303 of the Age Discrimination Act of 1975.</li>
+                    </ol>
+                </li>
+                <li><strong>The Donee agrees to the following conditions:</strong>
+                    <ol type="a">
+                        <li>All items of property shall be placed in use for the purpose(s) for which acquired within 1 year of receipt and shall be continued in use for such purpose(s) for a minimum of 1 year from the date the property was placed in use. In the event the property is not placed in use, or continued in use, the donee shall immediately notify the SASP, and, at the donee's expense, return such property to GSA or SASP, otherwise make the property available for transfer or other disposal by the SASP, provided the property is still usable as determined by the SASP.</li>
+                        <li>Such special handling or use limitations as are imposed by GSA on any item(s) of property listed hereon.</li>
+                        <li>In the event the property is not so used or handled as required by (b)(1) and (2), title and right to the possession of such property shall at the option of GSA revert to the United States of America, and upon demand, the donee shall release such property to such persons as GSA or its designee shall direct.</li>
+                    </ol>
+                </li>
+                <li><strong>The Donee agrees to the following conditions imposed by the SASP, applicable to items with a unit acquisition cost of $5,000 or more and passenger motor vehicles, regardless of acquisition cost, except vessels 50 feet or more in length and aircraft, foreign gifts or other items of property requiring special handling or use limitations, regardless of the acquisition cost or purpose for which acquired:</strong>
+                    <ol type="a">
+                        <li>The property shall be used only for the purpose(s) for which acquired, and for no other purpose(s).</li>
+                        <li>There shall be a period of restriction which will expire after such property has been used for the purpose(s) for which acquired for a period of 18 months from the date the property is placed in use.</li>
+                        <li>In the event the property is not so used or handled as required by (b)(1), (2) and (d), title and right to the possession of such property shall at the option of GSA or the SASP revert to the United States of America, and upon demand, the donee shall release such property to such persons as GSA or the SASP shall direct.</li>
+                    </ol>
+                </li>
+                <li><strong>The Donee agrees to the following conditions, reservations, and restrictions:</strong>
+                    <ol type="a">
+                        <li>From the date it receives the property listed hereon and through the period(s) of time the conditions imposed by (b), (c), and (d), remain in effect, the donee shall not sell, trade, lease, lend, bail, encumber, or otherwise dispose of such property, or remove it permanently for use outside the State, without the prior approval of GSA or the SASP, under (b), (c), and (d), or the SASP under (e) and (f). The proceeds from any sale, trade, lease, loan, bailment, encumbrance, or other disposal of the property, when such action is authorized by GSA or the SASP, shall be remitted promptly by the donee to GSA or the SASP, as the case may be.</li>
+                        <li>In the event any of the property listed hereon is sold, traded, leased, loaned, bailed, cannibalized, encumbered, or otherwise disposed of by the donee from the date of receipt through the period(s) of time the conditions imposed by (b), (d) and (f) remain in effect, without the prior approval of GSA or the SASP, the donee, at the option of GSA or the SASP shall pay to GSA or the SASP, as the case may be, the proceeds of the disposal at the fair market value or the fair rental value of the property at the time of such disposal, as determined by GSA or the SASP.</li>
+                        <li>If at any time, from the date of receipt through the period(s) of restriction, the property is no longer suitable, usable, or needed by the donee for the purpose(s) for which acquired, the donee shall promptly notify the SASP, and, as directed by the SASP, return the property to the SASP, release the property to another donee, or a named SASP, or to a department or agency of the United States, or sell, or otherwise dispose of the property. The proceeds from any sale shall be remitted promptly by the donee to the U.S. Government.</li>
+                        <li>The donee shall make reports to the SASP on the use, condition, and location of the property listed hereon and on other pertinent matters as may be required from time to time by the SASP. The SASP reserves the right to at its discretion, conduct on-site, virtual, telephonic, written reviews of property acquired for use to ensure the donee is properly utilizing the property and following all applicable program rules.</li>
+                        <li>At the option of the SASP, the donee may abrogate the State conditions set forth in (c) and the State terms, reservations, and restrictions pertinent thereto in (d) by payment of an amount determined by the SASP in conjunction with GSA.</li>
+                    </ol>
+                </li>
+                <li><strong>The Donee agrees to the following conditions, applicable to all items of property listed hereon:</strong>
+                    <ol type="a">
+                        <li>The property acquired by the donee is on an "as is, where is" basis, without warranty of any kind, and the Government of the United States of America, as well as the SASP will be held harmless from any or all debts, liabilities, costs, demands, suits, actions, or claims of any nature arising from or incident to the donation, the property, its use, or final disposition.</li>
+                        <li>Where a donee carries insurance against damages to or loss of property due to fire or other hazards and where loss or damage to donated property with unexpired terms, conditions, reservations, or restrictions occurs, GSA or the SASP, as the case may be, will be entitled to reimbursement from the donee out of the insurance proceeds of an amount equal to the unamortized portion of the fair market value of the damaged or destroyed donated items.</li>
+                    </ol>
+                </li>
+                <li><strong>The Donee agrees to the following additional special terms and conditions applicable to the donation of aircraft and vessels (50 feet or more in length) having an acquisition cost of $5,000 or more, and foreign gifts or other items of property requiring special handling or use limitations, regardless of the acquisition cost or purpose for which acquired:</strong>
+                    <ol type="a">
+                        <li>The donation shall be subject to the additional special terms, conditions, reservations, and restrictions set forth in the Conditional Transfer Document or other agreement executed by the authorized donee representative, as well as the conditions set forth in C, at a minimum.</li>
+                    </ol>
+                </li>
+            </ol>
+        </div>
+    </div>
+    <div class="form-section">
+        <h3>Single Audit Act</h3>
+        <div style="font-size: 10pt; color: #222;">
+            (a) THE DONEE AGREES TO THE FOLLOWING:
+            <ul>
+                <li>Donated Federal property is considered Federal Financial Assistance for purposes of the Single Audit Act (2 CFR 200). Donees who have received $750,000 (fair market value) or more in surplus property in one year may be required to obtain an audit at their expense. For additional instruction and information (including how to assess the fair market value), contact your respective SASP.</li>
+            </ul>
+        </div>
+    </div>
+    <div class="form-section">
+        <h3>Sample Restriction Periods</h3>
+        <div style="font-size: 10pt; color: #222;">
+            These are the general restriction periods for most types of property received. It is the applicant's responsibility to research, understand and comply with the specific restrictions placed upon each piece of property received.<br>
+            <ul>
+                <li>Property with an original gov't unit acquisition cost of less than $5,000 = 12 months</li>
+                <li>Property with an original gov't unit acquisition cost = $5,000 or more and passenger motor vehicles = 18 months</li>
+                <li>NASA artifacts = 60 months & Perpetuity</li>
+                <li>Noncombat Aircraft and Vessels 50' and greater = 60 months</li>
+                <li>Combat Aircraft and Vessels over 50' = Perpetuity</li>
+                <li>Firearms = Perpetuity</li>
+            </ul>
+            <div style="color: #b91c1c; font-weight: bold;">
+                SEAs can only acquire DOD property and are only subject to a 12 month restriction period!<br>
+                SBA 8D activities can acquire civilian agency and DOD property, but must use property during its term of participation in the SBA program plus one year!<br>
+                VOSBs and VSOs can acquire civilian agency and DOD property and are subject to the same restrictions imposed on traditional donation program participants.
+            </div>
+        </div>
+    </div>
+    <div class="form-section">
+        <h3>Nondiscrimination Assurance Statement</h3>
+        <div style="font-size: 10pt; color: #222;">
+            ASSURANCE AND COMPLIANCE WITH GSA REGULATIONS under Title VI of the Civil Rights Act of 1964, Section 606 of Title VI of the Federal Property and Administrative Service Act of 1949, as amended, Section 504 of the Rehabilitation Act of 1973, as amended, and Section 303 of the Age Discrimination Act of 1975.<br>
+            Hereinafter called the "Donee", agrees that the program for or in connection with which any property is donated to the Donee will be conducted in compliance, with and the Donee will comply with and will provide services or benefits under said program to comply with all requirements imposed by or pursuant to the regulation of the General Services Administration (41 CFR 101-6. PR 101-8) issued under the provisions of Title VI of the Civil Rights Act of Rehabilitation Act of 1973, as amended, Title IX of the Education Amendments of 1972, as amended, and Section 303 of the Age Discrimination Act of 1975. To the end that no person in the United States shall on the grounds of race, color, national origin, sex or age, or on the ground of handicap or disability, be excluded from participation in, be denied the benefits of, or be subjected to discrimination under any program or activity for which the Donee receives Federal Assistance from the General Services Administration.<br>
+            The Donee hereby gives assurance that it will immediately take any measure necessary to effectuate this agreement.
+        </div>
+    </div>
+    <div class="form-section">
+        <h3>Certification Regarding Debarment, Suspension, and Other Responsibility Matters - Primary Covered Transactions</h3>
+        <div style="font-size: 10pt; color: #222;">
+            (1) The prospective primary participant certifies to the best of its knowledge and belief, that it and its principals:
+            <ul>
+                <li>(a) Are not presently debarred, suspended, proposed for debarment, declared ineligible, or voluntarily excluded from covered transactions by any Federal department or agency;</li>
+                <li>(b) Have not within a 3-year period preceding this proposal been convicted of or had a civil judgement rendered against them for commission of fraud or a criminal offense in connection with obtaining, attempting to obtain, or performing a public (Federal, State, or local) transaction or contract under a public transaction; violation of Federal or State antitrust statutes or commission of embezzlement, theft, forgery, bribery, falsification or destruction of records, making false statements, or receiving stolen property;</li>
+                <li>(c) Are not presently indicted for or otherwise criminally or civilly charged by Governmental entity (Federal, State, or local) with commission of any of the offenses enumerated in paragraph (1)(b) of this certification; and</li>
+                <li>(d) Have not within a 3-year period preceding this application/proposal had one or more public transactions (Federal, state, or local) terminated for cause or default.</li>
+            </ul>
+            (2) Where the prospective primary participant is unable to certify to any of the statements in this certification, such prospective participant shall draw a line through the statement(s) above- (1)(a), (1)(b), (1)(c), (1)(d) for which the prospective applicant cannot certify and attach a detailed explanation to this application.
+        </div>
+    </div>
+    <% if (designatedSignersAttestations && designatedSignersAttestations.isMuseum) { %>
+    <div class="form-section">
+        <h3>Museum Access Agreement (Museum Applicants only)</h3>
+        <div style="font-size: 10pt; color: #222;">
+            As part of the Federal Surplus Property Donation Program, "museums"-- pursuant to Section 23 of Public Law 114-287 and Federal Management Regulation (FMR) Part 102-37-- agree that from an operational standpoint toward fulfilling the museum's mission and function for the general public that the museum will: Accede to any request submitted for access during typical "business" hours, interpreted here to be approximately 9:00am to 4:00pm, Monday through Friday-- although a reasonable variation from these hours may be considered due to individual circumstances (e.g. location of museum requiring strict business hours that deviate from the aforementioned time parameter).
+        </div>
+    </div>
+    <% } %>
+
+    <div class="footer">
+        <p><strong>Note:</strong> This application has been submitted electronically through the American Surplus platform. 
+        All information provided is subject to verification by the State Agency for Surplus Property (SASP).</p>
+        <p>Application ID: <%= applicationId %> | Generated on: <%= generatedDate %></p>
+    </div>
+</body>
+
+</html> 

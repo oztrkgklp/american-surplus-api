@@ -1,0 +1,58 @@
+name: Automated - Prod Deploy on Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  prod-deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    environment: production
+
+    env:
+      PROD_ENV_REPO: "ENV_production-american-surplus"
+
+    steps:
+    - name: Create image variable from latest PR commit
+      run: | 
+        PR_HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+        IMAGE_TAG="tag-${PR_HEAD_SHA::7}"
+        echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_ENV
+
+    - name: Azure Authentication
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Generate Prod GitHub App Token
+      id: prod-generate-token
+      uses: actions/create-github-app-token@v1
+      with:
+        app-id: ${{ secrets.GH_APP_ID }}
+        owner: AmericanSurplus
+        repositories: ${{ env.PROD_ENV_REPO }}
+        private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
+    - name: Environment Prod Env Update Workflow
+      uses: peter-evans/repository-dispatch@v3
+      with:
+        token: ${{ steps.prod-generate-token.outputs.token }}
+        repository: AmericanSurplus/${{ env.PROD_ENV_REPO }}
+        event-type: automatic-env-update-prod
+        client-payload: >-
+          {
+            "environment": "production",
+            "service_name": "american_surplus_api",
+            "image_tag": "${{ env.IMAGE_TAG }}"
+          }

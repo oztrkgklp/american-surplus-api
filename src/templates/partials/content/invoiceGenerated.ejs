@@ -1,0 +1,30 @@
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+    <p>
+        A new invoice has been uploaded for your request.
+    </p>
+
+    <table style="margin:20px 0; border-collapse:collapse;">
+        <tr>
+            <td style="padding:4px 8px;"><strong>Request ID:</strong></td>
+            <td style="padding:4px 8px;">#<%= request.id %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>TCN:</strong></td>
+            <td style="padding:4px 8px;"><%= request.tcn || 'N/A' %></td>
+        </tr>
+    </table>
+
+    <% if (requiresSignature) { %>
+    <p style="background-color:#fff8e1; padding:15px; border-left:4px solid #f9a825;">
+        <strong>Action Required:</strong> Please log in to American Surplus, review the invoice, and complete the required signature step.
+    </p>
+    <% } else { %>
+    <p style="background-color:#e3f2fd; padding:15px; border-left:4px solid #1976d2;">
+        <strong>Action Required:</strong> Please log in to American Surplus and review the uploaded invoice.
+    </p>
+    <% } %>
+
+    <p>If you have any questions, please contact us.</p>
+    <p>Thanks,<br />American Surplus Team</p>
+</div>

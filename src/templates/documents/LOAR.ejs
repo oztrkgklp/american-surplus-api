@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>LETTER OF AUTHORIZATION TO REMOVE</title>
+    <style>
+        @page {
+            size: a4;
+            margin: 0.5in;
+        }
+
+        .loar-container {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            color: #000;
+            background: white;
+            margin: 0;
+            /* padding: 20px; */
+            line-height: 1.2;
+            border: 2px solid #000;
+            min-height: calc(100vh - 40px);
+            box-sizing: border-box;
+        }
+
+        .header {
+            margin-bottom: 15px;
+            border: 1px solid #000;
+        }
+
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            padding-inline: 15px;
+            border-bottom: 1px solid #000;
+            min-height: 60px;
+        }
+
+        .header-title {
+            flex: 1;
+            text-align: center;
+            border-right: 1px solid #000;
+            padding-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title h1 {
+            margin: 0;
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #000;
+            line-height: 1.0;
+            font-family: Arial, sans-serif;
+            white-space: nowrap;
+        }
+
+        .header .metadata {
+            flex: 0 0 auto;
+            font-size: 8pt;
+            text-align: right;
+            line-height: 1.2;
+            margin-left: 15px;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .header-bottom-row {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .header .disclaimer {
+            font-size: 9pt;
+            font-style: normal;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+        }
+
+        .date-field {
+            margin-bottom: 8px;
+            margin-left: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .date-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .date-label {
+            display: inline-block;
+            width: 60px;
+        }
+
+        .date-input {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            min-width: 150px;
+            height: 18px;
+            margin-left: -20px;
+        }
+
+        .dod-text {
+            font-size: 12px;
+            line-height: 1.3;
+            max-width: 300px;
+            margin-top: 10px;
+            margin-left: 150px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .decorative-bar {
+            height: 2px;
+            background-color: #000;
+            margin: 8px 0;
+        }
+
+        .recipient-section {
+            display: flex;
+            margin-bottom: 8px;
+            margin-top: 15px;
+            margin-left: 20px;
+            margin-right: 20px;
+            gap: 15px;
+        }
+
+        .to-section,
+        .from-section {
+            flex: 1;
+            position: relative;
+        }
+
+        .to-label,
+        .from-label {
+            position: absolute;
+            top: -15px;
+            left: 0;
+            font-size: 9pt;
+            text-transform: uppercase;
+            z-index: 1;
+            background-color: white;
+            padding: 0 5px;
+        }
+
+        .to-box,
+        .from-box {
+            border: 1px solid #000;
+            padding: 10px;
+            min-height: 80px;
+            background-color: white;
+            position: relative;
+        }
+
+        .to-box .content,
+        .from-box .content {
+            font-size: 8pt;
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        .authorization-section {
+            margin-bottom: 15px;
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 20px;
+            font-size: 10pt;
+            line-height: 1.3;
+        }
+
+        .authorization-section .signature-line {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            min-width: 200px;
+            height: 16px;
+            margin: 0 3px;
+            vertical-align: bottom;
+        }
+
+        .authorization-section .transportation-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+
+        .authorization-section .transportation-line {
+            border-bottom: 1px solid #000;
+            width: 300px;
+            min-height: 20px;
+            flex-shrink: 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            padding: 2px 0;
+        }
+
+        .authorization-section .transportation-label {
+            font-weight: normal;
+            font-size: 8pt;
+            margin: 10px 0 0 0;
+            display: block;
+            text-align: left;
+            clear: both;
+            width: 100%;
+        }
+
+        .authorization-section .continuation-text {
+            display: inline;
+            vertical-align: bottom;
+            margin-left: 5px;
+            flex-shrink: 1;
+        }
+
+        .property-list-section {
+            margin-bottom: 8px;
+        }
+
+        .property-list-header {
+            background-color: #d0d0d0;
+            padding: 6px 8px;
+            font-weight: bold;
+            font-size: 9pt;
+            text-align: center;
+        }
+
+        .property-list-content {
+            padding: 8px;
+            min-height: 80px;
+        }
+
+        .property-item {
+            margin-left: 10px;
+            margin-top: 10px;
+            margin-bottom: 4px;
+            font-size: 8pt;
+            line-height: 1.2;
+        }
+
+        .workload-list {
+            margin-top: 50px;
+            text-align: right;
+        }
+
+        .workload-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+
+        .workload-input {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            min-width: 150px;
+            height: 16px;
+            margin-left: 8px;
+        }
+
+        .horizontal-bar {
+            border-top: 1px solid #000;
+            margin: 15px 0;
+        }
+
+        .instructions-section {
+            margin-left: 20px;
+            margin-bottom: 8px;
+            font-size: 8pt;
+        }
+
+        .instructions-section .highlight {
+            font-size: 9pt;
+            color: #000;
+        }
+
+        .email-line {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            width: 250px;
+            height: 16px;
+            margin: 0 3px;
+            vertical-align: bottom;
+        }
+
+        .phone-line {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            width: 150px;
+            height: 16px;
+            margin: 0 3px;
+            vertical-align: bottom;
+        }
+
+        .email-continuation,
+        .phone-continuation {
+            display: inline;
+            vertical-align: bottom;
+        }
+
+        .important-notes {
+            margin-left: 20px;
+            margin-bottom: 8px;
+            font-size: 9pt;
+            line-height: 0.5;
+            margin-top: 50px;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 7pt;
+            font-weight: bold;
+        }
+
+        .transportation-section {
+            margin-bottom: 15px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .transportation-label {
+            font-weight: bold;
+            margin-bottom: 3px;
+            margin-top: -5px !important;
+            margin-left: 5px !important;
+            text-align: center;
+        }
+
+        .transportation-line {
+            border-bottom: 1px solid #000;
+            margin: 5px 0;
+            min-height: 20px;
+            text-align: center;
+        }
+
+        .signature-section {
+            margin-bottom: 15px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #000;
+            margin: 5px 0;
+            min-height: 20px;
+            position: relative;
+            margin-top: 10px !important;
+            display: inline-block;
+            width: 300px;
+            vertical-align: bottom;
+        }
+
+        .signature-label {
+            margin-right: 10px;
+            margin-top: -10px !important;
+        }
+
+        .gsa-transfer-order {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .gsa-transfer-label {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loar-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-top-row">
+                <div class="header-title">
+                    <h1>LETTER OF AUTHORIZATION TO REMOVE</h1>
+                </div>
+                <div class="metadata">
+                    Prescribed by: DoD M 4160.21<br>
+                    Sponsor: Disposition Services
+                </div>
+            </div>
+            <div class="header-bottom-row">
+                <div class="disclaimer">This form may not be modified or altered. Other versions are not authorized.
+                </div>
+            </div>
+        </div>
+
+        <!-- Date Field -->
+        <div class="date-field">
+            <div class="date-section">
+                <span class="date-label">Date:</span>
+                <div class="date-input">
+                    <% if (signatureDate) { %>
+                        <%= new Date(signatureDate).toLocaleDateString('en-US') %>
+                            <% } %>
+                </div>
+            </div>
+            <div class="dod-text">
+                *For DOD releases, the individual signing must be listed on the LOA in the Centralized File*
+            </div>
+        </div>
+        <br>
+
+        <!-- Recipient and Sender Information -->
+        <div class="recipient-section">
+            <div class="to-section">
+                <div class="to-label">To: DLA DISPOSITION SERVICES</div>
+                <div class="to-box">
+                    <div class="content">
+                        <% if (propertyDetails && propertyDetails.length> 0) { %>
+                            <% const sampleProperty=propertyDetails[0]; %>
+                                <% if (sampleProperty.data && sampleProperty.data.propertyLocation) { %>
+                                    <% const address=sampleProperty.data.propertyLocation; %>
+                                        <%= address.line1 || '' %><br>
+                                            <% if (address.line2) { %>
+                                                <%= address.line2 %><br>
+                                                    <% } %>
+                                                        <% if (address.line3) { %>
+                                                            <%= address.line3 %><br>
+                                                                <% } %>
+                                                                    <%= address.city || '' %>, <%= address.stateCode
+                                                                            || '' %>
+                                                                            <%= address.zip || '' %>
+                                                                                <% } %>
+                                                                                    <% } %>
+                                                                                        <br><br>
+                                                                                        <% if (propertyDetails &&
+                                                                                            propertyDetails.length> 0)
+                                                                                            { %>
+                                                                                            <% const
+                                                                                                sampleProperty=propertyDetails[0];
+                                                                                                %>
+                                                                                                <% if
+                                                                                                    (sampleProperty.data
+                                                                                                    &&
+                                                                                                    sampleProperty.data.propertyPOC)
+                                                                                                    { %>
+                                                                                                    <% const
+                                                                                                        poc=sampleProperty.data.propertyPOC;
+                                                                                                        %>
+                                                                                                        Phone: <%=
+                                                                                                            poc.phone
+                                                                                                            || '' %>
+                                                                                                            <% } %>
+                                                                                                                <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="from-section">
+                <div class="from-label">From:</div>
+                <div class="from-box">
+                    <div class="content">
+                        FOR DONEE: <%= request.doneeAccount?.name || '' %> - <%= request.doneeAccount?.organization?.name || '' %>
+                        <br>
+                            <% if (organizationMailingAddress?.address_line1) { %>
+                                <%= organizationMailingAddress.address_line1 %>
+                            <% } %>
+                            <br>
+                            <% if (organizationMailingAddress?.address_line2) { %>
+                                <%= organizationMailingAddress.address_line2 %>
+                            <% } %>
+                            <br>
+                            <% if (organizationMailingAddress?.city && organizationMailingAddress?.state && organizationMailingAddress?.postal_code) { %>
+                                <%= organizationMailingAddress.city %>, <%= organizationMailingAddress.state %> <%= organizationMailingAddress.postal_code %>
+                        <% } %>                                       
+                        <% if (headAuthorizedUser) { %>
+                            POC: <%= headAuthorizedUser.name %>
+                            <br>
+                            PHONE: <%= headAuthorizedOrganizationUser?.phoneNumber %>
+                            <br>
+                            EMAIL: <%= headAuthorizedUser.email %>
+                        <% } else { %>
+                            POC: <%= headAuthorizedUser.name %>
+                            <br>
+                            PHONE: <%= headAuthorizedOrganizationUser?.phoneNumber %>
+                            <br>
+                            EMAIL: <%= headAuthorizedUser.email %>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authorization Statement -->
+        <div class="authorization-section">
+            <p>
+                I, <span class="signature-line">
+                    <%= saspUser?.name || '' %>
+                </span>
+                the undersigned, hereby authorize <br> <br>
+            <div class="transportation-row">
+                <span class="transportation-line">
+                    <% if (shippingName) { %>
+                        <%= shippingName %>
+                            <% } %>
+                </span>
+                <span class="continuation-text">to remove the requisitions listed below on my behalf.</span>
+            </div>
+            <div class="transportation-label">PRINT NAME OF PERSON OR TRANSPORTATION COMPANY</div>
+            </p>
+        </div>
+
+        <!-- Signature Section -->
+        <div class="signature-section">
+            <span class="signature-label">SIGNATURE OF CUSTOMER:</span>
+            <span class="signature-line">
+                <% if (signatureDate && saspUser) { %>
+                    <div style="display: flex; flex-direction: row; align-items: flex-end;">
+                        <div
+                            style="display: flex; flex-direction: column; text-align: left; align-content: end; align-items: end; white-space: nowrap;">
+                            <%= saspUser.name %>
+                        </div>
+                        <div style="display: flex; flex-direction: column; margin-left: 30px;">
+                            <small style="white-space: nowrap;">Digitally signed by <%= saspUser.name %><br>
+                                    <% if (request.doneeAccount?.state?.stateName) { %>
+                                        <%= request.doneeAccount.state.stateName %> SASP<br>
+                                            <% } %>
+                                                Date: <%= new Date(signatureDate).toLocaleString('en-US', {
+                                                    year: 'numeric' , month: '2-digit' , day: '2-digit' ,
+                                                    hour: '2-digit' , minute: '2-digit' , second: '2-digit' ,
+                                                    timeZoneName: 'short' }) %>
+                            </small>
+                        </div>
+                    </div>
+                    <% } %>
+            </span>
+        </div>
+
+        <!-- Property List Section -->
+        <div class="property-list-section">
+            <div class="property-list-header">Extent of Authority: To remove the property listed below.</div>
+            <div class="property-list-content">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font-size: 9pt;">
+                    <div style="flex: 1;">
+                        LIST ITEM(S) by Requisition/DTID Number/Work Load List*:
+                    </div>
+                    <div class="gsa-transfer-order"
+                        style="flex: 1; text-align: right; justify-content: flex-end; display: flex; font-size: 9pt;">
+                        <span class="gsa-transfer-label">GSA Transfer Order # if applicable:</span>
+                        <span class="gsa-transfer-value"><%= request.tcn || '' %></span>
+                    </div>
+                </div>
+
+                <% if (properties && properties.length> 0) { %>
+                    <% properties.forEach(function(property, index) { %>
+                        <% const propertyDetail=propertyDetails?.find(pd=> pd.data.itemControlNumber ===
+                            property.property_control_number); %>
+                            <div class="property-item">
+                                <%= property.property_control_number %>
+                                    <%= property.property_name || property.property_description || '' %>
+                                        <% if (propertyDetail?.data?.fscCode) { %>
+                                            FSC: <%= propertyDetail.data.fscCode %>, <%=
+                                                    property.property_disposal_condition %> QTY <%=
+                                                        property.property_allocated_quantity %>
+                                                        <% } else { %>
+                                                            QTY <%= property.property_allocated_quantity %>
+                                                                <% } %>
+                            </div>
+                            <% }); %>
+                                <% } %>
+
+                                    <div class="workload-list">
+                                        *Work Load List Number: _____________________________
+                                    </div>
+            </div>
+        </div>
+
+        <!-- Horizontal Bar -->
+        <div class="horizontal-bar"></div>
+
+        <!-- Instructions Section -->
+        <div class="instructions-section">
+            <% if (propertyDetails && propertyDetails.length > 0) { %>
+                <% const sampleProperty = propertyDetails[0]; %>
+                <% if (sampleProperty.data && sampleProperty.data.propertyPOC) { %>
+                    <% const poc = sampleProperty.data.propertyPOC; %>
+                    <p>
+                        PLEASE COMPLETE THIS FORM AND EMAIL OR FAX IT TO
+                        <span class="email-line">
+                            <%= poc.email %>
+                        </span>
+                    </p>
+                    <% if (poc.fax) { %>
+                    <p>
+                        FAX: <%= poc.fax %>
+                    </p>
+                    <% } %>
+                    <p>
+                        PLEASE CALL <span class="phone-line">
+                            <%= poc.phone %>
+                        </span>
+                        <span class="phone-continuation">TO SCHEDULE YOUR PICK-UP.</span>
+                    </p>
+                <% } %>
+            <% } %>
+        </div>
+
+        <!-- Important Notes -->
+        <div class="important-notes">
+            <p>REMEMBER TO BRING ADEQUATE ID WHEN YOU COME</p>
+            <p>THANK YOU</p>
+            <p>******************************************************************</p>
+            <p>PICK-UP OF REQUISITIONS IS REQUIRED WITHIN 14 DAYS OF THE 1348 DOCUMENT FOR DOD, LESO,</p>
+            <p>FIRE FIGHTER, AND CFL CUSTOMERS AND 21 DAYS FOR ALL DONATION AND TRANSFER CUSTOMERS.</p>
+            <p>ALL REQUISITIONS WILL BE CANCELLED AFTER THIS DATE.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div>DLA FORM 2516, AUG 2017</div>
+        <div style="font-weight: normal;">Page 1 of 1</div>
+        <div>PDF (DLA)</div>
+    </div>
+</body>
+
+</html>

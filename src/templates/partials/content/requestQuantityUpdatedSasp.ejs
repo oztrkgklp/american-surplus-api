@@ -1,0 +1,39 @@
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+    <p>
+        A donee updated the requested quantity for a property in American Surplus.
+    </p>
+
+    <table style="margin:20px 0; border-collapse:collapse;">
+        <tr>
+            <td style="padding:4px 8px;"><strong>Request ID:</strong></td>
+            <td style="padding:4px 8px;">#<%= requestId %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>TCN:</strong></td>
+            <td style="padding:4px 8px;"><%= tcn %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Organization:</strong></td>
+            <td style="padding:4px 8px;"><%= organizationName %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Property:</strong></td>
+            <td style="padding:4px 8px;"><%= propertyLabel %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Previous Quantity:</strong></td>
+            <td style="padding:4px 8px;"><%= oldQuantity %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Updated Quantity:</strong></td>
+            <td style="padding:4px 8px;"><%= newQuantity %></td>
+        </tr>
+    </table>
+
+    <p style="background-color:#fff8e1; padding:15px; border-left:4px solid #f9a825;">
+        <strong>Action Needed:</strong> Please review the request and update the related submission to GSA if needed.
+    </p>
+
+    <p>Thanks,<br />American Surplus Team</p>
+</div>

@@ -1,0 +1,20 @@
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+      <p>The following properties have been denied:</p>
+      <ul>
+        <% propertyDenialList.forEach(property => { %>
+          <li>
+            <strong><%= property.property_name %></strong> (ICN: <%= property.ICN %>) has been denied.
+          </li>
+        <% }); %>
+      </ul>
+      <% if (denyReason) { %>
+        <p><strong>Reason for denial:</strong></p>
+        <p style="background-color: #f5f5f5; padding: 15px; border-left: 4px solid #d73a49; margin: 10px 0;">
+          <%= denyReason %>
+        </p>
+      <% } %>
+      <p>Please review the details and take any necessary actions.</p>
+    <p>Thanks,<br />American Surplus</p>
+  </div>
+  

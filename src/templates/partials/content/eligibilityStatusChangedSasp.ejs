@@ -1,0 +1,72 @@
+<%# SDN-1295: display labels only. Underlying status values ('Rejected', 'Denied', etc.) unchanged. %>
+<% const STATUS_DISPLAY_LABELS = {
+    'Rejected': 'Returned',
+    'Application Renewal Rejected': 'Application Renewal Returned',
+    'Form Renewal Rejected': 'Form Renewal Returned',
+    'Denied': 'Not Eligible',
+}; %>
+<% const displayOldStatus = STATUS_DISPLAY_LABELS[oldStatus] || oldStatus; %>
+<% const displayNewStatus = STATUS_DISPLAY_LABELS[newStatus] || newStatus; %>
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+    <p>
+        An eligibility application status has been updated.
+    </p>
+    <table style="margin:20px 0; border-collapse:collapse;">
+        <tr>
+            <td style="padding:4px 8px;"><strong>Application ID:</strong></td>
+            <td style="padding:4px 8px;"><%= application.id %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Organization:</strong></td>
+            <td style="padding:4px 8px;"><%= organization %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>State:</strong></td>
+            <td style="padding:4px 8px;"><%= state %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Previous Status:</strong></td>
+            <td style="padding:4px 8px;"><%= displayOldStatus %></td>
+        </tr>
+        <tr style="background-color:#e8f5e9;">
+            <td style="padding:4px 8px;"><strong>New Status:</strong></td>
+            <td style="padding:4px 8px;"><strong><%= displayNewStatus %></strong></td>
+        </tr>
+    </table>
+
+    <% if (newStatus === 'Submitted' || newStatus === 'On Application Renewal' || newStatus === 'On Form Renewal') { %>
+        <p style="background-color:#e3f2fd; padding:15px; border-left:4px solid #1976d2;">
+            <strong>Action Required:</strong> A new application has been submitted and requires your review. Please log in to American Surplus to review the application and make a decision.
+        </p>
+    <% } else if (newStatus === 'Approved') { %>
+        <p style="background-color:#e8f5e9; padding:15px; border-left:4px solid #2e7d32;">
+            <strong>Status Update:</strong> This application has been approved. The Donee has been notified and can now submit property requests.
+        </p>
+    <% } else if (newStatus === 'Rejected' || newStatus === 'Application Renewal Rejected' || newStatus === 'Form Renewal Rejected') { %>
+        <p style="background-color:#fff3e0; padding:15px; border-left:4px solid #f57c00;">
+            <strong>Status Update:</strong> This application has been returned. The Donee has been notified and will need to make updates before resubmitting.
+        </p>
+        <% if (denyReason) { %>
+        <div style="background-color:#fafafa; padding:15px; margin-top:10px; border-left:4px solid #f57c00;">
+            <strong>Return Reason Provided:</strong><br/>
+            <%= denyReason %>
+        </div>
+        <% } %>
+    <% } else if (newStatus === 'Denied') { %>
+        <p style="background-color:#ffebee; padding:15px; border-left:4px solid #c62828;">
+            <strong>Status Update:</strong> This application has been marked Not Eligible. The Donee has been notified.
+        </p>
+        <% if (denyReason) { %>
+        <div style="background-color:#fafafa; padding:15px; margin-top:10px; border-left:4px solid #c62828;">
+            <strong>Not Eligible Reason Provided:</strong><br/>
+            <%= denyReason %>
+        </div>
+        <% } %>
+    <% } else { %>
+        <p>Please log in to American Surplus to review this application and take any necessary actions.</p>
+    <% } %>
+
+    <p>If you have any questions, please contact us.</p>
+    <p>Thanks,<br />American Surplus Team</p>
+</div>

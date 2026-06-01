@@ -1,0 +1,16 @@
+{
+  "status": "failed",
+  "step": "es-sync",
+  "pid": 59326,
+  "startedAt": "2026-06-01T07:02:31.270Z",
+  "endedAt": "2026-06-01T07:02:39.104Z",
+  "exitCode": 1,
+  "parentJob": "seed-local",
+  "logPath": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/.runtime/logs/es-sync.log",
+  "job": "es-sync",
+  "updatedAt": "2026-06-01T07:02:39.105Z",
+  "script": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/scripts/es-sync.cjs",
+  "args": [
+    "--mode=replace"
+  ]
+}

@@ -1,0 +1,29 @@
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+    <p>
+        This is a reminder that the following property must have evidence submitted within the next two weeks to confirm it is in service and compliant:
+    </p>
+    <table style="margin:20px 0; border-collapse:collapse;">
+        <tr>
+            <td style="padding:4px 8px;"><strong>Property Name:</strong></td>
+            <td style="padding:4px 8px;"><%= property.property_name %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Control Number:</strong></td>
+            <td style="padding:4px 8px;"><%= property.property_control_number %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Status:</strong></td>
+            <td style="padding:4px 8px;"><%= property.property_status %></td>
+        </tr>
+        <% if (property.request && property.request.doneeAccount && property.request.doneeAccount.organization) { %>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Organization:</strong></td>
+            <td style="padding:4px 8px;"><%= property.request.doneeAccount.organization.name %></td>
+        </tr>
+        <% } %>
+    </table>
+    <p>Please provide the required evidence to demonstrate the property is in service and compliant.</p>
+     <p>If you have any questions or need further details, please contact us.</p>
+    <p>Thanks,<br>American Surplus Team</p>
+</div>

@@ -1,0 +1,25 @@
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+    <p>The following properties have been allocated to your request:</p>
+    <p><strong>Donee Account:</strong> <%= doneeAccountNameAndState %></p>
+    <p><strong>Organization:</strong> <%= organizationName %></p>
+    <p><strong>Request TCN:</strong> <%= tcn %></p>
+    <table style="border-collapse: collapse; width: 100%; margin-top: 20px;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">ICN</th>
+                <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Property Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% allocatedPropertyList.forEach(property => { %>
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 8px;"><%= property.ICN %></td>
+                    <td style="border: 1px solid #ddd; padding: 8px;"><%= property.property_name %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    <p>Please review the details and take any necessary actions.</p>
+    <p>Thanks,<br />American Surplus</p>
+</div>

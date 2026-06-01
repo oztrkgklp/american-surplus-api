@@ -1,0 +1,31 @@
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+    <p>
+        A new document has been uploaded to an eligibility application.
+    </p>
+    <table style="margin:20px 0; border-collapse:collapse;">
+        <tr>
+            <td style="padding:4px 8px;"><strong>Application ID:</strong></td>
+            <td style="padding:4px 8px;"><%= application.id %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Organization:</strong></td>
+            <td style="padding:4px 8px;"><%= organization %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>State:</strong></td>
+            <td style="padding:4px 8px;"><%= state %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Document Name:</strong></td>
+            <td style="padding:4px 8px;"><%= fileName %></td>
+        </tr>
+        <tr>
+            <td style="padding:4px 8px;"><strong>Form ID:</strong></td>
+            <td style="padding:4px 8px;"><%= formId %></td>
+        </tr>
+    </table>
+    <p>Please log into American Surplus to review this document.</p>
+    <p>If you have any questions, please contact us.</p>
+    <p>Thanks,<br />American Surplus Team</p>
+</div>

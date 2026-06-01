@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SF 97 Request Form</title>
+    <style>
+        @page {
+            size: letter portrait;
+            margin: 0.45in;
+        }
+
+        body {
+            margin: 0;
+            color: #000;
+            font-family: Arial, sans-serif;
+            font-size: 11px;
+            line-height: 1.2;
+        }
+
+        .page {
+            width: 100%;
+        }
+
+        .title {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            text-decoration: underline;
+        }
+
+        .transfer-label {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .transfer-field {
+            border: 2px solid #000;
+            min-height: 28px;
+            padding: 4px 8px;
+            font-size: 18px;
+            font-weight: 700;
+            box-sizing: border-box;
+        }
+
+        .transfer-note {
+            margin: 6px 3px 12px 3px;
+            font-size: 11px;
+            line-height: 1.2;
+        }
+
+        .section-title {
+            margin: 0 0 4px 12px;
+            font-size: 39px;
+            font-weight: 700;
+            text-decoration: underline;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .sf97-table {
+            border: 2px solid #000;
+            table-layout: fixed;
+        }
+
+        .sf97-table td {
+            border: 1px solid #000;
+            vertical-align: top;
+            padding: 6px 7px;
+            word-break: break-word;
+        }
+
+        .label-cell {
+            font-size: 18px;
+            font-weight: 700;
+            background-color: #e9e9e9;
+        }
+
+        .right-label-cell {
+            white-space: nowrap;
+        }
+
+        .value-cell {
+            font-size: 17px;
+            min-height: 26px;
+        }
+
+        .full-height {
+            min-height: 98px;
+        }
+
+        .condition-label {
+            font-size: 18px;
+            font-weight: 700;
+            white-space: nowrap;
+            background-color: #e9e9e9;
+        }
+
+        .condition-option {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: normal;
+        }
+
+        .small-note {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 2px;
+            line-height: 1.15;
+        }
+
+        .address-label {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .address-label span {
+            display: block;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .address-block {
+            font-size: 16px;
+            line-height: 1.25;
+            min-height: 90px;
+        }
+    </style>
+</head>
+
+<body>
+    <%
+    var sf97Prop = sf97Data.sf97PrimaryProperty;
+    var sf97PrimaryPropertyDetail = sf97Data.sf97PrimaryPropertyDetail;
+    var doneeOrg = sf97Data.request?.doneeAccount?.organization;
+    var propertyLocation = sf97Data.propertyLocation || sf97PrimaryPropertyDetail?.data?.propertyLocation;
+    var propertyDescription = sf97Prop?.property_description || '';
+    var propertyDescriptionLower = propertyDescription.toLowerCase();
+    var propertyName = sf97Prop?.property_name || '';
+    var nameParts = propertyName.trim().split(/\s+/).filter(Boolean);
+    var vehicleYear = propertyName.match(/\b(19|20)\d{2}\b/)?.[0] || '';
+    var vehicleMake = nameParts.length > 1 ? nameParts[1] : '';
+    var vehicleModel = nameParts.length > 2 ? nameParts.slice(2).join(' ') : '';
+    var mileage = propertyDescription.match(/(\d+)\s*miles?/i)?.[1] || '';
+    var cylinders = propertyDescription.match(/(\d+)\s*cyl/i)?.[1] || '';
+    var weight = propertyDescription.match(/(\d+)\s*lbs?/i)?.[1] || '';
+    var gvwr = propertyDescription.match(/(\d+)\s*GVWR/i)?.[1] || '';
+    var tcn = sf97Data.request?.tcn || '';
+    var icn = sf97Prop?.property_control_number || '';
+    var icnSuffix = icn ? icn.slice(-4) : '';
+    var transferOrderNumber = [tcn, icnSuffix].filter(Boolean).join('-');
+    var propertyTotalValue = Number(sf97Prop?.property_total_value || 0);
+    var purchasePriceDisplay = propertyTotalValue > 0 ? propertyTotalValue.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) : 'DONATION';
+    var rawConditionCode = (sf97Data.conditionCode || sf97PrimaryPropertyDetail?.data?.conditionCode || sf97PrimaryPropertyDetail?.data?.supplyConditionCode || '').toString().trim().toUpperCase();
+    /** PPMS / surplus condition codes: N, U, R, X, S */
+    var conditionCodeLabels = {
+      'N': 'New/Unused',
+      'U': 'Usable',
+      'R': 'Repairable',
+      'X': 'Salvage',
+      'S': 'Scrap'
+    };
+    var conditionKey = rawConditionCode.length ? rawConditionCode.charAt(0) : '';
+    var conditionCodeDisplay = conditionCodeLabels[conditionKey] || (rawConditionCode ? rawConditionCode : '');
+
+    var transferorLines = [];
+    if (propertyLocation?.line1) transferorLines.push(propertyLocation.line1);
+    if (propertyLocation?.line2) transferorLines.push(propertyLocation.line2);
+    if (propertyLocation?.line3) transferorLines.push(propertyLocation.line3);
+    var transferorCityStateZip = [propertyLocation?.city, propertyLocation?.stateCode, propertyLocation?.zip].filter(Boolean).join(' ');
+    if (transferorCityStateZip) transferorLines.push(transferorCityStateZip);
+
+    var doneeLines = [];
+    if (doneeOrg?.name) doneeLines.push(doneeOrg.name);
+    if (doneeOrg?.mailing_address_line1) doneeLines.push(doneeOrg.mailing_address_line1);
+    if (doneeOrg?.mailing_address_line2) doneeLines.push(doneeOrg.mailing_address_line2);
+    var doneeCityStateZip = [doneeOrg?.mailing_city, doneeOrg?.mailing_state, doneeOrg?.mailing_zip].filter(Boolean).join(' ');
+    if (doneeCityStateZip) doneeLines.push(doneeCityStateZip);
+    %>
+
+    <div class="page">
+        <div class="title">SF 97 Request Form</div>
+
+        <div class="transfer-label">Transfer Order Number:</div>
+        <div class="transfer-field"><%= transferOrderNumber %></div>
+        <div class="transfer-note">
+            (Listed as the certificate number. Please add a suffix if there are multiple SF 97 requests coming from the
+            same Transfer Order. The last 4 digits of the VIN are currently being added as a distinguishing suffix. If
+            no transfer order exists, please provide a number to be listed as the certificate number.)
+        </div>
+
+        <div class="section-title">Vehicle Information:</div>
+        <table class="sf97-table">
+            <colgroup>
+                <col style="width: 24%;">
+                <col style="width: 18%;">
+                <col style="width: 8%;">
+                <col style="width: 17%;">
+                <col style="width: 11%;">
+                <col style="width: 22%;">
+            </colgroup>
+            <tr>
+                <td class="label-cell">Year</td>
+                <td class="value-cell" colspan="2"><%= vehicleYear %></td>
+                <td class="label-cell right-label-cell">Mileage</td>
+                <td class="value-cell" colspan="2"><%= mileage %></td>
+            </tr>
+            <tr>
+                <td class="label-cell">Make</td>
+                <td class="value-cell" colspan="2"><%= vehicleMake %></td>
+                <td class="label-cell right-label-cell">Fuel</td>
+                <td class="value-cell" colspan="2"><%= propertyDescriptionLower.includes('diesel') ? 'Diesel' : (propertyDescriptionLower.includes('electric') ? 'Electric' : (propertyDescriptionLower.includes('gas') ? 'Gas' : '')) %></td>
+            </tr>
+            <tr>
+                <td class="label-cell">Model</td>
+                <td class="value-cell" colspan="2"><%= vehicleModel %></td>
+                <td class="label-cell right-label-cell"># of Cylinders</td>
+                <td class="value-cell" colspan="2"><%= cylinders %></td>
+            </tr>
+            <tr>
+                <td class="label-cell">Body Style</td>
+                <td class="value-cell" colspan="2"><%= propertyDescriptionLower.includes('sedan') ? 'Sedan' : (propertyDescriptionLower.includes('truck') ? 'Truck' : (propertyDescriptionLower.includes('suv') ? 'SUV' : '')) %></td>
+                <td class="label-cell right-label-cell">Weight</td>
+                <td class="value-cell" colspan="2"><%= weight %></td>
+            </tr>
+            <tr>
+                <td class="label-cell">VIN</td>
+                <td class="value-cell" colspan="2"><%= icn %></td>
+                <td class="label-cell right-label-cell">GVWR</td>
+                <td class="value-cell" colspan="2"><%= gvwr %></td>
+            </tr>
+            <tr>
+                <td class="condition-label">Condition Code</td>
+                <td class="value-cell" colspan="5"><%= conditionCodeDisplay %></td>
+            </tr>
+            <tr>
+                <td class="label-cell">Purchase Price<span class="small-note">(If applicable)</span></td>
+                <td class="value-cell" colspan="5"><strong><%= purchasePriceDisplay %></strong></td>
+            </tr>
+            <tr>
+                <td class="address-label">Transferor:<span>(Complete address)</span></td>
+                <td class="address-block full-height" colspan="5"><%- transferorLines.join('<br>') %></td>
+            </tr>
+            <tr>
+                <td class="address-label">Transferee:<span>(Complete address)</span></td>
+                <td class="address-block full-height" colspan="5"><%- doneeLines.join('<br>') %></td>
+            </tr>
+            <tr>
+                <td class="address-label">Mail to<span>(Complete address &amp; ATTN To)</span></td>
+                <td class="address-block full-height" colspan="5"><%- doneeLines.join('<br>') %></td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

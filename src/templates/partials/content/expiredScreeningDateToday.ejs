@@ -1,0 +1,42 @@
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello,</h2>
+    <p>
+        <strong>REMINDER:</strong> The screening date for the following property expires today and requires your attention:
+    </p>
+    <table style="margin:20px 0; border-collapse:collapse; border:1px solid #ddd;">
+        <tr style="background-color:#f8f9fa;">
+            <td style="padding:8px 12px; border:1px solid #ddd;"><strong>Property Control Number:</strong></td>
+            <td style="padding:8px 12px; border:1px solid #ddd;"><%= property.property_control_number %></td>
+        </tr>
+        <tr>
+            <td style="padding:8px 12px; border:1px solid #ddd;"><strong>Property Name:</strong></td>
+            <td style="padding:8px 12px; border:1px solid #ddd;"><%= property.property_name %></td>
+        </tr>
+        <tr style="background-color:#f8f9fa;">
+            <td style="padding:8px 12px; border:1px solid #ddd;"><strong>Surplus Release Date:</strong></td>
+            <td style="padding:8px 12px; border:1px solid #ddd;"><%= new Date(property.property_surplus_release_date).toLocaleDateString() %></td>
+        </tr>
+        <tr>
+            <td style="padding:8px 12px; border:1px solid #ddd;"><strong>Property Status:</strong></td>
+            <td style="padding:8px 12px; border:1px solid #ddd;"><%= property.property_status %></td>
+        </tr>
+        <% if (property.request && property.request.doneeAccount) { %>
+        <tr style="background-color:#f8f9fa;">
+            <td style="padding:8px 12px; border:1px solid #ddd;"><strong>Organization:</strong></td>
+            <td style="padding:8px 12px; border:1px solid #ddd;"><%= property.request.doneeAccount.organization?.name %></td>
+        </tr>
+        <tr>
+            <td style="padding:8px 12px; border:1px solid #ddd;"><strong>State:</strong></td>
+            <td style="padding:8px 12px; border:1px solid #ddd;"><%= property.request.doneeAccount.state?.stateName %></td>
+        </tr>
+        <% } %>
+    </table>
+    
+    <div style="background-color:#d1ecf1; border:1px solid #bee5eb; border-radius:4px; padding:15px; margin:20px 0;">
+        <p style="margin:0; color:#0c5460;"><strong>Action Required:</strong> Please review this property today as the screening date expires at the end of today.</p>
+    </div>
+    
+    <p>Please log into American Surplus to review the property details and take the necessary action before the end of today.</p>
+    <p>If you have any questions or need further assistance, please contact the American Surplus support team.</p>
+    <p>Thanks,<br>American Surplus Team</p>
+</div>

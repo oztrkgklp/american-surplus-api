@@ -1,0 +1,700 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>INVOICE - Florida SASP</title>
+    <style>
+        @page {
+            size: a4;
+            margin: 0.25in;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 9pt;
+            color: #000;
+            background: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-table {
+            width: 100%;
+            border-spacing: 0;
+            margin-bottom: 10px;
+            table-layout: fixed;
+        }
+
+        .header-logo {
+            width: 320px;
+            vertical-align: top;
+        }
+
+        .header-logo img {
+            max-width: 220px;
+        }
+
+        .header-info {
+            text-align: right;
+            vertical-align: top;
+            font-size: 11pt;
+            padding-top: 10px;
+        }
+
+        .header-info .invoice-label {
+            font-weight: bold;
+            font-size: 14pt;
+        }
+
+        .header-info .invoice-number {
+            font-weight: bold;
+            font-size: 14pt;
+            margin-left: 5px;
+        }
+
+        .header-info .tcn {
+            font-size: 10pt;
+            margin-top: 5px;
+        }
+
+        .header-info .tcn-label {
+            font-weight: bold;
+        }
+
+        .header-info .tcn-number {
+            margin-left: 5px;
+        }
+
+        .header-info .tcndesc {
+            font-size: 9pt;
+            color: #444;
+        }
+
+        .header-info .invoice-date {
+            font-size: 10pt;
+            margin-top: 8px;
+        }
+
+        .header-info .due-date {
+            font-size: 10pt;
+            margin-top: 5px;
+        }
+
+        .header-info .date-label {
+            font-weight: bold;
+        }
+
+        .header-info .date-value {
+            margin-left: 5px;
+        }
+
+        .donee-box {
+            border: 2px solid #000;
+            width: 350px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            padding: 10px 16px 10px 16px;
+            font-size: 9pt;
+        }
+
+        .donee-box-table {
+            width: 100%;
+        }
+
+        .donee-box-table td {
+            padding: 2px 4px;
+            vertical-align: top;
+        }
+
+        .donee-label {
+            font-weight: bold;
+            width: 120px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 10pt;
+            border-top: 2px solid #000;
+            border-bottom: 2px solid #000;
+            padding: 6px 0;
+            margin: 12px 0 10px 0;
+            letter-spacing: 0.5px;
+        }
+
+        .asset-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 9pt;
+        }
+
+        .asset-table th,
+        .asset-table td {
+            border: 1.5px solid #000;
+            text-align: center;
+            padding: 6px 2px;
+        }
+
+        .asset-table th {
+            font-weight: bold;
+            background: #f5f5f5;
+            font-size: 9pt;
+        }
+
+        .asset-table .description {
+            text-align: left;
+        }
+
+        .asset-table .amount {
+            text-align: right;
+        }
+
+        .totals-table {
+            width: 250px;
+            float: right;
+            border: 1.5px solid #000;
+            margin-top: 8px;
+            font-size: 9pt;
+        }
+
+        .totals-table td {
+            padding: 6px 10px;
+        }
+
+        .totals-table .label {
+            width: 120px;
+        }
+
+        .totals-table .amount {
+            text-align: right;
+            width: 100px;
+            border-left: 1.5px solid #000;
+        }
+
+        .footer-notes {
+            margin-top: 30px;
+            font-size: 9pt;
+        }
+
+        .footer-notes .notice {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 10pt;
+        }
+
+        .footer-notes>div {
+            margin-bottom: 5px;
+        }
+
+        .payment-info-table {
+            width: 100%;
+            margin: 8px 0;
+            font-size: 9pt;
+            border: none;
+        }
+
+        .payment-info-table td {
+            vertical-align: top;
+            width: 50%;
+            padding: 0 5px;
+            border: none;
+        }
+
+        .payment-info-table .payment-title {
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 9pt;
+        }
+
+        .payment-box {
+            border: 2px solid #000;
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #f9f9f9;
+        }
+
+        .payment-disclaimer {
+            background-color: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 10px;
+            margin: 15px 0;
+            font-weight: bold;
+            text-align: center;
+            font-size: 10pt;
+        }
+
+        .fl-disclaimer {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #666;
+            background-color: #f5f5f5;
+            font-size: 9pt;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .signature-section {
+            margin-top: 18px;
+            font-size: 9pt;
+        }
+
+        .signature-section td {
+            padding: 0 4px;
+        }
+
+        .legal-section {
+            page-break-before: always;
+            font-size: 8pt;
+            text-align: justify;
+            line-height: 1.2;
+            padding: 0;
+            break-inside: avoid;
+        }
+
+        .legal-section ol {
+            padding-left: 20px;
+            margin: 4px 0;
+        }
+
+        .legal-section li {
+            margin-bottom: 4px;
+        }
+
+        .legal-section h4 {
+            margin: 10px 0 5px 0;
+            font-size: 9pt;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        .dms-logo {
+            margin-top: 10px;
+            width: 180px;
+        }
+
+        .legal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .legal-header .legal-title {
+            font-size: 12pt;
+            font-weight: bold;
+            margin-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <table class="header-table">
+        <tr>
+            <td class="header-logo">
+                <img src="<%= AmericanSurplusLogo %>" alt="AMERICAN SURPLUS Logo" />
+            </td>
+            <td class="header-info">
+                <div class="invoice-label">INVOICE # <span class="invoice-number">
+                        <%= invoiceNo %>
+                    </span></div>
+                <div class="tcn"><span class="tcn-label">TCN :</span> <span class="tcn-number">
+                        <%= TCN %>
+                    </span></div>
+                <div class="tcndesc">(Transfer Control Number)</div>
+                <div class="invoice-date">
+                    <span class="date-label">Invoice Date:</span>
+                    <span class="date-value">
+                        <% const invoiceDateObj=new Date(); const formattedInvoiceDate=invoiceDateObj.toLocaleDateString('en-US', {
+                            year: 'numeric' , month: '2-digit' , day: '2-digit' }); %>
+                            <%= formattedInvoiceDate %>
+                    </span>
+                </div>
+                <div class="due-date">
+                    <span class="date-label">Due Date:</span>
+                    <span class="date-value">
+                        <% 
+                            const dueDateObj = new Date(dueDate); 
+                            const formattedDueDate = dueDateObj.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }); 
+                        %>
+                        <%= formattedDueDate %>
+                    </span>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table style="width: 100%; margin-bottom: 0;">
+        <tr>
+            <td style="width: 50%; vertical-align: top;">
+                <div class="section-title">Donee Information</div>
+                <div class="donee-box">
+                    <table class="donee-box-table">
+                        <tr>
+                            <td class="donee-label">ACCOUNT NO.</td>
+                            <td>
+                                <%= doneeInformation.accountNo %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="donee-label">Representative</td>
+                            <td>
+                                <%= doneeInformation.representative %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="donee-label">Telephone</td>
+                            <td>
+                                <%= doneeInformation.telephone %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="donee-label">Address</td>
+                            <td>
+                                <%= doneeInformation.address %>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="donee-label">City, State Zip Code</td>
+                            <td>
+                                <%= doneeInformation.city %>, <%= doneeInformation.state %>
+                                        <%= doneeInformation.zipCode %>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td style="width: 50%; vertical-align: top; text-align: right;">
+                <div style="font-size: 10pt; font-weight: bold; color: #b00; margin-top: 18px; margin-bottom: 10px;">
+                    &nbsp;</div>
+            </td>
+        </tr>
+    </table>
+    <table class="asset-table">
+        <thead>
+            <tr>
+                <th style="width: 10%;">Asset ID</th>
+                <th style="width: 25%;">Property Name</th>
+                <th style="width: 10%;">Original Acquisition Cost</th>
+                <th style="width: 10%;">Condition Percentage</th>
+                <th style="width: 6%;">UOM</th>
+                <th style="width: 6%;">Qty</th>
+                <th style="width: 10%;">Unit Price</th>
+                <th style="width: 11%;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% assetInformation.propertyDetails.forEach(function(property) { %>
+                <tr>
+                    <td>
+                        <%= property.assetId %>
+                    </td>
+                    <td style="text-align: center;"><%- property.description %></td>
+                    <td style="text-align: center;">$<%= property.original_value ?? 0 %></td>
+                    <td><%= property.disposalName ? property.disposalName + ' (' + (property.stateFeePercentage ?? 0) + '%)' : '' %></td>
+                    <td>EA</td>
+                    <td>
+                        <%= property.quantity %>
+                    </td>
+                    <td style="text-align: center;">$<%= property.subTotal || property.subTotal == 0 ? property.subTotal : '' %>
+                    </td>
+                    <td style="text-align: center;" class="amount">$<%= property.lineTotal || property.lineTotal ==0 ? property.lineTotal.toFixed(2) : '' %>
+                    </td>
+                </tr>
+                <% }); %>
+        </tbody>
+    </table>
+    <table class="totals-table">
+        <tr>
+            <td class="label">Delivery Fee</td>
+            <td class="amount">$<%= assetInformation.deliveryFee.toFixed(2) %>
+            </td>
+        </tr>
+        <tr>
+            <td class="label" style="font-weight:bold;">Total</td>
+            <td class="amount" style="font-weight:bold;">$<%= assetInformation.total.toFixed(2) %>
+            </td>
+        </tr>
+    </table>
+    <div style="clear:both;"></div>
+    
+    <!-- New Payment Process Disclaimer -->
+    <div class="payment-disclaimer">
+        <div style="font-size: 12pt; margin-bottom: 5px;">⚠️ NEW PAYMENT PROCESS ⚠️</div>
+        <div style="font-size: 10pt;">Please note the updated payment instructions below. Paper checks must be sent to our Melbourne office.</div>
+    </div>
+
+    <!-- Payment Instructions Box -->
+    <div class="payment-box">
+        <div style="text-align: center; font-weight: bold; font-size: 11pt; margin-bottom: 15px; text-decoration: underline;">PAYMENT INSTRUCTIONS</div>
+        
+        <table style="width: 100%; border: none;">
+            <tr>
+                <td style="width: 50%; vertical-align: top; padding-right: 15px; border-right: 1px solid #ccc;">
+                    <div style="font-weight: bold; margin-bottom: 8px; font-size: 10pt;">PAPER CHECK PAYMENTS:</div>
+                    <div style="background-color: #ffffcc; padding: 8px; border: 1px solid #ffcc00; margin-bottom: 8px;">
+                        <strong style="color: #d00;">IMPORTANT:</strong> All paper checks MUST be addressed to our Melbourne office:
+                    </div>
+                    <div style="font-size: 9pt;">
+                        <strong><%= bankInformation.remitCheckPayments.name %></strong><br/>
+                        <%= bankInformation.remitCheckPayments.adress1 %><br/>
+                        <%= bankInformation.remitCheckPayments.adress2 %><br/>
+                        Telephone: <%= bankInformation.remitCheckPayments.telephone %>
+                    </div>
+                </td>
+                <td style="width: 50%; vertical-align: top; padding-left: 15px;">
+                    <div style="font-weight: bold; margin-bottom: 8px; font-size: 10pt;">ACH PAYMENTS:</div>
+                    <div style="font-size: 9pt;">
+                        <strong>Bank:</strong> <%= bankInformation.achPayments.bank %><br/>
+                        <strong>Address:</strong> <%= bankInformation.achPayments.adress1 %>,<br/>
+                        <%= bankInformation.achPayments.adress2 %><br/>
+                        <strong>Account Title:</strong> <%= bankInformation.achPayments.accountTitle %>,<br/>
+                        <%= bankInformation.achPayments.accountTitle2 %><br/>
+                        <strong>Account #:</strong> <%= bankInformation.achPayments.account %><br/>
+                        <strong>ACH/Wire Routing #:</strong> <%= bankInformation.achPayments.routingNo %><br/>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        
+        <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #ccc; font-size: 9pt; text-align: center;">
+            <strong>Payment Terms:</strong> Payment must be remitted within 30 days from invoice date. Include invoice number on all forms of payment.
+        </div>
+    </div>
+
+    <!-- Signature Section (moved here, above DMS logo) -->
+    <table style="width: 100%; border: none; margin: 20px 0;">
+        <tr>
+            <td style="width: 60%; text-align: left; padding-top: 6px; font-size: 9pt; vertical-align: bottom;">
+                <% if (typeof signedByName !=='undefined' ) { %>
+                    <div style="font-size: 7pt; color: #666;">
+                        Digitally signed by <%= signedByName %>
+                    </div>
+                <% } %>
+                <div style="border-bottom: 1.5px solid #000; width: 95%; height: 18px;"></div>
+                <div style="margin-top: 2px;">Signature of Authorized Representative</div>
+            </td>
+            <td style="width: 40%; text-align: right; padding-top: 6px; font-size: 9pt; vertical-align: top;">
+                <% if (typeof signDate !=='undefined' ) { %>
+                    <div style="font-size: 7pt; color: #666; text-align: right;">
+                        <%= signDate %>
+                    </div>
+                <% } %>
+                <div style="border-bottom: 1.5px solid #000; width: 95%; height: 18px; margin-left: auto;"></div>
+                <div style="margin-top: 2px; text-align: right;">Date</div>
+            </td>
+        </tr>
+    </table>
+
+    <!-- Florida Non-Discriminatory Disclaimer -->
+    <div class="fl-disclaimer">
+        <strong>FLORIDA NON-DISCRIMINATION NOTICE:</strong><br/>
+        The State of Florida and the Department of Management Services do not discriminate on the basis of race, color, 
+        national origin, sex, age, or disability in administration of its programs, services, and activities.
+    </div>
+
+    <!-- DMS SASP Agency Info and Payment Instructions -->
+    <div style="margin: 24px auto 0 auto; max-width: 700px;">
+        <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
+            <img src="<%= DMSLogo %>" style="height: 60px; margin-right: 18px; margin-top: 2px;" alt="DMS SASP Logo" />
+            <div>
+                <div style="font-weight: bold; font-size: 10pt; line-height: 1.1; margin-bottom: 2px;">FLORIDA SASP
+                </div>
+                <div style="font-weight: bold; font-size: 8pt; line-height: 1.1;">DEPARTMENT OF MANAGEMENT SERVICES
+                </div>
+                <div style="font-weight: bold; font-size: 8pt; line-height: 1.1;">DIVISION OF SPECIALIZED SERVICES
+                </div>
+                <div style="font-weight: bold; font-size: 8pt; line-height: 1.1;">Bureau of Fleet Management and
+                    Federal
+                    Property Assistance State Agency for Surplus Property (SASP)</div>
+                <div style="font-size: 8pt; line-height: 1.1; margin-bottom: 2px;"><a
+                        href="https://www.dms.myflorida.com/SASP"
+                        style="color: #0000EE; text-decoration: underline; font-weight: bold;">www.dms.myflorida.com/SASP</a>
+                </div>
+            </div>
+        </div>
+        <div style="font-weight: bold; margin-top: 10px; font-size: 8pt;">**ALL FEDERAL DONATIONS ARE FINAL, NO
+            RETURNS**</div>
+        <div style="font-weight: bold; font-size: 8pt;">PAYMENT INFORMATION:</div>
+        <div style="font-size: 8pt;">Payment must be remitted 30 days from invoice date. Include invoice number on all
+            forms of
+            payment.</div>
+        <div style="margin-bottom: 10px; font-size: 8pt;">As an authorized representative of the above donee, I accept
+            the
+            property
+            hereon and
+            on the attached continuation sheet(s) where appropriate and commit the donee to the certifications, terms
+            and
+            conditions accompanying this document, which I have read and understand.</div>
+    </div>
+    <div class="page legal-section">
+        <div style="font-size: 8pt;">
+            <div style="font-weight: bold; text-decoration: underline; margin-top: 10px;">A. The Donee Certifies that:
+            </div>
+            <ol style="margin-bottom: 10px;">
+                <li>It is a public or a nonprofit educational or health Institution or organization, exempt from
+                    taxation under
+                    section 501 of the Internal Revenue Code of 1954 within the meaning of section 203(1) of the Federal
+                    Property and Administrative Services Act of 1949 as amended and the regulations of the Administrator
+                    of
+                    General Services.</li>
+                <li>If a Public Agency, the property is needed and will be used by the recipient for carrying out or
+                    promoting
+                    for the residents of a given political area one or more public purposes or if a nonprofit tax exempt
+                    institution or organization the property is needed for and will be used by the recipient for
+                    educational or
+                    public health purposes and including research for such purpose. The property is not being acquired
+                    for any
+                    other use or purpose or for sale or other distribution, or for permanent use outside the State,
+                    except with
+                    prior approval of the State Agency.</li>
+                <li>If it is Service Educational Activities (SEA) with formal designation under the Department of
+                    Defense, SBA 8
+                    (a) Business Development Program or Veteran Owned Small Business meeting the requirements under the
+                    Small
+                    Business Administration, the property is needed and will be used by the recipient.</li>
+                <li>Funds are available to pay all costs and charges incident to donation.</li>
+                <li>This transaction shall be subject to the nondiscrimination regulations governing the donation of
+                    surplus property
+                    issued under Title VI of the Civil Rights Act of 1964 and Title VI Section 606 of the Federal
+                    Property and
+                    Administrative Services Act of 1949 as amended and section 504 of the Rehabilitation Act of 1973 as
+                    amended.</li>
+            </ol>
+            <div style="font-weight: bold; text-decoration: underline; margin-top: 10px;">B. The Donee Agrees to the
+                following
+                Federal Conditions</div>
+            <ol style="margin-bottom: 10px;">
+                <li>All Items of property shall be placed in use for the purpose for which acquired within one year of
+                    receipt and
+                    shall be continued in use for such purposes for one year from the date the property was placed in
+                    use. In the
+                    event the property is not so placed in use or continued in use the Donee shall immediately notify
+                    the State
+                    Agency and at the Donee's expense return such property to the State Agency or otherwise make the
+                    property
+                    available for transfer or other disposal by the State Agency, provided the property is still usable
+                    as
+                    determined by the State Agency.</li>
+                <li>Such special handling or use limitations as are imposed by General Services Administration (GSA) on
+                    any item(s)
+                    of property listed hereon.</li>
+                <li>In the event the property is not so used or handled as required by (B)(1) and (2) title and right to
+                    the
+                    possession of such property shall at the option of GSA revert to the United States of America and
+                    upon demand
+                    the Donee shall release such property to such person as GSA or its designee shall direct.</li>
+            </ol>
+            <div style="font-weight: bold; text-decoration: underline; margin-top: 10px;">C. The Donee agrees to the
+                following
+                conditions imposed by the State Agency, applicable to items with a unit acquisition cost of $5,000 or
+                more and
+                passenger motor vehicles, regardless of acquisition cost, except vessels 50 feet or more in length and
+                aircraft:
+            </div>
+            <ol style="margin-bottom: 10px;">
+                <li>The property shall be used only for the purpose(s) for which acquired and for no other purpose(s).
+                </li>
+                <li>There shall be a period of restriction which will expire after such property has been used for the
+                    purpose(s) for
+                    which acquired for a period of 18 months from the date the property is placed in use, except for
+                    such items of major
+                    equipment listed hereon, on which the State Agency designates a further period of restriction.</li>
+                <li>In the event the property is not used as required by (C) (1) and (2) and Federal restrictions (B)
+                    (1) and (2) have
+                    expired then title and right to the possession of such property shall at the option of the State
+                    Agency, revert to
+                    the State of Florida and the Donee shall release such property to such person as the State Agency
+                    shall direct.</li>
+            </ol>
+            <div style="font-weight: bold; text-decoration: underline; margin-top: 10px;">D. The Donee agrees to the
+                following
+                terms, reservations and restrictions</div>
+            <ol style="margin-bottom: 10px;">
+                <li>From the date it receives the property listed hereon and through the period(s) of time the
+                    conditions imposed by
+                    (B) and (C) above remain in effect the Donee shall not sell, trade, lease, lend, bail, cannibalize,
+                    encumber, or
+                    otherwise dispose of such property, or remove it permanently, for use outside the State, without the
+                    prior
+                    approval of GSA under (B) or the State Agency under (C). The proceeds from any sale, trade, lease,
+                    loan,
+                    bailment, encumbrance or other disposal of the property, when such action is authorized by GSA or by
+                    the State
+                    Agency, shall be remitted promptly by the Donee to GSA or the State Agency, as the case may be.</li>
+                <li>In the event any of the property listed hereon is sold, traded, leased, loaned, bailed,
+                    cannibalized, encumbered
+                    or otherwise disposed of by the Donee from the date it receives the property through the period(s)
+                    of time the
+                    conditions imposed by (B) and (C) remain in effect without the prior approval of GSA or the State
+                    Agency, the
+                    Donee, at the option of GSA or the State Agency shall pay to GSA or the State Agency, as the case
+                    may be, the
+                    proceeds of the disposal or the fair market value or the fair rental value of the property at the
+                    time of such
+                    disposal, as determined by GSA or the State Agency.</li>
+                <li>If at any time, from the date it receives the property through the period(s) of time the conditions
+                    imposed by
+                    (B) and (C) remain in effect any of the property listed hereon is no longer suitable, usable or
+                    further needed
+                    by the Donee for the purpose(s) for which acquired the Donee shall promptly notify the State Agency
+                    and shall,
+                    as directed by the State Agency, return the property to the State Agency, release the property to
+                    another Donee
+                    or another State Agency, a department or agency of the United States, sell or otherwise dispose of
+                    the property.
+                    The proceeds from any sale shall be remitted promptly by the Donee to the State Agency.</li>
+                <li>The Donee shall make reports to the State Agency on the use, condition, and location of the property
+                    listed
+                    hereon, and on the other pertinent matters as may be required from time to time by the State Agency.
+                </li>
+                <li>At the option of the State Agency, the Donee may abrogate the conditions set forth in (C) and the
+                    terms,
+                    reservations and restrictions pertinent thereto in (D) by payment of an amount as determined by the
+                    State
+                    Agency.</li>
+            </ol>
+            <div style="font-weight: bold; text-decoration: underline; margin-top: 10px;">E. The Donee agrees to the
+                following
+                conditions, applicable to all items of property listed hereon:</div>
+            <ol style="margin-bottom: 10px;">
+                <li>The property acquired by the Donee is on an "as is", "where is" basis, without warranty of any kind.
+                </li>
+                <li>Where a Donee carries insurance against damage to or loss of property due to fire or other hazards
+                    and where
+                    loss of or damage to donated property with unexpired terms, conditions, reservations or
+                    restrictions, occurs,
+                    the State Agency will be entitled to reimbursement from the Donee out of the insurance proceeds, of
+                    an amount
+                    equal to the unamortized portion of the fair value of the damaged or destroyed donated items.</li>
+            </ol>
+            <div style="font-weight: bold; text-decoration: underline; margin-top: 10px;">F. Terms and Conditions
+                applicable to the
+                donation of Aircraft and vessels (50 ft or more in length) having an acquisition cost of $5,000 or more,
+                regardless
+                of the purpose for which acquired:</div>
+            <ol style="margin-bottom: 10px;">
+                <li>The donation shall be subject to the terms, conditions, reservations and restrictions set forth in
+                    the
+                    Conditional Transfer Document executed by the authorized Donee representative.</li>
+                <li>The Donee Certifies to assurance of Compliance with GSA Regulations under Title VI of the Civil
+                    Rights Act of
+                    1964 Section 606 of Title VI of the Federal Property and Administrative Services Act of 1949 as
+                    amended, section
+                    504 of the Rehabilitation Act of 1973 as amended. Title IX of the Education Amendments of 1972 an
+                    amended and
+                    Section 303 of the Age Discrimination Act of 1975.</li>
+            </ol>
+            <div style="font-weight: bold; text-decoration: underline; margin-top: 10px;">G. Use Restriction.</div>
+            <ol style="margin-bottom: 10px;">
+                <li>Surplus Property with an acquisition under $5,000.00 (except vehicles) must be in use for 12 months.
+                </li>
+                <li>Surplus Property with an acquisition of $5,000.00 or more must be in use for 18 months.</li>
+                <li>Vehicles or Surplus Property that must be titled regardless of acquisition cost must be in use for
+                    18 months.</li>
+                <li>Aircraft and Vessels regardless of acquisition cost must be in use for 60 months.</li>
+            </ol>
+        </div>
+    </div>
+</body>
+
+</html>

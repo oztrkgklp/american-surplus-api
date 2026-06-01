@@ -1,0 +1,32 @@
+<div style="padding:30px 20px; color:#333;">
+    <h2>Hello <%= name %>,</h2>
+      <p>
+        The following properties were cancelled on <strong><%= cancellationDate %></strong>
+        for request <strong><%= tcn %></strong>
+        <% if (typeof canceledByName !== 'undefined' && canceledByName) { %>
+          by <strong><%= canceledByName %></strong>
+        <% } %>
+        <% if (typeof organizationName !== 'undefined' && organizationName) { %>
+          from <strong><%= organizationName %></strong>
+        <% } %>
+        <% if (typeof doneeAccountNumber !== 'undefined' && doneeAccountNumber) { %>
+          (Donee Account: <%= doneeAccountNumber %>)
+        <% } %>:
+      </p>
+      <ul>
+        <% propertyCancelList.forEach(property => { %>
+          <li>
+            <strong><%= property.property_name %></strong> (ICN: <%= property.ICN %>) has been cancelled.
+            <% if (property.is_late_cancelled) { %>
+              This is a late cancellation.
+            <% } %>
+            <div>
+              Reason: <%= property.cancellation_reason || cancellationReason %>
+            </div>
+          </li>
+        <% }); %>
+      </ul>
+      
+      <p>Please review the details and take any necessary actions.</p>
+    <p>Thanks,<br />American Surplus</p>
+  </div>

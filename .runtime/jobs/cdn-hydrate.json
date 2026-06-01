@@ -1,0 +1,15 @@
+{
+  "status": "running",
+  "step": "cdn-hydrate",
+  "pid": 14589,
+  "startedAt": "2026-06-01T07:22:38.151Z",
+  "endedAt": null,
+  "exitCode": null,
+  "parentJob": "seed-local",
+  "logPath": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/.runtime/logs/cdn-hydrate.log",
+  "job": "cdn-hydrate",
+  "updatedAt": "2026-06-01T07:22:38.152Z",
+  "reason": "Skipped because pipeline failed at step 'cdn-hydrate'.",
+  "queuedAt": "2026-06-01T07:22:38.149Z",
+  "script": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/scripts/cdn-hydrate.cjs"
+}

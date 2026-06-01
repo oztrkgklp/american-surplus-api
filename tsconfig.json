@@ -1,0 +1,19 @@
+{
+  "ts-node": {
+    "require": ["tsconfig-paths/register"],
+  },
+  "compilerOptions": {
+    "typeRoots": ["./src/authn/types", "./src/qbo/types", "./node_modules/@types"],
+    "target": "es6",
+    "module": "commonjs",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"],
+  "extends": "./tsconfig.paths.json"
+}

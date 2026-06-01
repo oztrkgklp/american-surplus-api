@@ -1,0 +1,51 @@
+================================================================================
+FLORIDA STATE AGENCY FOR SURPLUS PROPERTY (SASP)
+DONATION REPORT
+From 2025-07-01 to 2025-09-30
+================================================================================
+
+PUBLIC AGENCY DONATIONS:
+-----------------------
+  Conservation                                       $        0.00
+  Economic Development                               $        0.00
+  Education                                          $   13,175.36
+  Parks & Recreation                                 $        0.00
+  Public Health                                      $        0.00
+  Public Safety                                      $        0.00
+  Assistance to the Homeless                         $        0.00
+  Assistance to Impoverished Families or Individuals $        0.00
+  Assistance to Older Americans                      $        0.00
+  Public Purpose(s)                                  $        0.00
+  Other                                              $        0.00
+  Total Public Agency Donations                      $   13,175.36
+
+NON-PROFIT DONATIONS:
+--------------------
+  Education                                          $  273,562.74
+  Public Health                                      $        0.00
+  Assistance to the Homeless                         $    2,091.85
+  Assistance to Impoverished Families or Individuals $        0.00
+  Assistance to Older Americans                      $        0.00
+  Total Non-Profit Donations                         $  275,654.58
+
+MISCELLANEOUS DONATIONS/TRANSFERS:
+---------------------------------
+  Transfers to Other SASPs                           $        0.00
+  Return to Federal Agency                           $        0.00
+  Transfers for SASP Use                             $        0.00
+  SBA 8(a) Donations                                 $    2,953.93
+  SEA Donations                                      $        0.00
+  SBA VOSB Donations                                 $4,704,871.10
+  Donations to Veteran Organizations                 $        0.00
+  SBA Disaster (RISE Act) Donations                  $        0.00
+  Total Miscellaneous Donations/Transfers            $4,707,825.03
+
+OTHER DISPOSAL METHODS:
+----------------------
+  Sold                                               $        0.00
+  Abandoned or Destroyed                             $        0.00
+  Other/ Negative Adjustments (explain in comments)  $        0.00
+  Total Other Disposal Methods                       $        0.00
+
+GRAND TOTAL                                           $4,996,654.98
+================================================================================

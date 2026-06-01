@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>LOAR with Logistics Packet</title>
+    <style>
+        @page {
+            size: a4;
+            margin: 0.5in;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            color: #000;
+            background: white;
+            margin: 0;
+            padding: 0;
+            line-height: 1.2;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* LOAR Styles */
+        .loar-container {
+            border: 2px solid #000;
+            /* padding: 20px; */
+            /* margin: 20px; */
+            box-sizing: border-box;
+            min-height: calc(100vh - 40px);
+        }
+
+        .loar-header {
+            margin-bottom: 15px;
+            border: 1px solid #000;
+        }
+
+        .loar-header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            padding-inline: 15px;
+            border-bottom: 1px solid #000;
+            min-height: 60px;
+        }
+
+        .loar-header-title {
+            flex: 1;
+            text-align: center;
+            border-right: 1px solid #000;
+            padding-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loar-header-title h1 {
+            margin: 0;
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #000;
+            line-height: 1.0;
+            font-family: Arial, sans-serif;
+            white-space: nowrap;
+        }
+
+        .loar-header .metadata {
+            flex: 0 0 auto;
+            font-size: 8pt;
+            text-align: right;
+            line-height: 1.2;
+            margin-left: 15px;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .loar-header-bottom-row {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .loar-header .disclaimer {
+            font-size: 9pt;
+            font-style: normal;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+        }
+
+        .loar-date-field {
+            margin-bottom: 8px;
+            margin-left: 20px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .loar-date-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .loar-date-label {
+            display: inline-block;
+            width: 60px;
+        }
+
+        .loar-date-input {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            min-width: 150px;
+            height: 18px;
+            margin-left: -20px;
+        }
+
+        .loar-dod-text {
+            margin-left: 150px;
+            font-size: 12px;
+            line-height: 1.3;
+            max-width: 300px;
+            margin-top: 10px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .decorative-bar {
+            height: 2px;
+            background-color: #000;
+            margin: 8px 0;
+        }
+
+        .loar-recipient-section {
+            display: flex;
+            margin-bottom: 8px;
+            margin-top: 15px;
+            margin-left: 20px;
+            margin-right: 20px;
+            gap: 15px;
+        }
+
+        .loar-to-section,
+        .loar-from-section {
+            flex: 1;
+            position: relative;
+        }
+
+        .loar-to-label,
+        .loar-from-label {
+            position: absolute;
+            top: -15px;
+            left: 0;
+            font-size: 9pt;
+            text-transform: uppercase;
+            z-index: 1;
+            background-color: white;
+            padding: 0 5px;
+        }
+
+        .loar-to-box,
+        .loar-from-box {
+            border: 1px solid #000;
+            padding: 10px;
+            min-height: 80px;
+            background-color: white;
+            position: relative;
+        }
+
+        .loar-to-box .content,
+        .loar-from-box .content {
+            font-size: 8pt;
+            line-height: 1.3;
+            margin: 0;
+        }
+
+        .loar-authorization-section {
+            margin-bottom: 15px;
+            margin-left: 20px;
+            margin-right: 20px;
+            margin-top: 20px;
+            font-size: 10pt;
+            line-height: 1.3;
+        }
+
+        .loar-authorization-section .signature-line {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            min-width: 120px;
+            height: 16px;
+            margin: 0 3px;
+            vertical-align: bottom;
+        }
+
+        .loar-authorization-section .loar-transportation-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 0;
+            flex-wrap: wrap;
+        }
+
+        .loar-authorization-section .loar-transportation-line {
+            border-bottom: 1px solid #000;
+            width: 300px;
+            min-height: 20px;
+            flex-shrink: 0;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            padding: 2px 0;
+        }
+
+        .loar-authorization-section .loar-transportation-label {
+            font-weight: normal;
+            font-size: 8pt;
+            margin: 10px 0 0 0;
+            display: block;
+            text-align: left;
+            clear: both;
+            width: 100%;
+        }
+
+        .loar-authorization-section .loar-continuation-text {
+            display: inline;
+            vertical-align: bottom;
+            margin-left: 5px;
+            flex-shrink: 1;
+        }
+
+        .loar-property-list-section {
+            margin-bottom: 8px;
+        }
+
+        .loar-property-list-header {
+            background-color: #d0d0d0;
+            padding: 6px 8px;
+            font-weight: bold;
+            font-size: 9pt;
+            border-bottom: 1px solid #000;
+            text-align: center;
+        }
+
+        .loar-property-list-content {
+            padding: 8px;
+            min-height: 80px;
+        }
+
+        .loar-property-item {
+            margin-left: 10px;
+            margin-top: 10px;
+            margin-bottom: 4px;
+            font-size: 8pt;
+            line-height: 1.2;
+        }
+
+        .loar-workload-list {
+            margin-top: 50px;
+            text-align: right;
+        }
+
+        .loar-workload-label {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+
+        .loar-workload-input {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            min-width: 150px;
+            height: 16px;
+            margin-left: 8px;
+        }
+
+        .loar-horizontal-bar {
+            border-top: 1px solid #000;
+            margin: 15px 0;
+        }
+
+        .loar-instructions-section {
+            margin-left: 20px;
+            margin-bottom: 8px;
+            font-size: 8pt;
+        }
+
+        .loar-instructions-section .highlight {
+            font-size: 9pt;
+            color: #000;
+        }
+
+        .loar-email-line {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            width: 250px;
+            height: 16px;
+            margin: 0 3px;
+            vertical-align: bottom;
+        }
+
+        .loar-phone-line {
+            border-bottom: 1px solid #000;
+            display: inline-block;
+            width: 150px;
+            height: 16px;
+            margin: 0 3px;
+            vertical-align: bottom;
+        }
+
+        .loar-email-continuation,
+        .loar-phone-continuation {
+            display: inline;
+            vertical-align: bottom;
+        }
+
+        .loar-important-notes {
+            margin-bottom: 8px;
+            margin-left: 20px;
+            font-size: 9pt;
+            line-height: 0.5;
+            margin-top: 50px;
+        }
+
+        .loar-footer {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 7pt;
+            margin-top: 10px;
+        }
+
+        .loar-transportation-section {
+            margin-bottom: 15px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .loar-transportation-label {
+            font-weight: bold;
+            margin-bottom: 3px;
+            margin-top: -5px !important;
+            margin-left: 5px !important;
+            text-align: center;
+        }
+
+        .loar-transportation-line {
+            border-bottom: 1px solid #000;
+            margin: 5px 0;
+            min-height: 20px;
+            text-align: center;
+        }
+
+        .loar-signature-section {
+            margin-bottom: 15px;
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        .loar-signature-line {
+            border-bottom: 1px solid #000;
+            margin: 5px 0;
+            min-height: 20px;
+            margin-top: 10px !important;
+            position: relative;
+            display: inline-block;
+            width: 300px;
+            vertical-align: bottom;
+        }
+
+        .loar-signature-label {
+            margin-right: 10px;
+            margin-top: -10px !important;
+        }
+
+        .loar-gsa-transfer-order {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .loar-gsa-transfer-label {
+            margin-right: 8px;
+        }
+
+
+        /* Logistics Packet Styles */
+        .logistics-header-top {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .logistics-fl-logo {
+            width: 180px;
+            height: 80px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .logistics-agency-info {
+            flex: 1;
+        }
+
+        .logistics-agency-info .agency-name {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin: 0;
+            line-height: 1.1;
+        }
+
+        .logistics-agency-info .address {
+            font-size: 10pt;
+            color: #333;
+            margin: 2px 0;
+            line-height: 1.2;
+        }
+
+        .logistics-header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border: 1px solid #999;
+            table-layout: fixed;
+        }
+
+        .logistics-title-cell {
+            border: 1px solid #999;
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
+            background-color: #fff;
+            width: 60%;
+        }
+
+        .logistics-title-cell h2 {
+            margin: 0;
+            font-size: 16pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: center;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .logistics-document-label {
+            border: 1px solid #999;
+            padding: 8px 12px;
+            background-color: #f0f0f0;
+            font-weight: bold;
+            font-size: 10pt;
+            text-align: center;
+            color: #333;
+            width: 20%;
+        }
+
+        .logistics-document-value {
+            border: 1px solid #999;
+            padding: 8px 12px;
+            background-color: #fff;
+            font-weight: bold;
+            font-size: 11pt;
+            text-align: center;
+            color: #333;
+            width: 20%;
+        }
+
+        .logistics-info-section {
+            margin-bottom: 25px;
+        }
+
+        .logistics-info-section h3 {
+            margin: 0 0 15px 0;
+            font-size: 12pt;
+            font-weight: bold;
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-left: 4px solid #1e3a8a;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .logistics-order-details-table {
+            width: 100%;
+            margin-top: -15px;
+            border-collapse: collapse;
+            font-size: 9pt;
+            table-layout: fixed;
+        }
+
+        .logistics-order-details-table td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            font-size: 9pt;
+        }
+
+        .logistics-order-label {
+            background-color: #f0f0f0;
+            font-weight: bold;
+        }
+
+        .logistics-order-value {
+            background-color: #fff;
+        }
+
+        /* Column widths - 4 equal columns */
+        .logistics-order-details-table td:nth-child(1),
+        .logistics-order-details-table td:nth-child(2),
+        .logistics-order-details-table td:nth-child(3),
+        .logistics-order-details-table td:nth-child(4) {
+            width: 25%;
+        }
+
+        .logistics-contact-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 9pt;
+            table-layout: fixed;
+        }
+
+        .logistics-contact-table td {
+            border: none;
+            padding: 6px 8px;
+            font-size: 9pt;
+            vertical-align: top;
+        }
+
+        .logistics-contact-label {
+            width: 35%;
+            font-weight: bold;
+        }
+
+        .logistics-contact-details {
+            width: 45%;
+        }
+
+        .logistics-contact-phone {
+            width: 20%;
+            text-align: right;
+        }
+
+        .logistics-property-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 9pt;
+            table-layout: fixed;
+        }
+
+        .logistics-property-table th,
+        .logistics-property-table td {
+            border: 1px solid #000;
+            padding: 6px 4px;
+            text-align: left;
+            font-size: 8pt;
+            vertical-align: top;
+        }
+
+        .logistics-property-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .logistics-property-table .number-cell {
+            text-align: right;
+        }
+
+        .logistics-property-table .description-cell {
+            word-wrap: break-word;
+        }
+
+        /* Column width specifications */
+        .logistics-property-table th:nth-child(1),
+        .logistics-property-table td:nth-child(1) {
+            width: 4%;
+        }
+
+        .logistics-property-table th:nth-child(2),
+        .logistics-property-table td:nth-child(2) {
+            width: 18%;
+        }
+
+        .logistics-property-table th:nth-child(3),
+        .logistics-property-table td:nth-child(3) {
+            width: 22%;
+        }
+
+        .logistics-property-table th:nth-child(4),
+        .logistics-property-table td:nth-child(4) {
+            width: 6%;
+        }
+
+        .logistics-property-table th:nth-child(5),
+        .logistics-property-table td:nth-child(5) {
+            width: 6%;
+        }
+
+        .logistics-property-table th:nth-child(6),
+        .logistics-property-table td:nth-child(6) {
+            width: 22%;
+        }
+
+        .logistics-property-table th:nth-child(7),
+        .logistics-property-table td:nth-child(7) {
+            width: 22%;
+        }
+
+        .logistics-signature-section {
+            margin-top: 30px;
+            page-break-inside: avoid;
+            margin-right: 50px;
+        }
+
+        .logistics-signature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .logistics-signature-box {
+            border: 1px solid #000;
+            padding: 20px;
+            text-align: center;
+            min-height: 100px;
+        }
+
+        .logistics-signature-line {
+            border-bottom: 1px solid #000;
+            margin: 20px 0 5px 0;
+            min-height: 30px;
+        }
+
+        .logistics-signature-label {
+            font-size: 9pt;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .logistics-document-included {
+            background-color: #e8f5e8;
+            border: 1px solid #4caf50;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .logistics-document-not-included {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .logistics-footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 8pt;
+            color: #666;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+
+        .logistics-signature-signed {
+            background-color: #d4edda;
+        }
+
+        .logistics-checkbox-group {
+            margin: 10px 0;
+        }
+
+        .logistics-checkbox-item {
+            margin-right: 20px;
+            display: inline-block;
+        }
+
+        .logistics-checkbox-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 0.5px solid gray;
+        }
+
+        .logistics-checkbox-cell {
+            border-right: 0.5px solid gray;
+            border-bottom: 0.5px solid gray;
+            padding: 8px;
+            text-align: left;
+            width: 25%;
+        }
+
+        .logistics-checkbox-cell:last-child {
+            border-right: none;
+        }
+
+        .logistics-checkbox-table tr:last-child .logistics-checkbox-cell {
+            border-bottom: none;
+        }
+
+        .logistics-checkbox-table .logistics-checkbox-item {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            font-size: 9pt;
+            font-weight: bold;
+            margin-right: 0;
+        }
+
+        .logistics-checkbox-table .logistics-checkbox-item input {
+            margin-right: 5px;
+        }
+
+        .logistics-pickup-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 0.5px solid gray;
+            border-top: none;
+        }
+
+        .logistics-pickup-cell {
+            border-right: 0.5px solid gray;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .logistics-pickup-cell:last-child {
+            border-right: none;
+        }
+
+        .logistics-pickup-cell-value {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Page 1: Logistics Packet Document -->
+    <div class="logistics-header">
+        <div class="logistics-header-top">
+            <img src="<%= logisticsData.DMSLogo %>" alt="FL DMS SASP Logo" class="logistics-fl-logo" />
+            <div class="logistics-agency-info">
+                <div class="logistics-agency-info agency-name">BUREAU OF FEDERAL PROPERTY ASSISTANCE</div>
+                <div class="logistics-agency-info address">
+                    STATE AGENCY FOR SURPLUS PROPERTY-SASP<br>
+                    4050 ESPLANADE WAY<br>
+                    TALLAHASSEE, FLORIDA 32399
+                </div>
+            </div>
+        </div>
+        <table class="logistics-header-table">
+            <tr>
+                <td class="logistics-title-cell" rowspan="2">
+                    <h2>BILL OF LADING<br>SHIPPING AUTHORIZATION</h2>
+                </td>
+                <td class="logistics-document-label">TCN</td>
+                <td class="logistics-document-label">MANIFEST NUMBER</td>
+            </tr>
+            <tr>
+                <td class="logistics-document-value">
+                    <%= logisticsData.request.tcn || '' %>
+                </td>
+                <td class="logistics-document-value">
+                    <%= logisticsData.logisticsPacket?.packet_no || '' %>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Logistics Recipient Information -->
+    <div class="logistics-info-section">
+        <div style="margin-bottom: 15px;">
+            <strong>
+                <%= logisticsData.request.doneeAccount?.organization?.name || '' %>
+            </strong><br>
+            <%= logisticsData.request.doneeAccount?.organization?.mailing_address_line1 || '' %><br>
+                <% if (logisticsData.request.doneeAccount?.organization?.mailing_address_line2) { %>
+                    <%= logisticsData.request.doneeAccount?.organization?.mailing_address_line2 %><br>
+                        <% } %>
+                            <%= logisticsData.request.doneeAccount?.organization?.mailing_city || '' %>, <%=
+                                    logisticsData.request.doneeAccount?.organization?.mailing_state || '' %>
+                                    <%= logisticsData.request.doneeAccount?.organization?.mailing_zip || '' %>
+        </div>
+        <!-- Contact Information -->
+        <div style="margin-bottom: 15px;">
+            <% if (logisticsData.request.doneeAccount?.organization?.contact_first_name ||
+                logisticsData.request.doneeAccount?.organization?.contact_last_name) { %>
+                <strong>Contact:</strong>
+                <%= logisticsData.request.doneeAccount?.organization?.contact_first_name || '' %>
+                    <%= logisticsData.request.doneeAccount?.organization?.contact_last_name || '' %>
+                        <% if (logisticsData.request.doneeAccount?.organization?.contact_title) { %>
+                            (<%= logisticsData.request.doneeAccount?.organization?.contact_title %>)
+                                <% } %>
+                                    <br>
+                                    <% } %>
+        
+                                        <% if (logisticsData.request.doneeAccount?.organization?.contact_phone) { %>
+                                            <strong>Phone:</strong>
+                                            <%= logisticsData.request.doneeAccount?.organization?.contact_phone %>
+                                                <% if (logisticsData.request.doneeAccount?.organization?.contact_extension) { %>
+                                                    ext. <%= logisticsData.request.doneeAccount?.organization?.contact_extension
+                                                        %>
+                                                        <% } %>
+                                                            <br>
+                                                            <% } %>
+        
+                                                                <% if
+                                                                    (logisticsData.request.doneeAccount?.organization?.contact_email)
+                                                                    { %>
+                                                                    <strong>Email:</strong>
+                                                                    <%= logisticsData.request.doneeAccount?.organization?.contact_email
+                                                                        %><br>
+                                                                        <% } %>
+        
+                                                                            <% if
+                                                                                (logisticsData.request.doneeAccount?.organization?.contact_fax_number)
+                                                                                { %>
+                                                                                <strong>Fax:</strong>
+                                                                                <%= logisticsData.request.doneeAccount?.organization?.contact_fax_number
+                                                                                    %><br>
+                                                                                    <% } %>
+        </div>
+        <div>
+            <strong>ORDERED BY:</strong>
+        </div>
+    </div>
+    <!-- Logistics Order Details -->
+    <div class="logistics-info-section">
+        <table class="logistics-order-details-table">
+            <tbody>
+                <tr>
+                    <td class="logistics-order-label"><strong>DONEE ACCOUNT NUMBER</strong></td>
+                    <td class="logistics-order-label"><strong>DATE</strong></td>
+                    <td class="logistics-order-label"><strong>TYPE</strong></td>
+                    <td class="logistics-order-label"><strong>DOCUMENT NUMBER</strong></td>
+                </tr>
+                <tr>
+                    <td class="logistics-order-value">
+                        <%= logisticsData.request.doneeAccount?.name || '' %>
+                    </td>
+                    <td class="logistics-order-value">
+                        <%= new Date(logisticsData.generatedDate).toLocaleDateString('en-US') %>
+                    </td>
+                    <td class="logistics-order-value">From Federal Agencies</td>
+                    <td class="logistics-order-value">
+                        <%= logisticsData.request.tcn || '' %>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- Logistics Authorization Statement -->
+    <div class="logistics-info-section">
+        <div style="margin-bottom: 20px;">
+            THIS FORM IS YOUR AUTHORIZATION TO OBTAIN THE PROPERTY WHICH <u>MUST</u> BE PICKED UP WITHIN 15 CALENDAR
+            DAYS.
+        </div>
+    </div>
+    <!-- Logistics Contact and Property Information -->
+    <div class="logistics-info-section">
+        <table class="logistics-contact-table">
+            <tbody>
+                <tr>
+                    <td style='white-space: nowrap;'>PLEASE CONTACT IMMEDIATELY</td>
+                    <td class="logistics-contact-details">
+                        <strong>
+                            <%= logisticsData.properties?.[0]?.property_custodian_name || '' %>
+                        </strong><br>
+                        FEDERAL REPRESENTATIVE
+                    </td>
+                    <td class="logistics-contact-phone">
+                        <strong>
+                            <%= logisticsData.properties?.[0]?.property_custodian_phone || '' %>
+                        </strong><br>
+                        TELEPHONE
+                    </td>
+                </tr>
+                <tr>
+                    <td>PROPERTY LOCATED AT:</td>
+                    <td class="logistics-contact-details">
+                        <strong>
+                            <%= logisticsData.properties?.[0]?.property_location_address_one || '' %>
+                        </strong><br>
+                        <%= logisticsData.properties?.[0]?.property_location_address_two || '' %><br>
+                            <%= logisticsData.properties?.[0]?.property_location_city || '' %>, <%=
+                                    logisticsData.properties?.[0]?.property_location_region_state || '' %>
+                                    <%= logisticsData.properties?.[0]?.property_location_postal_code || '' %><br>
+                    </td>
+                    <td class="logistics-contact-phone"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Logistics Pickup or Shipping Instructions -->
+    <div class="logistics-info-section">
+        <div style="margin-bottom: 15px;">
+            PICKUP OR SHIPPING INSTRUCTIONS:<br>
+            PLEASE SIGN A COPY AFTER ALL ITEMS ARE PICKED UP, AND IF ANY ITEMS ARE NOT PICKED UP, RETURN TO AMERICAN SURPLUS AND CANCEL THE ICN AND PROVIDE A JUSTFICATION FOR THE CANCELLATION.  YOU WILL BE SUBJECT TO A NON-REFUNDABLE SERVICE CHARGE.  ONCE THE ITEM(S) ARE PICKED UP, EMAIL ozturkgokalp000@gmail.com STATING THAT THE ITEM(S) HAVE BEEN TRANSFERRED AND ARE READY FOR AN INVOICE.
+        </div>
+        <div style="margin-bottom: 15px;">
+            FEDERAL AGENCY: IF THE PROPERTY IS NOT PICKED UP, PLEASE CONTACT THE FLORIDA SASP AT ozturkgokalp000@gmail.com OR ozturkgokalp000@gmail.com.  PROVIDE THE TCN, ICN, AND QUANTITY.
+        </div>
+    </div>
+
+    <div class="logistics-info-section">
+        <% if (logisticsData.properties.length> 0) { %>
+            <table class="logistics-property-table">
+                <thead>
+                    <tr>
+                        <th>LINE NO.</th>
+                        <th>GSA REPORT NO. OR H/A IDENT. NO.</th>
+                        <th>DESCRIPTION</th>
+                        <th>SF QTY</th>
+                        <th>REM. QTY</th>
+                        <th colspan="2">GOVT. ACQUISITION COST VALUE</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>SF UNIT</th>
+                        <th>SF TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% logisticsData.properties.forEach(function(property, index) { %>
+                        <tr>
+                            <td class="logistics-property-table number-cell">
+                                <%= index + 1 %>
+                            </td>
+                            <td>
+                                <%= property.property_control_number %><br>
+                                    NSN: <%= property.property_control_number %>
+                            </td>
+                            <td class="logistics-property-table description-cell">
+                                <%= property.property_name || property.property_description || '' %><br>
+                                    REQ NO. <%= property.property_control_number %>
+                            </td>
+                            <td class="logistics-property-table number-cell">
+                                <%= property.property_allocated_quantity %> EA
+                            </td>
+                            <td class="logistics-property-table number-cell">
+                                <%= property.property_allocated_quantity %> EA
+                            </td>
+                            <td class="logistics-property-table number-cell">
+                                <% if (property.property_original_value) { %>
+                                    $<%= Number(property.property_original_value).toFixed(2) %>
+                                        <% } else { %>
+                                            <% } %>
+                            </td>
+                            <td class="logistics-property-table number-cell">
+                                <% if (property.property_original_value) { %>
+                                    $<%= (Number(property.property_original_value) *
+                                        property.property_allocated_quantity).toFixed(2) %>
+                                        <% } else { %>
+                                            <% } %>
+                            </td>
+                        </tr>
+                        <% }); %>
+                            <tr style="font-weight: bold; background-color: #f8f9fa;">
+                                <td colspan="5">TOTAL GOVT. VALUE OF PROPERTY LISTED:</td>
+                                <td></td>
+                                <td class="logistics-property-table number-cell">
+                                    <% const totalValue=logisticsData.properties.reduce((sum, property)=> {
+                                        return sum + (property.property_original_value || 0) *
+                                        property.property_allocated_quantity;
+                                        }, 0);
+                                        %>
+                                        <%= totalValue.toFixed(2) %>
+                                </td>
+                            </tr>
+                            <tr style="font-weight: bold; background-color: #f8f9fa;">
+                                <td colspan="5">TOTAL SERVICE CHARGE ASSESSMENT FOR ITEMS:</td>
+                                <td></td>
+                                <td class="logistics-property-table number-cell">TBD</td>
+                            </tr>
+                </tbody>
+            </table>
+            <% } %>
+    </div>
+
+    <!-- Logistics Signature Section -->
+    <div class="logistics-signature-section">
+        <div>
+            <h4
+                style="text-align: center; border: 0.5px solid black; border-radius: 1px; height: 30px; align-items: center; padding-top: 10px;">
+                DONEES MUST
+                COMPLETE AND SIGN
+                THIS
+                SECTION</h4>
+            <div style="margin-top: -20px;">
+                <div
+                    style="border-inline: 0.5px solid black; border-radius: 1px; padding-top: 5px; padding-bottom: 5px;">
+                    <strong style="margin-left: 10px; padding-left: 10px;">Property Will Be Used For The Purposes
+                        Checked:</strong>
+                </div>
+                <table class="logistics-checkbox-table">
+                    <tbody>
+                        <tr>
+                            <td class="logistics-checkbox-cell">
+                                <label class="logistics-checkbox-item">
+                                    <input type="checkbox" disabled <% if (logisticsData.purposes?.education) {
+                                        %>checked<% } %>
+                                        >
+                                        Education
+                                </label>
+                            </td>
+                            <td class="logistics-checkbox-cell">
+                                <label class="logistics-checkbox-item">
+                                    <input type="checkbox" disabled <% if (logisticsData.purposes?.publicSafety) {
+                                        %>checked<% } %>>
+                                        Public Safety
+                                </label>
+                            </td>
+                            <td class="logistics-checkbox-cell">
+                                <label class="logistics-checkbox-item">
+                                    <input type="checkbox" disabled <% if (logisticsData.purposes?.economicDevelopment)
+                                        { %>checked<% } %>>
+                                        Economic Development
+                                </label>
+                            </td>
+                            <td class="logistics-checkbox-cell">
+                                <label class="logistics-checkbox-item">
+                                    <input type="checkbox" disabled <% if (logisticsData.purposes?.other) { %>checked<%
+                                        } %>>
+                                        Other
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="logistics-checkbox-cell">
+                                <label class="logistics-checkbox-item">
+                                    <input type="checkbox" disabled <% if (logisticsData.purposes?.health) { %>checked<%
+                                        } %>>
+                                        Health
+                                </label>
+                            </td>
+                            <td class="logistics-checkbox-cell">
+                                <label class="logistics-checkbox-item">
+                                    <input type="checkbox" disabled <% if (logisticsData.purposes?.conservation) {
+                                        %>checked<% } %>>
+                                        Conservation
+                                </label>
+                            </td>
+                            <td class="logistics-checkbox-cell">
+                                <label class="logistics-checkbox-item">
+                                    <input type="checkbox" disabled <% if (logisticsData.purposes?.parksAndRecreation) {
+                                        %>checked<% } %>>
+                                        Parks and Recreation
+                                </label>
+                            </td>
+                            <td class="logistics-checkbox-cell">
+                                <label class="logistics-checkbox-item">
+                                    <input type="checkbox" disabled <% if (logisticsData.purposes?.homeless) { %>checked
+                                    <% } %>>
+                                        Homeless
+                                </label>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <table class="logistics-pickup-table">
+                    <tbody>
+                        <tr>
+                            <td class="logistics-pickup-cell">
+                                <div class="logistics-signature-label">DATE PICKED UP</div>
+                                <div class="logistics-pickup-cell-value">
+                                    <%= new
+                                        Date(logisticsData.properties?.[0]?.property_pickup_date).toLocaleDateString('en-US')
+                                        %>
+                                </div>
+                            </td>
+                            <td class="logistics-pickup-cell">
+                                <div style="margin-bottom: 5px;">
+                                    <strong>BY:</strong> <input type="checkbox" disabled <% if
+                                        (logisticsData.isLocalGovernment) { %>checked<% } %>> Local Government
+                                </div>
+                                <div>
+                                    <strong>OR:</strong> <input type="checkbox" disabled <% if
+                                        (logisticsData.isNonprofit) { %>checked<% } %>> Non-Profit Agency
+                                </div>
+                            </td>
+                            <td class="logistics-pickup-cell">
+                                <div>
+                                    <input type="checkbox" disabled <% if (logisticsData.isStateGovernment) { %>checked
+                                    <% } %>> State Government
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="logistics-signature-grid">
+            <div
+                class="logistics-signature-box <% if (logisticsData.saspSignedBy?.name) { %>logistics-signature-signed<% } %>">
+                <div class="logistics-signature-line">
+                    <% if (logisticsData.saspSignedBy?.name) { %>
+                        <span style="color: #155724; font-weight: bold;">✓ SIGNED BY <%=
+                                logisticsData.saspSignedBy?.name %>
+                        </span><br>
+                        <small>Date: <%= new
+                                Date(logisticsData.logisticsPacket.sasp_signed_at).toLocaleDateString('en-US') %>
+                        </small>
+                        <% } %>
+                </div>
+                <div class="logistics-signature-label">SIGNATURE OF STATE AGENCY</div>
+            </div>
+            <div
+                class="logistics-signature-box <% if (logisticsData.organizationSignedBy?.name) { %>logistics-signature-signed<% } %>">
+                <div class="logistics-signature-line">
+                    <% if (logisticsData.organizationSignedBy?.name) { %>
+                        <span style="color: #155724; font-weight: bold;">✓ SIGNED BY <%=
+                                logisticsData.organizationSignedBy?.name %>
+                        </span><br>
+                        <small>Date: <%= new
+                                Date(logisticsData.logisticsPacket.organization_signed_at).toLocaleDateString('en-US')
+                                %></small>
+                        <% } %>
+                </div>
+                <div class="logistics-signature-label">SIGNATURE OF AUTHORIZED REPRESENTATIVE</div>
+            </div>
+        </div>
+
+        <div
+            style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 5px;">
+            <strong>TERMS AND CONDITIONS:</strong><br>
+            The State and Federal conditions regarding any property obtained through this Agency are readily understood,
+            and
+            must be adhered to under the law. These certifications, covenants and agreements constitute a legal Contact
+            between
+            the donee organization and the Federal and State governments. By signing this document I do hereby accept
+            the
+            property listed hereon, and commit the Donee to the certifications, terms, and conditions as listed on your
+            original
+            eligibility application.
+        </div>
+    </div>
+
+    <div class="logistics-footer">
+        <div style="text-align: center; margin-top: 30px; font-size: 8pt; color: #666;">
+            Date Printed: <%= new Date(logisticsData.generatedDate).toLocaleDateString('en-US') %> at <%= new
+                    Date(logisticsData.generatedDate).toLocaleTimeString('en-US') %> by <%=
+                        logisticsData.authenticatedUser?.name || 'American Surplus' %>
+        </div>
+    </div>
+
+    <!-- Page Break -->
+    <div class="page-break"></div>
+
+    <!-- Page 2: LOAR Document -->
+    <div class="loar-container">
+        <div class="loar-header">
+            <div class="loar-header-top-row">
+                <div class="loar-header-title">
+                    <h1>LETTER OF AUTHORIZATION TO REMOVE</h1>
+                </div>
+                <div class="metadata">
+                    Prescribed by: DoD M 4160.21<br>
+                    Sponsor: Disposition Services
+                </div>
+            </div>
+            <div class="loar-header-bottom-row">
+                <div class="disclaimer">This form may not be modified or altered. Other versions are not authorized.
+                </div>
+            </div>
+        </div>
+
+        <!-- LOAR Date Field -->
+        <div class="loar-date-field">
+            <div class="loar-date-section">
+                <span class="loar-date-label">Date:</span>
+                <div class="loar-date-input">
+                    <% if (loarData.signatureDate) { %>
+                        <%= new Date(loarData.signatureDate).toLocaleDateString('en-US') %>
+                            <% } %>
+                </div>
+            </div>
+            <div class="loar-dod-text">
+                *For DOD releases, the individual signing must be listed on the LOA in the Centralized File*
+            </div>
+        </div>
+        <br>
+        <!-- LOAR Recipient and Sender Information -->
+        <div class="loar-recipient-section">
+            <div class="loar-to-section">
+                <div class="loar-to-label">To: DLA DISPOSITION SERVICES</div>
+                <div class="loar-to-box">
+                    <div class="content">
+                        <% if (loarData.propertyDetails && loarData.propertyDetails.length > 0) { %>
+                            <% const sampleProperty = loarData.propertyDetails[0]; %>
+                            <% if (sampleProperty.data && sampleProperty.data.propertyLocation) { %>
+                                <% const address = sampleProperty.data.propertyLocation; %>
+                                <%= address.line1 || '' %><br>
+                                <% if (address.line2) { %>
+                                    <%= address.line2 %><br>
+                                <% } %>
+                                <% if (address.line3) { %>
+                                    <%= address.line3 %><br>
+                                <% } %>
+                                <%= address.city || '' %>, <%= address.stateCode || '' %> <%= address.zip || '' %>
+                            <% } %>
+                        <% } %>
+                        <br><br>
+                        <% if (loarData.propertyDetails && loarData.propertyDetails.length > 0) { %>
+                            <% const sampleProperty = loarData.propertyDetails[0]; %>
+                            <% if (sampleProperty.data && sampleProperty.data.propertyPOC) { %>
+                                <% const poc = sampleProperty.data.propertyPOC; %>
+                                Phone: <%= poc.phone || '' %>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+
+            <div class="loar-from-section">
+                <div class="loar-from-label">From:</div>
+                <div class="loar-from-box">
+                    <div class="content">
+                        FOR DONEE: <%= loarData.request.doneeAccount?.name || '' %> - <%=
+                                loarData.request.doneeAccount?.organization?.name || '' %><br>
+                                <%= loarData.organizationMailingAddress?.address_line1 || '' %><br>
+                                    <%= loarData.organizationMailingAddress?.city || '' %>, <%=
+                                            loarData.organizationMailingAddress?.state || '' %>
+                                            <%= loarData.organizationMailingAddress?.postal_code || '' %>
+                                                <br><br>
+                                                POC: <%= loarData.headAuthorizedUser?.name %>
+                                                        <br>
+                                                        PHONE: <%=
+                                                            loarData.headAuthorizedOrganizationUser?.phoneNumber %>
+                                                            <br>
+                                                            EMAIL: <%= loarData.headAuthorizedUser?.email %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOAR Authorization Statement -->
+        <div class="loar-authorization-section">
+            <p>
+                I, <span class="loar-signature-line">
+                    <%= loarData.saspUser?.name || '' %>
+                </span>
+                the undersigned, hereby authorize <br> <br>
+            <div class="loar-transportation-row">
+                <span class="loar-transportation-line">
+                    <% if (loarData.shippingName) { %>
+                        <%= loarData.shippingName %>
+                            <% } %>
+                </span>
+                <span class="loar-continuation-text">to remove the requisitions listed below on my
+                    behalf.</span>
+            </div>
+            <div class="loar-transportation-label">PRINT NAME OF PERSON OR TRANSPORTATION COMPANY</div>
+            </p>
+        </div>
+        <!-- LOAR Signature Section -->
+        <div class="loar-signature-section">
+            <span class="loar-signature-label">SIGNATURE OF CUSTOMER:</span>
+            <span class="loar-signature-line">
+                <% if (loarData.signatureDate && loarData.saspUser) { %>
+                    <div style="display: flex; flex-direction: row; align-items: flex-end;">
+                        <div
+                            style="display: flex; flex-direction: column; text-align: left; align-content: end; align-items: end; white-space: nowrap;">
+                            <%= loarData.saspUser.name %>
+                        </div>
+                        <div style="display: flex; flex-direction: column; margin-left: 30px;">
+                            <small style="white-space: nowrap;">Digitally signed by <%= loarData.saspUser.name %><br>
+                                    <% if (loarData.request.doneeAccount?.state?.stateName) { %>
+                                        <%= loarData.request.doneeAccount.state.stateName %> SASP<br>
+                                            <% } %>
+                                                Date: <%= new Date(loarData.signatureDate).toLocaleString('en-US', {
+                                                    year: 'numeric' , month: '2-digit' , day: '2-digit' ,
+                                                    hour: '2-digit' , minute: '2-digit' , second: '2-digit' ,
+                                                    timeZoneName: 'short' }) %>
+                            </small>
+                        </div>
+                    </div>
+                    <% } %>
+            </span>
+        </div>
+        <!-- LOAR Property List Section -->
+        <div class="loar-property-list-section">
+            <div class="loar-property-list-header">Extent of Authority: To remove the property listed below.</div>
+            <div class="loar-property-list-content">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; font-size: 9pt;">
+                    <div style="flex: 1;">
+                        LIST ITEM(S) by Requisition/DTID Number/Work Load List*:
+                    </div>
+                    <div class="loar-gsa-transfer-order"
+                        style="flex: 1; text-align: right; justify-content: flex-end; display: flex; font-size: 9pt;">
+                        <span class="loar-gsa-transfer-label">GSA Transfer Order # if applicable:</span>
+                        <span class="loar-gsa-transfer-value"><%= loarData.request.tcn || '' %></span>
+                    </div>
+                </div>
+                <% if (loarData.properties && loarData.properties.length> 0) { %>
+                    <% loarData.properties.forEach(function(property, index) { %>
+                        <% const propertyDetail=loarData.propertyDetails?.find(pd=> pd.data.itemControlNumber ===
+                            property.property_control_number); %>
+                            <div class="loar-property-item">
+                                <%= property.property_control_number %>
+                                    <%= property.property_name || property.property_description || '' %>
+                                        <% if (propertyDetail?.data?.fscCode) { %>
+                                            FSC: <%= propertyDetail.data.fscCode %>, U QTY <%=
+                                                    property.property_allocated_quantity %>
+                                                    <% } else { %>
+                                                        QTY <%= property.property_allocated_quantity %>
+                                                            <% } %>
+                            </div>
+                            <% }); %>
+                                <% } %>
+                                    <div class="loar-workload-list">
+                                        *Work Load List Number: _____________________________
+                                    </div>
+            </div>
+        </div>
+        <!-- LOAR Horizontal Bar -->
+        <div class="loar-horizontal-bar"></div>
+        <!-- LOAR Instructions Section -->
+        <div class="loar-instructions-section">
+            <% if (loarData.propertyDetails && loarData.propertyDetails.length > 0) { %>
+                <% const sampleProperty = loarData.propertyDetails[0]; %>
+                <% if (sampleProperty.data && sampleProperty.data.propertyPOC) { %>
+                    <% const poc = sampleProperty.data.propertyPOC; %>
+                    <p>
+                        PLEASE COMPLETE THIS FORM AND EMAIL OR FAX IT TO
+                        <span class="loar-email-line">
+                            <%= poc.email %>
+                        </span>
+                    </p>
+                    <% if (poc.fax) { %>
+                    <p>
+                        FAX: <%= poc.fax %>
+                    </p>
+                    <% } %>
+                    <p>
+                        PLEASE CALL <span class="loar-phone-line">
+                            <%= poc.phone %>
+                        </span>
+                        <span class="loar-phone-continuation">TO SCHEDULE YOUR PICK-UP.</span>
+                    </p>
+                <% } %>
+            <% } %>
+        </div>
+
+        <!-- LOAR Important Notes -->
+        <div class="loar-important-notes">
+            <p>REMEMBER TO BRING ADEQUATE ID WHEN YOU COME</p>
+            <p>THANK YOU</p>
+            <p>******************************************************************</p>
+            <p>PICK-UP OF REQUISITIONS IS REQUIRED WITHIN 14 DAYS OF THE 1348 DOCUMENT FOR DOD, LESO,</p>
+            <p>FIRE FIGHTER, AND CFL CUSTOMERS AND 21 DAYS FOR ALL DONATION AND TRANSFER CUSTOMERS.</p>
+            <p>ALL REQUISITIONS WILL BE CANCELLED AFTER THIS DATE.</p>
+        </div>
+    </div>
+    <!-- LOAR Footer -->
+    <div class="loar-footer">
+        <div>DLA FORM 2516, AUG 2017</div>
+        <div style="font-weight: normal;">Page 1 of 1</div>
+        <div>PDF (DLA)</div>
+    </div>
+
+</body>
+
+</html>
