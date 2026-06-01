@@ -41,6 +41,18 @@ export const sendEmail = async ({
   emailId?: string;
   queueJobId?: string | number;
 }): Promise<void> => {
+  if (!config.mailer.enabled) {
+    logInfo({
+      event: 'graph_send_skipped',
+      reason: 'emails_disabled',
+      recipient: Array.isArray(to) ? to.join(',') : to,
+      subject,
+      emailId,
+      queueJobId,
+    });
+    return;
+  }
+
   let graphStart = 0;
 
   try {

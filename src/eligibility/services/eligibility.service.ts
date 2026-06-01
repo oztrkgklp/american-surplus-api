@@ -1616,7 +1616,7 @@ export class EligibilityService {
 
         await application.update(updates, { transaction });
         // Create QBO customer if not already exists
-        if (!doneeAccount.qbo_ref_id && name && envvars.app.environment !== 'local_development') {
+        if (!doneeAccount.qbo_ref_id && name && envvars.app.environment !== 'local_development' && envvars.quickbooks.syncEnabled) {
             const qboCustomerService = new QBOCustomerService();
             const hydratedOrg = await OrganizationUserService.getOrganizationById(
                 application.organization_id,

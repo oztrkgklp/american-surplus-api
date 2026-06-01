@@ -2,6 +2,7 @@ import { Queue, Worker, Job, JobsOptions } from 'bullmq';
 import { bullmqConnection } from '@/utils/bullmq/connection';
 import { getLogger } from '@/utils/logger';
 import { QBOWebhookService, WebhookPayload } from '@/qbo/services/qbo-webhook.service';
+import envvars from '@/config/envvars';
 
 const logger = getLogger('qboWebhookQueue');
 const QBO_WEBHOOK_QUEUE_NAME = 'qboWebhookQueue';
@@ -29,6 +30,11 @@ export const qboWebhookQueue = new Queue(QBO_WEBHOOK_QUEUE_NAME, {
 const worker = new Worker(
     QBO_WEBHOOK_QUEUE_NAME,
     async (job: Job<QboInvoiceWebhookJobData>) => {
+        if (!envvars.quickbooks.syncEnabled) {
+            logger.info(`Skipping QBO webhook job ${job.name}:${job.id} because QBO sync is disabled`);
+            return;
+        }
+
         logger.info(`Processing QBO webhook job ${job.name}:${job.id}`);
         const webhookService = new QBOWebhookService();
         webhookService.authenticateWebhook(job.data.rawBody, job.data.intuitSignature);

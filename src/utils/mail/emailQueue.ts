@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { sendEmail } from "./mailerHelper";
 import { getLogger } from '@/utils/logger';
 import { bullmqConnection } from "@/utils/bullmq/connection";
+import config from "@/config/envvars";
 
 const logger = getLogger('emailQueue');
 const EMAIL_QUEUE_NAME = "emailQueue";
@@ -39,6 +40,16 @@ export const emailQueue = new Queue(EMAIL_QUEUE_NAME, {
 
 const originalEmailQueueAdd = emailQueue.add.bind(emailQueue);
 (emailQueue as any).add = async (jobName: string, data: any, opts?: JobsOptions) => {
+    if (!config.mailer.enabled) {
+        logInfo({
+            event: "email_queue_enqueue_skipped",
+            reason: "emails_disabled",
+            template: data?.template || data?.templateName || jobName,
+            recipient: getRecipient(data?.to),
+        });
+        return { id: "emails-disabled" } as any;
+    }
+
     const now = Date.now();
     const emailId = data?.emailId || randomUUID();
     const requestId = data?.requestId ?? null;
@@ -86,6 +97,16 @@ const originalEmailQueueAdd = emailQueue.add.bind(emailQueue);
 const worker = new Worker(
     EMAIL_QUEUE_NAME,
     async (job: Job) => {
+        if (!config.mailer.enabled) {
+            logInfo({
+                event: "email_job_skipped",
+                reason: "emails_disabled",
+                queueJobId: job.id,
+                emailId: job.data?.emailId,
+            });
+            return;
+        }
+
         const queuedAt = Number(job.data?.queued_at || Date.now());
         const dequeuedAt = Date.now();
         const emailId = job.data?.emailId;

@@ -14,6 +14,7 @@ import InvoiceActivityLog, { InvoiceActivity } from "../models/InvoiceActivityLo
 import { withTransaction } from "@/utils/transactionalOperation";
 import { OrganizationAddressService, type OrganizationMailingCompatFields } from "@/organization/services/organizationAddress.service";
 import { OrganizationUserService } from "@/organization/services/organizationUser";
+import envvars from "@/config/envvars";
 
 const logger = getLogger("InvoiceFileProcessingService");
 
@@ -279,6 +280,11 @@ export class InvoiceFileProcessingService {
     }
 
     static async checkAndUpdatePaymentStatus() {
+        if (!envvars.quickbooks.syncEnabled) {
+            logger.info('Skipping QBO payment status sync because QBO_SYNC_ENABLED is false');
+            return;
+        }
+
         const qboInvoiceService = new QBOInvoiceService();
 
         const invoices = await Invoice.findAll({

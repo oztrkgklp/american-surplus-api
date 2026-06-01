@@ -223,6 +223,17 @@ export class AuthService {
                 throw new AppError(401, 'Invalid MFA code', 'Invalid MFA code or backup code');
             }
         } else {
+            if (!envvars.auth.nonMfaVerificationEnabled) {
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email,
+                    isSasp: user.typeId === UserType.SASP,
+                    requiresMFA: false,
+                    requiresVerification: false,
+                };
+            }
+
             if (!verificationCode) {
                 await this.sendVerificationCode(user);
                 return {

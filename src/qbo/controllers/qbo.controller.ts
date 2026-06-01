@@ -7,8 +7,15 @@ import { QBOWebhookService } from '@/qbo/services/qbo-webhook.service';
 import { addInvoiceWebhookJob } from '@/qbo/job/qboWebhook.job';
 import { getLogger } from '@/utils/logger';
 import { error } from 'console';
+import config from '@/config/envvars';
 
 const logger = getLogger('QBOAuthController');
+
+const assertQboSyncEnabled = (): void => {
+    if (!config.quickbooks.syncEnabled) {
+        throw new AppError(503, 'QuickBooks sync is currently disabled');
+    }
+};
 
 /**
  * Get the OAuth authorization URL for user to authorize QB access
@@ -16,6 +23,8 @@ const logger = getLogger('QBOAuthController');
  */
 export const getAuthorizationUrl = async (req: Request, res: Response): Promise<void> => {
     try {
+        assertQboSyncEnabled();
+
         const authService = new QBOAuthService();
         const authUrl = authService.getAuthorizationUrl({
             scope: ['com.intuit.quickbooks.accounting'],
@@ -42,6 +51,8 @@ export const getAuthorizationUrl = async (req: Request, res: Response): Promise<
  */
 export const handleAuthCallback = async (req: Request, res: Response): Promise<void> => {
     try {
+        assertQboSyncEnabled();
+
         const { code, state, realmId } = req.query;
         const user = req.user; // Set by authenticateQBOAdmin middleware
 
@@ -103,6 +114,8 @@ export const handleAuthCallback = async (req: Request, res: Response): Promise<v
  */
 export const checkTokenValidity = async (req: Request, res: Response): Promise<void> => {
     try {
+        assertQboSyncEnabled();
+
         logger.info('Checking token validity');
         const token = await QBOTokenService.getToken();
 
@@ -140,6 +153,8 @@ export const checkTokenValidity = async (req: Request, res: Response): Promise<v
  */
 export const refreshToken = async (req: Request, res: Response): Promise<void> => {
     try {
+        assertQboSyncEnabled();
+
         logger.info('Refreshing access token');
 
         // Load token from database
@@ -170,6 +185,8 @@ export const refreshToken = async (req: Request, res: Response): Promise<void> =
  */
 export const revokeConnection = async (req: Request, res: Response): Promise<void> => {
     try {
+        assertQboSyncEnabled();
+
         logger.info('Revoking QBO connection');
 
         const authService = new QBOAuthService();
@@ -197,6 +214,8 @@ export const revokeConnection = async (req: Request, res: Response): Promise<voi
  */
 export const getTokenStatus = async (req: Request, res: Response): Promise<void> => {
     try {
+        assertQboSyncEnabled();
+
         logger.info('Getting token status');
         const token = await QBOTokenService.getToken();
 
@@ -225,6 +244,12 @@ export const getTokenStatus = async (req: Request, res: Response): Promise<void>
 };
 
 export const handleInvoiceWebhookPing = async (req: Request, res: Response) => {
+    if (!config.quickbooks.syncEnabled) {
+        logger.info('Webhook ping received while QBO sync is disabled');
+        res.status(200).send('QBO sync disabled');
+        return;
+    }
+
     logger.info('Webhook Get Arrived');
     res.status(200).send('OK');
 }
@@ -239,6 +264,12 @@ export const handleInvoiceWebhookPing = async (req: Request, res: Response) => {
  * - Verifies intuit-signature header matches computed payload hash
  */
 export const handleInvoiceWebhook = async (req: Request, res: Response): Promise<void> => {
+    if (!config.quickbooks.syncEnabled) {
+        logger.info('Webhook received while QBO sync is disabled');
+        res.status(200).send('QBO sync disabled');
+        return;
+    }
+
     logger.info('Webhook initialized');
 
     try {

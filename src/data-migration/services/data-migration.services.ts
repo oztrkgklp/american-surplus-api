@@ -50,6 +50,7 @@ import {
 import { OrganizationAddressService } from '@/organization/services/organizationAddress.service';
 import { OrganizationUserService } from '@/organization/services/organizationUser';
 import { OrganizationAddressType } from '@/enums/organizationAddressType.enum';
+import envvars from '@/config/envvars';
 const logger = getLogger('DataMigration');
 
 interface MigrationError {
@@ -1914,6 +1915,11 @@ export class DataMigrationService {
             statusMessage: 'Processing started.'
         };
 
+        if (!envvars.quickbooks.syncEnabled) {
+            report.statusMessage = 'Skipped: QuickBooks sync is disabled';
+            return report;
+        }
+
         const qboCustomerService = new QBOCustomerService();
 
         try {
@@ -2039,6 +2045,11 @@ export class DataMigrationService {
             failures: [],
             statusMessage: 'Processing started.'
         };
+
+        if (!envvars.quickbooks.syncEnabled) {
+            report.statusMessage = 'Skipped: QuickBooks sync is disabled';
+            return report;
+        }
 
         const qboInvoiceService = new QBOInvoiceService();
 

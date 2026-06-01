@@ -19,6 +19,7 @@ import Invoice, { InvoiceStatus } from '@/documents/models/Invoice.entity';
 import InvoiceActivityLog, { InvoiceActivity } from '@/documents/models/InvoiceActivityLogs.entity';
 import { QBOInvoiceService } from '@/qbo/invoice/invoice.service';
 import OrganizationAddress from '@/organization/models/OrganizationAddress';
+import envvars from '@/config/envvars';
 
 export class RequestService {
    /**
@@ -541,7 +542,7 @@ export class RequestService {
       if (overdueMs > fiveDaysMs) throw new AppError(400, 'Invoice is beyond cancel window (more than 5 days past due)');
 
       // Cancel on QBO side if invoice has a QBO reference ID
-      if (invoice.qbo_ref_id) {
+      if (invoice.qbo_ref_id && envvars.quickbooks.syncEnabled) {
          try {
             const qboInvoiceService = new QBOInvoiceService();
             // First, get the invoice from QBO to retrieve payment state and sync token

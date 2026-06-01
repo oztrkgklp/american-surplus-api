@@ -47,6 +47,7 @@ export default {
         defaultExpiration: parseInt(process.env.REDIS_DEFAULT_EXPIRATION || "300"),
     },
     auth: {
+        nonMfaVerificationEnabled: process.env.NON_MFA_VERIFICATION_ENABLED === "true",
         jwt: {
             accessSecret: process.env.JWT_ACCESS_SECRET,
             refreshSecret: process.env.REFRESH_TOKEN_SECRET,
@@ -63,6 +64,7 @@ export default {
         maxLimit: parseInt(process.env.MAX_PAGINATION_LIMIT || '100'),
     },
     mailer: {
+        enabled: process.env.EMAILS_ENABLED !== "false",
         mailbox: process.env.MAIL_BOX,
         whitelistedEmailDomains: process.env.WHITELISTED_EMAIL_DOMAINS?.split(',') || ['gmail.com', 'american-surplus.app'],
     },
@@ -106,6 +108,7 @@ export default {
         timeoutMs: parseInt(process.env.CDN_TIMEOUT_MS || "5000"),
     },
     quickbooks: {
+        syncEnabled: process.env.QBO_SYNC_ENABLED === "true",
         clientId: process.env.QUICKBOOKS_CLIENT_ID,
         clientSecret: process.env.QUICKBOOKS_CLIENT_SECRET,
         environment: (process.env.QUICKBOOKS_ENVIRONMENT || 'sandbox') as 'sandbox' | 'Production',

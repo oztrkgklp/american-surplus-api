@@ -248,7 +248,7 @@ export default class DocumentFactory {
     for (const inv of oldUnpaid) {
       try {
         // Cancel invoice on QBO side first if qbo_ref_id exists
-        if (inv.qbo_ref_id && envvars.app.environment !== 'local_development') {
+        if (inv.qbo_ref_id && envvars.app.environment !== 'local_development' && envvars.quickbooks.syncEnabled) {
           try {
             const qboInvoiceService = new QBOInvoiceService();
             const invoice = await qboInvoiceService.getById(inv.qbo_ref_id);
@@ -293,7 +293,7 @@ export default class DocumentFactory {
     }
 
     //qbo invoice genration
-    if (envvars.app.environment !== 'local_development') {
+    if (envvars.app.environment !== 'local_development' && envvars.quickbooks.syncEnabled) {
       try {
         const qboInvoiceService = new QBOInvoiceService();
         const invoiceData = QBOInvoiceService.generateInvoiceData(request, invoiceNo, invoiceDate, dueDate, assetInformation);
