@@ -779,52 +779,54 @@
             <strong>
                 <%= logisticsData.request.doneeAccount?.organization?.name || '' %>
             </strong><br>
-            <%= logisticsData.request.doneeAccount?.organization?.mailing_address_line1 || '' %><br>
-                <% if (logisticsData.request.doneeAccount?.organization?.mailing_address_line2) { %>
-                    <%= logisticsData.request.doneeAccount?.organization?.mailing_address_line2 %><br>
+            <%= logisticsData.organizationMailingAddress?.address_line1 || logisticsData.request.doneeAccount?.organization?.mailing_address_line1 || '' %><br>
+                <% if (logisticsData.organizationMailingAddress?.address_line2 || logisticsData.request.doneeAccount?.organization?.mailing_address_line2) { %>
+                    <%= logisticsData.organizationMailingAddress?.address_line2 || logisticsData.request.doneeAccount?.organization?.mailing_address_line2 %><br>
                         <% } %>
-                            <%= logisticsData.request.doneeAccount?.organization?.mailing_city || '' %>, <%=
-                                    logisticsData.request.doneeAccount?.organization?.mailing_state || '' %>
-                                    <%= logisticsData.request.doneeAccount?.organization?.mailing_zip || '' %>
+                            <%= logisticsData.organizationMailingAddress?.city || logisticsData.request.doneeAccount?.organization?.mailing_city || '' %>, <%=
+                                    logisticsData.organizationMailingAddress?.state || logisticsData.request.doneeAccount?.organization?.mailing_state || '' %>
+                                    <%= logisticsData.organizationMailingAddress?.postal_code || logisticsData.request.doneeAccount?.organization?.mailing_zip || '' %>
         </div>
         <!-- Contact Information -->
         <div style="margin-bottom: 15px;">
-            <% if (logisticsData.request.doneeAccount?.organization?.contact_first_name ||
-                logisticsData.request.doneeAccount?.organization?.contact_last_name) { %>
+            <% if (logisticsData.headAuthorizedUser?.name || logisticsData.request.doneeAccount?.organization?.contact_first_name || logisticsData.request.doneeAccount?.organization?.contact_last_name) { %>
                 <strong>Contact:</strong>
-                <%= logisticsData.request.doneeAccount?.organization?.contact_first_name || '' %>
+                <% if (logisticsData.headAuthorizedUser?.name) { %>
+                    <%= logisticsData.headAuthorizedUser.name %>
+                <% } else { %>
+                    <%= logisticsData.request.doneeAccount?.organization?.contact_first_name || '' %>
                     <%= logisticsData.request.doneeAccount?.organization?.contact_last_name || '' %>
-                        <% if (logisticsData.request.doneeAccount?.organization?.contact_title) { %>
-                            (<%= logisticsData.request.doneeAccount?.organization?.contact_title %>)
-                                <% } %>
-                                    <br>
-                                    <% } %>
-        
-                                        <% if (logisticsData.request.doneeAccount?.organization?.contact_phone) { %>
-                                            <strong>Phone:</strong>
-                                            <%= logisticsData.request.doneeAccount?.organization?.contact_phone %>
-                                                <% if (logisticsData.request.doneeAccount?.organization?.contact_extension) { %>
-                                                    ext. <%= logisticsData.request.doneeAccount?.organization?.contact_extension
-                                                        %>
-                                                        <% } %>
-                                                            <br>
-                                                            <% } %>
-        
-                                                                <% if
-                                                                    (logisticsData.request.doneeAccount?.organization?.contact_email)
-                                                                    { %>
-                                                                    <strong>Email:</strong>
-                                                                    <%= logisticsData.request.doneeAccount?.organization?.contact_email
-                                                                        %><br>
-                                                                        <% } %>
-        
-                                                                            <% if
-                                                                                (logisticsData.request.doneeAccount?.organization?.contact_fax_number)
-                                                                                { %>
-                                                                                <strong>Fax:</strong>
-                                                                                <%= logisticsData.request.doneeAccount?.organization?.contact_fax_number
-                                                                                    %><br>
-                                                                                    <% } %>
+                    <% if (logisticsData.request.doneeAccount?.organization?.contact_title) { %>
+                        (<%= logisticsData.request.doneeAccount?.organization?.contact_title %>)
+                    <% } %>
+                <% } %>
+                <br>
+            <% } %>
+
+            <% if (logisticsData.headAuthorizedOrganizationUser?.phoneNumber) { %>
+                <strong>Phone:</strong>
+                <%= logisticsData.headAuthorizedOrganizationUser.phoneNumber %><br>
+            <% } else if (logisticsData.request.doneeAccount?.organization?.contact_phone) { %>
+                <strong>Phone:</strong>
+                <%= logisticsData.request.doneeAccount?.organization?.contact_phone %>
+                <% if (logisticsData.request.doneeAccount?.organization?.contact_extension) { %>
+                    ext. <%= logisticsData.request.doneeAccount?.organization?.contact_extension %>
+                <% } %>
+                <br>
+            <% } %>
+
+            <% if (logisticsData.headAuthorizedUser?.email) { %>
+                <strong>Email:</strong>
+                <%= logisticsData.headAuthorizedUser.email %><br>
+            <% } else if (logisticsData.request.doneeAccount?.organization?.contact_email) { %>
+                <strong>Email:</strong>
+                <%= logisticsData.request.doneeAccount?.organization?.contact_email %><br>
+            <% } %>
+
+            <% if (logisticsData.request.doneeAccount?.organization?.contact_fax_number) { %>
+                <strong>Fax:</strong>
+                <%= logisticsData.request.doneeAccount?.organization?.contact_fax_number %><br>
+            <% } %>
         </div>
         <div>
             <strong>ORDERED BY:</strong>

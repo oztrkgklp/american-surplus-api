@@ -1113,7 +1113,7 @@ export default class DocumentFactory {
       where: { donee_account_id: request.doneeAccount?.id, is_head_representative: true },
     });
     const headAuthorizedUser = await User.findByPk(doneeHeadAuthorizedRepScope?.user_id);
-    const headAuthorizedOrganizationUser = await OrganizationUser.findOne({ where: { userId: headAuthorizedUser?.id }, transaction });
+    const headAuthorizedOrganizationUser = await OrganizationUser.findOne({ where: { userId: headAuthorizedUser?.id, organizationId: request.doneeAccount?.organization?.id }, transaction });
     const organizationMailingAddress = request.doneeAccount?.organization?.organization_addresses?.find(type => type.address_type == OrganizationAddressType.MAILING);
 
     // Prepare LOAR data
@@ -1134,6 +1134,7 @@ export default class DocumentFactory {
     // Prepare Logistics Packet data
     const logisticsData = {
       request,
+      headAuthorizedUser,
       headAuthorizedOrganizationUser,
       organizationMailingAddress,
       properties: allocatedProperties,
@@ -1273,7 +1274,7 @@ export default class DocumentFactory {
     // Get head authorized user for LOAR data
     const doneeHeadAuthorizedRepScope = await UserScope.findOne({ where: { donee_account_id: request.doneeAccount?.id, is_head_representative: true }, });
     const headAuthorizedUser = await User.findByPk(doneeHeadAuthorizedRepScope?.user_id);
-    const headAuthorizedOrganizationUser = await OrganizationUser.findOne({ where: { userId: headAuthorizedUser?.id }, transaction });
+    const headAuthorizedOrganizationUser = await OrganizationUser.findOne({ where: { userId: headAuthorizedUser?.id, organizationId: request.doneeAccount?.organization?.id }, transaction });
     const organizationMailingAddress = request.doneeAccount?.organization?.organization_addresses?.find(type => type.address_type == OrganizationAddressType.MAILING);
 
     // Prepare LOAR data (with signature for signed version)
@@ -1310,6 +1311,7 @@ export default class DocumentFactory {
       isStateGovernment:
         request.doneeAccount?.organization?.organization_type === "Public Agency" &&
         request.doneeAccount?.organization?.organization_sub_type === "State",
+      headAuthorizedUser,
       headAuthorizedOrganizationUser,
       organizationMailingAddress
     };
@@ -1621,7 +1623,7 @@ export default class DocumentFactory {
 
     if (!samplePropertyDetails) throw new AppError(400, 'Property details not found for the sample property');
 
-    const headAuthorizedOrganizationUser = await OrganizationUser.findOne({ where: { userId: headAuthorizedUser?.id }, transaction });
+    const headAuthorizedOrganizationUser = await OrganizationUser.findOne({ where: { userId: headAuthorizedUser?.id, organizationId: request.doneeAccount?.organization?.id }, transaction });
     const organizationMailingAddress = request.doneeAccount?.organization?.organization_addresses?.find(type => type.address_type == OrganizationAddressType.MAILING);
 
     const loarPayload = {
@@ -1692,8 +1694,18 @@ export default class DocumentFactory {
 
     if (!logisticsPacket) throw new AppError(404, 'Logistics packet entity not found');
 
+    const headAuthorizedOrganizationUser = await OrganizationUser.findOne({
+      where: { userId: headAuthorizedUser?.id, organizationId: request.doneeAccount?.organization?.id },
+      transaction,
+    });
+    const organizationMailingAddress = request.doneeAccount?.organization?.organization_addresses?.find(
+      (type) => type.address_type == OrganizationAddressType.MAILING
+    );
+
     const loarPayload = {
       request,
+      headAuthorizedOrganizationUser,
+      organizationMailingAddress,
       authenticatedUser: payload.authenticatedUser,
       properties: payload.properties,
       propertyDetails: payload.propertyDetails,
