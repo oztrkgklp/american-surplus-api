@@ -188,8 +188,10 @@ async function main() {
   });
 
   try {
+    await connection.query("SET SQL_SAFE_UPDATES = 0");
     await ensureSchema(connection);
     await applySeedSql(connection);
+    await connection.query("SET SQL_SAFE_UPDATES = 0");
     await seedStateAndUser(connection);
   } finally {
     await connection.end();
