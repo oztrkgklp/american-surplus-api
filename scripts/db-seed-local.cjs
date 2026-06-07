@@ -142,11 +142,11 @@ async function seedStateAndUser(connection) {
   }
 
   const [roleRows] = await connection.query(
-    "SELECT role_id FROM roles WHERE role_name = 'Admin (SASP)' ORDER BY role_id LIMIT 1"
+    "SELECT role_id FROM roles WHERE role_name = 'SASP Admin' ORDER BY role_id LIMIT 1"
   );
   const roleId = roleRows?.[0]?.role_id;
   if (!roleId) {
-    throw new Error("Missing 'Admin (SASP)' role required for local seed.");
+    throw new Error("Missing 'SASP Admin' role required for local seed.");
   }
 
   const [saspInsert] = await connection.query(

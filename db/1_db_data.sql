@@ -86,10 +86,13 @@ ON DUPLICATE KEY UPDATE
   `color` = VALUES(`color`);
 
 INSERT INTO `roles` (`role_id`, `role_name`, `createdAt`, `updatedAt`) VALUES
-  (1,'Admin (SASP)', NOW(), NOW()),
-  (2,'View Only (SASP)', NOW(), NOW()),
-  (3,'Admin (Donee)', NOW(), NOW()),
-  (4,'View Only (Donee)', NOW(), NOW())
+  (1,'SASP Admin', NOW(), NOW()),
+  (2,'SASP Property Manager', NOW(), NOW()),
+  (3,'SASP View-Only Staff', NOW(), NOW()),
+  (4,'Organization Admin', NOW(), NOW()),
+  (5,'Organization Manager', NOW(), NOW()),
+  (6,'Organization Member', NOW(), NOW()),
+  (7,'Donee Authorized Representative', NOW(), NOW())
 ON DUPLICATE KEY UPDATE
   `role_name` = VALUES(`role_name`),
   `updatedAt` = NOW();
@@ -101,11 +104,21 @@ INSERT INTO `scopes` (`scope_id`, `type`) VALUES
 ON DUPLICATE KEY UPDATE
   `type` = VALUES(`type`);
 
+DELETE FROM `role_permissions`;
+
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
-  (1,1),(1,2),(2,2),(1,3),(2,3),(1,4),(2,4),(1,5),(2,5),(1,6),(2,6),(1,7),(1,8),(1,9),(1,10),(1,11),(1,12),(1,13),
-  (3,14),(4,14),(3,15),(3,16),(3,17),(3,18),(3,20),(4,20),(3,21)
-ON DUPLICATE KEY UPDATE
-  `role_id` = VALUES(`role_id`);
+  (1,1),(1,2),(1,3),
+  (1,4),(2,4),(3,4),
+  (1,5),(2,5),(3,5),
+  (1,6),(2,6),(3,6),
+  (1,7),(2,7),(3,7),
+  (1,8),(2,8),
+  (1,9),(2,9),
+  (1,10),(2,10),
+  (1,11),(2,11),(3,11),(4,11),
+  (1,12),(2,12),
+  (1,13),
+  (4,14),(6,14),(4,15),(4,16),(4,17),(4,18),(4,20),(6,20),(4,21);
 
 INSERT INTO `supply_conditions` (`id`, `code`, `name`) VALUES
   (1,'A','A - Serviceable - Issuable without Qualification'),
