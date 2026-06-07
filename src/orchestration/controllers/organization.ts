@@ -300,14 +300,16 @@ export const createApplication = async (req: Request, res: Response): Promise<vo
         const { stateId, forms } = req.body;
         const doneeAccountDetails = { organizationId: organizationId, stateId: stateId, isActive: false } as DoneeAccount
 
-        await withTransaction(async (transaction) => {
+        const result = await withTransaction(async (transaction) => {
             const isMigratedDoneeAccount = await DoneeAccountService.getDoneeAccountByOrganizationAndState(organizationId, stateId, transaction);
             const doneeAccount = isMigratedDoneeAccount ?? await DoneeAccountService.createDoneeAccount(doneeAccountDetails, transaction)
             const application = await EligibilityService.createApplication({ organizationId, doneeAccountId: doneeAccount.id, stateId, createdBy: req.user }, transaction)
             const applicationForms = await EligibilityService.bulkCreateApplicationForms(application.id, forms, transaction)
             await DoneeAccountService.assignHeadAuthRoleDoneeAccount(doneeAccount.id, req.user.id, false, transaction);
-            sendSuccess(res, { doneeAccount, application, applicationForms });
-        })
+            return { doneeAccount, application, applicationForms };
+        });
+
+        sendSuccess(res, result);
     } catch (error) {
         sendError(req, res, error);
     }

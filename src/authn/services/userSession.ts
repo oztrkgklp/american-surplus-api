@@ -4,6 +4,7 @@ import { Transaction } from 'sequelize';
 import { AppError } from '@/utils/response/appError';
 import envvars from '@/config/envvars';
 import { parseDuration } from '@/utils/parseExpirationPeriod';
+import { database } from '@/utils/database';
 
 const REFRESH_GRACE_PERIOD_MS = 60 * 1000;
 
@@ -100,11 +101,17 @@ export class UserSessionService {
         // Step-3  Rotate the session and issue fresh tokens for continued activity.
         const newRefreshToken = generateRefreshToken(userId);
         const accessToken = generateAccessToken(userId, {});
-        await existingSession.update({ expiredAt: new Date() });
-        await UserSession.create({
-            userId,
-            refreshToken: newRefreshToken,
-            deviceInfo: existingSession.deviceInfo,
+
+        await database.sequelize.transaction(async (transaction) => {
+            await existingSession.update({ expiredAt: new Date() }, { transaction });
+            await UserSession.create(
+                {
+                    userId,
+                    refreshToken: newRefreshToken,
+                    deviceInfo: existingSession.deviceInfo,
+                },
+                { transaction },
+            );
         });
 
         return { accessToken, refreshToken: newRefreshToken, userId };

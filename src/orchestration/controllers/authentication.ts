@@ -68,34 +68,33 @@ export async function register(req: Request, res: Response): Promise<void> {
  */
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
-        await withTransaction(async (transaction) => {
-            // Authenticate the user
-            const user = await AuthService.loginUser(req);
-            const deviceInfo = getDeviceInfoString(req);
+        const deviceInfo = getDeviceInfoString(req);
+        const { user, accessToken, refreshToken } = await withTransaction(async (transaction) => {
+            const authenticatedUser = await AuthService.loginUser(req);
+            const session = await UserSessionService.createUserSession(
+                authenticatedUser.id,
+                authenticatedUser.email,
+                deviceInfo,
+                transaction,
+            );
+            return { user: authenticatedUser, ...session };
+        });
 
-            const { accessToken, refreshToken } = await UserSessionService.createUserSession(user.id, user.email, deviceInfo, transaction);
+        resetAccessTokenCookie(res, accessToken);
+        resetRefreshTokenCookie(res, refreshToken);
 
-            // Reset the access token cookie
-            resetAccessTokenCookie(res, accessToken);
-
-            // Set the refresh token cookie (httpOnly)
-            resetRefreshTokenCookie(res, refreshToken);
-
-            const { value, unit } = parseDuration(ACCESS_TOKEN_EXPIRATION);
-            const tokenExpirationDate = moment().add(value, unit).toDate().getTime();
-            // Send success response
-            sendSuccess(res, {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                isSasp: user.isSasp,
-                isMfaEnabled: user.requiresMFA,
-                requiresVerification: user.requiresVerification,
-                tokenExpirationDate,
-            });
+        const { value, unit } = parseDuration(ACCESS_TOKEN_EXPIRATION);
+        const tokenExpirationDate = moment().add(value, unit).toDate().getTime();
+        sendSuccess(res, {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            isSasp: user.isSasp,
+            isMfaEnabled: user.requiresMFA,
+            requiresVerification: user.requiresVerification,
+            tokenExpirationDate,
         });
     } catch (error) {
-        // Handle errors using centralized error handling
         sendError(req, res, error);
     }
 };
