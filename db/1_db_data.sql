@@ -24,31 +24,33 @@ ON DUPLICATE KEY UPDATE
   `code` = VALUES(`code`),
   `name` = VALUES(`name`);
 
+DELETE FROM `role_permissions`;
+
 INSERT INTO `permissions` (`id`, `name`, `identifier`, `description`) VALUES
-  (1,'Manage SASP settings','sasp_manage_settings','Manage settings and preferences for the SASP.'),
-  (2,'View all organizations','sasp_view_all_organizations','View all organizations registered in the system.'),
-  (3,'View all donee accounts','sasp_view_all_donee_accounts','View all accounts related to donee organizations.'),
-  (4,'View all SASP users','sasp_view_all_users','View all users within the SASP.'),
-  (5,'View all requests','sasp_view_all_requests','View all requests and properties within those requests.'),
-  (6,'View requests by property ICN','view_requests_by_icn','View all requests that have the same property ICN.'),
-  (7,'Add new SASP users','add_sasp_users','Add new users to the SASP.'),
-  (8,'Manage SASP users','sasp_manage_sasp_users','Manage SASP users, roles, and permissions.'),
-  (9,'Manage requests','sasp_manage_all_requests','Manage existing requests within the SASP.'),
-  (10,'Generate LOAR documents','sasp_generate_request_loar','Generate signed LOAR documents for requests.'),
-  (11,'Generate invoices','sasp_generate_request_invoice','Generate invoices for requests within the SASP.'),
-  (12,'Attach files to requests','attach_files_to_requests','Attach files and documents to requests.'),
-  (13,'Review and approve organizations','sasp_approve_organizations','Review and approve new organizations registered.'),
-  (14,'View organization info','view_organization_info','View organization-specific information.'),
-  (15,'Manage organization info','manage_organization_info','Manage organization-specific information.'),
-  (16,'Add new organization users','add_organization_users','Add new users within the organization.'),
-  (17,'Manage organization users','manage_organization_users','Manage users, roles, and permissions within the organization.'),
-  (18,'Create new requests','create_requests','Create new requests within the organization.'),
-  (20,'View organization requests','view_organization_requests','View all requests within the organization.'),
-  (21,'Manage organization donee accounts','manage_organization_donee_account','Manage organization donee accounts.')
+  (1,'Manage SASP Settings','sasp_manage_settings','description'),
+  (2,'Manage SASP Users','sasp_manage_sasp_users','description'),
+  (3,'Approve Organizations','sasp_approve_organizations','description'),
+  (4,'View All Organizations','sasp_view_all_organizations','only local sasp'),
+  (5,'View All Donee Accounts','sasp_view_all_donee_accounts','only local sasp'),
+  (6,'View All Users','sasp_view_all_users','only local sasp'),
+  (7,'View All Requests','sasp_view_all_requests','only local sasp'),
+  (8,'Manage All Requests','sasp_manage_all_requests','description'),
+  (9,'Generate Request LOAR','sasp_generate_request_loar','description'),
+  (10,'Generate Request Invoice','sasp_generate_request_invoice','description'),
+  (11,'View Organization Requests','view_organization_requests','description'),
+  (12,'View Organization Info','view_organization_info','description'),
+  (13,'Manage Organization Info','manage_organization_info','description'),
+  (14,'Manage Organization Users','manage_organization_users','description'),
+  (15,'Manage Donee Account','manage_donee_account','description'),
+  (17,'Manage Requests','manage_requests','description'),
+  (18,'Attach Files to Requests','attach_files_to_requests','description'),
+  (19,'Manage Organization Donee Accounts','manage_organization_donee_account','description')
 ON DUPLICATE KEY UPDATE
   `name` = VALUES(`name`),
   `identifier` = VALUES(`identifier`),
   `description` = VALUES(`description`);
+
+DELETE FROM `permissions` WHERE `id` NOT IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18,19);
 
 INSERT INTO `property_types` (`id`, `code`, `name`) VALUES
   (1,'NR','A - No Special Requirements'),
@@ -104,8 +106,6 @@ INSERT INTO `scopes` (`scope_id`, `type`) VALUES
 ON DUPLICATE KEY UPDATE
   `type` = VALUES(`type`);
 
-DELETE FROM `role_permissions`;
-
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
   (1,1),(1,2),(1,3),
   (1,4),(2,4),(3,4),
@@ -118,7 +118,7 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
   (1,11),(2,11),(3,11),(4,11),
   (1,12),(2,12),
   (1,13),
-  (4,14),(6,14),(4,15),(4,16),(4,17),(4,18),(4,20),(6,20),(4,21);
+  (4,12),(6,12),(4,13),(4,14),(4,15),(4,17),(5,17),(4,18),(4,19);
 
 INSERT INTO `supply_conditions` (`id`, `code`, `name`) VALUES
   (1,'A','A - Serviceable - Issuable without Qualification'),
