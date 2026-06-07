@@ -1,4 +1,5 @@
 SET FOREIGN_KEY_CHECKS = 0;
+SET SQL_SAFE_UPDATES = 0;
 
 INSERT INTO `demil_conditions` (`id`, `code`, `name`) VALUES
   (0,'A','A - Non-MLI/Non-CCLI'),
@@ -25,6 +26,7 @@ ON DUPLICATE KEY UPDATE
   `name` = VALUES(`name`);
 
 DELETE FROM `role_permissions`;
+DELETE FROM `permissions`;
 
 INSERT INTO `permissions` (`id`, `name`, `identifier`, `description`) VALUES
   (1,'Manage SASP Settings','sasp_manage_settings','description'),
@@ -49,8 +51,6 @@ ON DUPLICATE KEY UPDATE
   `name` = VALUES(`name`),
   `identifier` = VALUES(`identifier`),
   `description` = VALUES(`description`);
-
-DELETE FROM `permissions` WHERE `id` NOT IN (1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18,19);
 
 INSERT INTO `property_types` (`id`, `code`, `name`) VALUES
   (1,'NR','A - No Special Requirements'),
@@ -106,6 +106,17 @@ INSERT INTO `scopes` (`scope_id`, `type`) VALUES
 ON DUPLICATE KEY UPDATE
   `type` = VALUES(`type`);
 
+INSERT INTO `forms` (`id`, `name`, `identifier`, `scope`, `createdAt`, `updatedAt`) VALUES
+  (1,'Organizational Identity and Legal Profile','organizational_identity_legal_profile','Organization', NOW(), NOW()),
+  (2,'Public Purpose and Primary Program Activity','public_purpose_primary_program_activity','Organization', NOW(), NOW()),
+  (3,'Capacity Oversight and Program Funding','capacity_oversight_program_funding','Organization', NOW(), NOW()),
+  (4,'Designated Signers, Attestations, and Use Declarations','designated_signers_attestations','Organization', NOW(), NOW())
+ON DUPLICATE KEY UPDATE
+  `name` = VALUES(`name`),
+  `identifier` = VALUES(`identifier`),
+  `scope` = VALUES(`scope`),
+  `updatedAt` = NOW();
+
 INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
   (1,1),(1,2),(1,3),
   (1,4),(2,4),(3,4),
@@ -135,3 +146,4 @@ ON DUPLICATE KEY UPDATE
   `name` = VALUES(`name`);
 
 SET FOREIGN_KEY_CHECKS = 1;
+SET SQL_SAFE_UPDATES = 1;
