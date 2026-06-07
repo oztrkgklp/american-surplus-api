@@ -148,13 +148,14 @@ export const createDoneePropertyWithICN = async (req: Request, res: Response) =>
             const summaryData = await PropertyDataService.getPropertySummaryByICN(validatedBody.property_control_number);
             const surplusReleaseDate = summaryData?.surplusReleaseDate || diskPropertyData.data.surplusReleaseDate;
 
-            const unixTimeNow = new Date().getTime();
-            const endOfReleaseDay = new Date(new Date(surplusReleaseDate).setHours(23, 59, 59, 999)).getTime();
-            const isSurplusReleaseDatePassed = unixTimeNow > endOfReleaseDay;
+            // TODO: Uncomment this when we have a way to validate the surplus release date
+            // const unixTimeNow = new Date().getTime();
+            // const endOfReleaseDay = new Date(new Date(surplusReleaseDate).setHours(23, 59, 59, 999)).getTime();
+            // const isSurplusReleaseDatePassed = unixTimeNow > endOfReleaseDay;
 
-            if (isSurplusReleaseDatePassed) {
-                throw new AppError(400, 'The surplus release date has passed.');
-            }
+            // if (isSurplusReleaseDatePassed) {
+            //     throw new AppError(400, 'The surplus release date has passed.');
+            // }
 
             if (validatedBody.property_quantity > diskPropertyData.data.quantity) {
                 throw new AppError(400, 'The quantity requested exceeds the available quantity for this property.');
