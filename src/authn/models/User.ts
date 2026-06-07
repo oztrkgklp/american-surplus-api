@@ -10,6 +10,7 @@ interface UserAttributes {
     email: string;
     password: string;
     name: string;
+    avatar_url?: string | null;
     typeId: number;
     isActive: boolean;
     mfaEnabled: boolean;
@@ -45,6 +46,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
     public email!: string;
     public password!: string;
     public name!: string;
+    public avatar_url?: string | null;
     public typeId!: number;
     public isActive!: boolean;
     public mfaEnabled!: boolean;
@@ -87,6 +89,10 @@ User.init(
         },
         name: {
             type: DataTypes.STRING,
+        },
+        avatar_url: {
+            type: DataTypes.STRING(512),
+            allowNull: true,
         },
         typeId: {
             type: DataTypes.INTEGER,

@@ -106,6 +106,9 @@ export default {
         fallbackEnabled: process.env.CDN_FALLBACK_ENABLED !== "false",
         baseUrl: process.env.CDN_BASE_URL || "http://localhost:8088",
         timeoutMs: parseInt(process.env.CDN_TIMEOUT_MS || "5000"),
+        dockerContainer: process.env.CDN_DOCKER_CONTAINER || "american-surplus-cdn",
+        /** When set, writes CDN files directly to this host path instead of docker cp. */
+        filesystemRoot: process.env.CDN_FILESYSTEM_ROOT || "",
     },
     quickbooks: {
         syncEnabled: process.env.QBO_SYNC_ENABLED === "true",

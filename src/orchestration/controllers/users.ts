@@ -41,6 +41,7 @@ type UserDetails = {
   isAdmin?: boolean;
   /** True when every active organization membership allows profile edits (name/email). */
   canEditOrganizationInfo?: boolean;
+  avatarUrl?: string | null;
   organizationMemberships: UserOrganizationMembershipContactDto[];
 };
 
@@ -52,7 +53,7 @@ export const getAuthenticatedUserDetails = async (req: Request, res: Response): 
       return;
     }
 
-    const user = await User.findOne({ where: { id: userId }, attributes: ['id', 'name', 'email', 'typeId'] });
+    const user = await User.findOne({ where: { id: userId }, attributes: ['id', 'name', 'email', 'avatar_url', 'typeId'] });
     if (!user) return sendError(req, res, new Error('User not found'));
 
     const notificationToken = uuidv4();
@@ -74,6 +75,7 @@ export const getAuthenticatedUserDetails = async (req: Request, res: Response): 
       notificationToken: notificationTokenHash,
       isAdmin: (req.user as { isAdmin?: boolean })?.isAdmin ?? false,
       canEditOrganizationInfo,
+      avatarUrl: user.avatar_url ?? null,
       organizationMemberships,
     };
 
@@ -316,6 +318,21 @@ export const countUnreadNotifications = async (req: Request, res: Response): Pro
 
     const unreadCount = await NotificationService.countUnread(userId);
     sendSuccess(res, { unreadCount });
+  } catch (error) {
+    sendError(req, res, error);
+  }
+};
+
+export const updateAvatar = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) throw new AppError(401, 'Unauthorized');
+
+    const file = req.file;
+    if (!file) throw new AppError(400, 'Avatar file is required');
+
+    const avatarUrl = await UserService.updateAvatar(userId, file);
+    sendSuccess(res, { message: 'Avatar updated successfully', avatarUrl });
   } catch (error) {
     sendError(req, res, error);
   }

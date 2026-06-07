@@ -28,6 +28,30 @@ export const validateFileUpload = (req: Request, res: Response, next: NextFuncti
     }
 };
 
+const avatarMimeTypes = ['image/jpeg', 'image/png'];
+
+export const validateAvatarUpload = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const file = req.file;
+
+        if (!file) {
+            throw new AppError(400, 'Avatar file is required');
+        }
+
+        if (!avatarMimeTypes.includes(file.mimetype)) {
+            throw new AppError(400, 'Avatar must be a PNG or JPEG image');
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            throw new AppError(400, 'Avatar must be 5 MB or smaller');
+        }
+
+        next();
+    } catch (err) {
+        sendError(req, res, err);
+    }
+};
+
 export const validatePickupFiles = (req: Request, res: Response, next: NextFunction) => {
     try {
         const files = req.files as Express.Multer.File[] | undefined;

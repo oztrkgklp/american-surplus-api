@@ -1,11 +1,20 @@
 import { Router } from "express";
 
 import { authenticate } from "@/orchestration/middleware/authenticate";
-import { generateMFASecret, verifyMFAToken, generateBackupCodes, verifyBackupCode, enableMFA, disableMFA, checkIfUserExists, getAuthenticatedUserDetails, getUserByEmail, getMyInvitations, respondHaoRoleInvitation, listNotifications, markNotificationAsRead, markAllNotificationsAsRead, countUnreadNotifications, updateProfile, updatePassword, updateEmail } from "@/orchestration/controllers/users";
+import { upload, validateAvatarUpload } from "@/orchestration/middleware/upload";
+import { generateMFASecret, verifyMFAToken, generateBackupCodes, verifyBackupCode, enableMFA, disableMFA, checkIfUserExists, getAuthenticatedUserDetails, getUserByEmail, getMyInvitations, respondHaoRoleInvitation, listNotifications, markNotificationAsRead, markAllNotificationsAsRead, countUnreadNotifications, updateAvatar, updateProfile, updatePassword, updateEmail } from "@/orchestration/controllers/users";
 
 const router = Router();
 
 router.get('/me', authenticate, getAuthenticatedUserDetails);
+
+router.patch(
+    '/me/update-avatar',
+    authenticate,
+    upload.single('avatar'),
+    validateAvatarUpload,
+    updateAvatar,
+);
 
 router.patch('/me/update-profile', authenticate, updateProfile);
 

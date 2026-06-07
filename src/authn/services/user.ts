@@ -8,6 +8,7 @@ import envvars from '@/config/envvars';
 import { TemplateEnum } from '@/enums/mailEnum';
 import { renderEmail } from '@/utils/mail/render';
 import { emailQueue } from '@/utils/mail/emailQueue';
+import { uploadToCdn } from '@/utils/storage/cdnUpload';
 
 export type UserProfileUpdatePayload = {
   name?: string;
@@ -79,6 +80,14 @@ export class UserService {
     );
 
     await OrganizationUserService.syncForm1HeadAuthorizedOfficialFromUserProfile(userId, {}, transaction);
+  }
+
+  static async updateAvatar(userId: string, file: Express.Multer.File): Promise<string> {
+    const ext = file.mimetype === 'image/png' ? 'png' : 'jpg';
+    const relativePath = `user-avatars/${userId}.${ext}`;
+    const avatarUrl = await uploadToCdn(relativePath, file.buffer);
+    await User.update({ avatar_url: avatarUrl }, { where: { id: userId } });
+    return avatarUrl;
   }
 
   static async updatePassword(userId: string, currentPassword: string, password: string, transaction?: Transaction): Promise<void> {
