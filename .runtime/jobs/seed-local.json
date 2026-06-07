@@ -1,20 +1,21 @@
 {
-  "status": "failed",
-  "queuedAt": "2026-06-01T07:02:31.201Z",
-  "pid": 59323,
-  "startedAt": "2026-06-01T07:02:31.237Z",
-  "endedAt": "2026-06-01T07:02:39.107Z",
-  "exitCode": 1,
+  "status": "killed",
+  "queuedAt": "2026-06-07T08:25:40.375Z",
+  "pid": 20311,
+  "startedAt": "2026-06-07T08:25:40.414Z",
+  "endedAt": "2026-06-07T08:27:12.409Z",
+  "exitCode": null,
   "currentStep": "es-sync",
   "logPath": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/.runtime/logs/seed-local.log",
   "job": "seed-local",
-  "updatedAt": "2026-06-01T07:02:39.108Z",
+  "updatedAt": "2026-06-07T08:27:12.410Z",
   "script": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/scripts/seed-local-async.cjs",
   "steps": [
     "seed-local-script",
     "es-sync",
     "cdn-hydrate"
   ],
-  "lastStepStartedAt": "2026-06-01T07:02:31.270Z",
-  "error": "es-sync exited with code 1"
+  "lastStepStartedAt": "2026-06-07T08:25:40.449Z",
+  "error": "es-sync exited with code 1",
+  "reason": "Marked killed; process was already not running."
 }

@@ -136,3 +136,5 @@ _data/
 # Local-only docs, AI memory, Claude Code settings
 CLAUDE.local.md
 .claude/
+
+.runtime/*

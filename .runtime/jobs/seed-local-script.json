@@ -1,14 +1,16 @@
 {
   "status": "completed",
   "step": "seed-local-script",
-  "pid": 59325,
-  "startedAt": "2026-06-01T07:02:31.237Z",
-  "endedAt": "2026-06-01T07:02:31.269Z",
+  "pid": 20356,
+  "startedAt": "2026-06-07T08:25:40.415Z",
+  "endedAt": "2026-06-07T08:25:40.448Z",
   "exitCode": 0,
   "parentJob": "seed-local",
   "logPath": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/.runtime/logs/seed-local-script.log",
   "job": "seed-local-script",
-  "updatedAt": "2026-06-01T07:02:31.269Z",
+  "updatedAt": "2026-06-07T08:25:40.448Z",
   "script": "/Users/gokalp/Desktop/projects/krytheon/american-surplus-api/scripts/seed-local.cjs",
-  "args": []
+  "args": [],
+  "reason": null,
+  "error": null
 }
