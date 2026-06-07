@@ -129,7 +129,7 @@ INSERT INTO `role_permissions` (`role_id`, `permission_id`) VALUES
   (1,11),(2,11),(3,11),(4,11),
   (1,12),(2,12),
   (1,13),
-  (4,12),(6,12),(4,13),(4,14),(4,15),(4,17),(5,17),(4,18),(4,19);
+  (4,12),(6,12),(4,13),(4,14),(4,15),(4,17),(5,17),(4,18),(4,19),(7,17);
 
 INSERT INTO `supply_conditions` (`id`, `code`, `name`) VALUES
   (1,'A','A - Serviceable - Issuable without Qualification'),
