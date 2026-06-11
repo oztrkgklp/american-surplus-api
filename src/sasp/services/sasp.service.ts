@@ -89,7 +89,7 @@ export default class SaspService {
 
         const result = await paginateSequelize<SaspUser>(SaspUser, page, limit, {
             where: whereClause,
-            include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email'], required: true }],
+            include: [{ model: User, as: 'user', attributes: ['id', 'name', 'email', 'avatar_url'], required: true }],
             order,
         });
 

@@ -986,7 +986,7 @@ export class OrganizationUserService {
                 {
                     model: User,
                     as: 'user',
-                    attributes: ['id', 'name', 'email'],
+                    attributes: ['id', 'name', 'email', 'avatar_url'],
                     required: true,
                     include: [{
                         model: UserScope,
