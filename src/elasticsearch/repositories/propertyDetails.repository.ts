@@ -694,7 +694,8 @@ export class PropertyDetailsRepository extends EsRepository<PropertyDetailsEntit
         )
       );
     } else {
-      filterQueries.push(this.buildDefaultSurplusReleaseDateFilter());
+      // TODO: Uncomment this when we have a way to filter for future surplus release dates
+      // filterQueries.push(this.buildDefaultSurplusReleaseDateFilter());
     }
 
     if (options.propertyIds && options.propertyIds.length > 0) {
