@@ -30,6 +30,19 @@ function isRejectedExecutionError(error) {
   );
 }
 
+function isSearchContextMissingError(error) {
+  const message = String(error?.message || "");
+  const type = error?.meta?.body?.error?.type;
+  const causedBy = error?.meta?.body?.error?.caused_by?.type;
+  const rootCauses = error?.meta?.body?.error?.root_cause || [];
+  return (
+    type === "search_context_missing_exception" ||
+    causedBy === "search_context_missing_exception" ||
+    message.includes("search_context_missing_exception") ||
+    rootCauses.some((cause) => cause?.type === "search_context_missing_exception")
+  );
+}
+
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -200,7 +213,14 @@ async function ensureIndex(localClient, remoteClient, index, mode) {
   return sourceExists;
 }
 
-async function syncIndexSlice(
+async function scrollNextPage(remoteClient, scrollId, scrollKeepalive) {
+  return remoteClient.scroll({
+    scroll_id: scrollId,
+    scroll: scrollKeepalive,
+  });
+}
+
+async function syncIndexSliceOnce(
   remoteClient,
   localClient,
   index,
@@ -211,11 +231,12 @@ async function syncIndexSlice(
   writeSemaphore,
   resumeAfterIcn
 ) {
+  const { scrollKeepalive } = options;
   let response;
   try {
     response = await remoteClient.search({
       index,
-      scroll: "2m",
+      scroll: scrollKeepalive,
       size: batchSize,
       query: { match_all: {} },
       sort: ["_doc"],
@@ -264,12 +285,10 @@ async function syncIndexSlice(
       effectiveHits.push(hit);
     }
 
+    if (!response._scroll_id) break;
+
     if (effectiveHits.length === 0) {
-      if (!response._scroll_id) break;
-      response = await remoteClient.scroll({
-        scroll_id: response._scroll_id,
-        scroll: "2m",
-      });
+      response = await scrollNextPage(remoteClient, response._scroll_id, scrollKeepalive);
       continue;
     }
 
@@ -284,11 +303,7 @@ async function syncIndexSlice(
     }
     totalImported += effectiveHits.length;
 
-    if (!response._scroll_id) break;
-    response = await remoteClient.scroll({
-      scroll_id: response._scroll_id,
-      scroll: "2m",
-    });
+    response = await scrollNextPage(remoteClient, response._scroll_id, scrollKeepalive);
   }
 
   if (response._scroll_id) {
@@ -302,6 +317,47 @@ async function syncIndexSlice(
     totalSkippedMissingIcn,
     highestIcn,
   };
+}
+
+async function syncIndexSlice(
+  remoteClient,
+  localClient,
+  index,
+  batchSize,
+  sliceId,
+  sliceCount,
+  options,
+  writeSemaphore,
+  resumeAfterIcn
+) {
+  const maxScrollRestarts = options.maxScrollRestarts ?? 3;
+
+  for (let attempt = 1; attempt <= maxScrollRestarts; attempt += 1) {
+    try {
+      return await syncIndexSliceOnce(
+        remoteClient,
+        localClient,
+        index,
+        batchSize,
+        sliceId,
+        sliceCount,
+        options,
+        writeSemaphore,
+        resumeAfterIcn
+      );
+    } catch (error) {
+      if (!isSearchContextMissingError(error) || attempt >= maxScrollRestarts) {
+        throw error;
+      }
+      const waitMs = options.baseBackoffMs * attempt;
+      console.warn(
+        `[es-sync] Scroll context expired for ${index} slice ${sliceId + 1}/${sliceCount}; restarting slice (${attempt}/${maxScrollRestarts}), wait ${waitMs}ms`
+      );
+      await sleep(waitMs);
+    }
+  }
+
+  throw new Error(`Failed to sync ${index} slice ${sliceId + 1}/${sliceCount} after scroll restarts.`);
 }
 
 async function syncIndex(
@@ -409,6 +465,11 @@ async function main() {
     100,
     Number(getArgValue("bulk-retry-backoff-ms", "500")) || 500
   );
+  const scrollKeepalive = getArgValue("scroll-keepalive", "15m");
+  const maxScrollRestarts = Math.max(
+    1,
+    Number(getArgValue("max-scroll-restarts", "3")) || 3
+  );
 
   const indicesArg = getArgValue("indices", "");
   const startAfterIcn = normalizeIcn(getArgValue("start-after-icn", ""));
@@ -433,6 +494,8 @@ async function main() {
   console.log(`[es-sync] Write concurrency: ${writeConcurrency}`);
   console.log(`[es-sync] Max bulk retries: ${maxBulkRetries}`);
   console.log(`[es-sync] Bulk retry backoff ms: ${backoffMs}`);
+  console.log(`[es-sync] Scroll keepalive: ${scrollKeepalive}`);
+  console.log(`[es-sync] Max scroll restarts: ${maxScrollRestarts}`);
   console.log(`[es-sync] Indices: ${indices.join(", ")}`);
   console.log(`[es-sync] Start after ICN: ${startAfterIcn || "none"}`);
   console.log(`[es-sync] Checkpoint manifest: ${checkpointManifest}`);
@@ -458,6 +521,8 @@ async function main() {
     bulkSize,
     maxRetries: maxBulkRetries,
     baseBackoffMs: backoffMs,
+    scrollKeepalive,
+    maxScrollRestarts,
   };
 
   const indexSummaries = await Promise.all(
