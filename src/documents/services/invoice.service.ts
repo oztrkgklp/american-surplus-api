@@ -199,18 +199,18 @@ export class InvoiceService {
         return {
             remitCheckPayments: {
                 name: 'American Surplus LLC',
-                adress1: 'PO BOX 120178',
-                adress2: 'West Melbourne, FL 32904',
-                telephone: '(321) 209-2333',
+                adress1: '123 Main St',
+                adress2: 'Anytown, USA, 12345',
+                telephone: '(123) 456-7890',
             },
             achPayments: {
-                bank: 'Hancock Whitney Bank',
-                adress1: '2285 LAKESHORE DRIVE. BLDG 4',
-                adress2: 'NEW ORLEANS, LA, 70122',
+                bank: 'Halid Gokalp Bank',
+                adress1: '123 Main St',
+                adress2: 'Anytown, USA, 12345',
                 accountTitle: 'AMERICAN SURPLUS LLC',
-                accountTitle2: 'DBA American Surplus LLC',
-                account: '28958886',
-                routingNo: '021052053',
+                accountTitle2: 'DBA Halid Gokalp Bank',
+                account: '1234567890',
+                routingNo: '124567890',
             },
         };
     }

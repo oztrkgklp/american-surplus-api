@@ -13,6 +13,7 @@
     "init:local:reset": "node scripts/local-init.cjs --reset",
     "db:sync:local": "node scripts/db-sync-local.cjs",
     "seed:db:local": "node scripts/db-seed-local.cjs",
+    "seed:db:local:clean": "node scripts/db-seed-local.cjs --clean-organizations",
     "mysql:unlock:local": "node scripts/mysql-unlock-local.cjs",
     "seed:local": "node scripts/seed-local-launcher.cjs",
     "seed:local:status": "node scripts/job-status.cjs --job=seed-local",

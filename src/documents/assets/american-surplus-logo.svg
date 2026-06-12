@@ -1,8 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title">
-  <title id="title">American Surplus Logo Placeholder</title>
-  <rect width="1200" height="360" fill="#f4f8ff" />
-  <rect x="24" y="24" width="312" height="312" rx="48" fill="#1457c2" />
-  <text x="180" y="205" text-anchor="middle" font-size="140" font-family="Arial, Helvetica, sans-serif" font-weight="700" fill="#ffffff">AS</text>
-  <text x="380" y="185" font-size="110" font-family="Arial, Helvetica, sans-serif" font-weight="700" fill="#0f2a5f">American Surplus</text>
-  <text x="380" y="250" font-size="40" font-family="Arial, Helvetica, sans-serif" fill="#516789">Placeholder Logo</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 48" role="img" aria-labelledby="brand-light-title">
+  <title id="brand-light-title">American Surplus</title>
+  <defs>
+    <linearGradient id="accent-light" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6B4EFF"/>
+      <stop offset="100%" stop-color="#00B8D9"/>
+    </linearGradient>
+  </defs>
+  <polygon points="24,4 44,14 44,34 24,44 4,34 4,14" fill="url(#accent-light)"/>
+  <path d="M24 14 L32 28 L28 28 L24 22 L20 28 L16 28 Z" fill="#FFFFFF" opacity="0.95"/>
+  <text x="56" y="32" font-family="Outfit, system-ui, sans-serif" font-size="18" font-weight="600" fill="#0F1729">American Surplus</text>
 </svg>

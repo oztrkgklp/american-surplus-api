@@ -11,9 +11,9 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             font-size: 9pt;
-            color: #000;
+            color: #0f1729;
             background: white;
             margin: 0;
             padding: 0;
@@ -22,44 +22,49 @@
         .header-table {
             width: 100%;
             border-spacing: 0;
-            margin-bottom: 10px;
+            margin-bottom: 16px;
             table-layout: fixed;
         }
 
         .header-logo {
             width: 320px;
-            vertical-align: top;
+            vertical-align: middle;
         }
 
         .header-logo img {
-            max-width: 220px;
+            height: 40px;
+            width: auto;
+            max-width: 280px;
         }
 
         .header-info {
             text-align: right;
-            vertical-align: top;
-            font-size: 11pt;
-            padding-top: 10px;
+            vertical-align: middle;
+            font-size: 10pt;
+            padding-top: 4px;
         }
 
         .header-info .invoice-label {
-            font-weight: bold;
-            font-size: 14pt;
+            font-weight: 600;
+            font-size: 13pt;
+            color: #0f1729;
         }
 
         .header-info .invoice-number {
-            font-weight: bold;
-            font-size: 14pt;
+            font-weight: 700;
+            font-size: 13pt;
             margin-left: 5px;
+            color: #1457c2;
         }
 
         .header-info .tcn {
-            font-size: 10pt;
-            margin-top: 5px;
+            font-size: 9.5pt;
+            margin-top: 6px;
+            color: #334155;
         }
 
         .header-info .tcn-label {
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .header-info .tcn-number {
@@ -67,22 +72,24 @@
         }
 
         .header-info .tcndesc {
-            font-size: 9pt;
-            color: #444;
+            font-size: 8.5pt;
+            color: #64748b;
         }
 
         .header-info .invoice-date {
-            font-size: 10pt;
+            font-size: 9.5pt;
             margin-top: 8px;
+            color: #334155;
         }
 
         .header-info .due-date {
-            font-size: 10pt;
-            margin-top: 5px;
+            font-size: 9.5pt;
+            margin-top: 4px;
+            color: #334155;
         }
 
         .header-info .date-label {
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .header-info .date-value {
@@ -90,12 +97,15 @@
         }
 
         .donee-box {
-            border: 2px solid #000;
-            width: 350px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            padding: 10px 16px 10px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 380px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            padding: 12px 16px;
             font-size: 9pt;
+            background: #f8fafc;
         }
 
         .donee-box-table {
@@ -103,44 +113,64 @@
         }
 
         .donee-box-table td {
-            padding: 2px 4px;
+            padding: 3px 4px;
             vertical-align: top;
         }
 
         .donee-label {
-            font-weight: bold;
+            font-weight: 600;
             width: 120px;
+            color: #475569;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
         }
 
         .section-title {
-            text-align: center;
-            font-weight: bold;
+            text-align: left;
+            font-weight: 600;
             font-size: 10pt;
-            border-top: 2px solid #000;
-            border-bottom: 2px solid #000;
-            padding: 6px 0;
-            margin: 12px 0 10px 0;
-            letter-spacing: 0.5px;
+            border: none;
+            border-left: 4px solid #6b4eff;
+            padding: 4px 0 4px 10px;
+            margin: 12px 0 8px 0;
+            letter-spacing: 0.3px;
+            color: #0f1729;
         }
 
         .asset-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 8px;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 10px;
             font-size: 9pt;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            overflow: hidden;
         }
 
         .asset-table th,
         .asset-table td {
-            border: 1.5px solid #000;
+            border-bottom: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
             text-align: center;
-            padding: 6px 2px;
+            padding: 7px 4px;
+        }
+
+        .asset-table th:last-child,
+        .asset-table td:last-child {
+            border-right: none;
+        }
+
+        .asset-table tbody tr:last-child td {
+            border-bottom: none;
         }
 
         .asset-table th {
-            font-weight: bold;
-            background: #f5f5f5;
-            font-size: 9pt;
+            font-weight: 600;
+            background: #f1f5f9;
+            font-size: 8.5pt;
+            color: #334155;
         }
 
         .asset-table .description {
@@ -154,23 +184,27 @@
         .totals-table {
             width: 250px;
             float: right;
-            border: 1.5px solid #000;
-            margin-top: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-top: 10px;
             font-size: 9pt;
+            overflow: hidden;
         }
 
         .totals-table td {
-            padding: 6px 10px;
+            padding: 7px 12px;
         }
 
         .totals-table .label {
             width: 120px;
+            color: #475569;
         }
 
         .totals-table .amount {
             text-align: right;
             width: 100px;
-            border-left: 1.5px solid #000;
+            border-left: 1px solid #e2e8f0;
+            font-weight: 600;
         }
 
         .footer-notes {
@@ -209,20 +243,23 @@
         }
 
         .payment-box {
-            border: 2px solid #000;
-            padding: 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 16px;
             margin: 20px 0;
-            background-color: #f9f9f9;
+            background-color: #f8fafc;
         }
 
         .payment-disclaimer {
-            background-color: #fff3cd;
-            border: 2px solid #ffc107;
-            padding: 10px;
+            background-color: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 12px;
             margin: 15px 0;
-            font-weight: bold;
+            font-weight: 600;
             text-align: center;
             font-size: 10pt;
+            color: #92400e;
         }
 
         .fl-disclaimer {

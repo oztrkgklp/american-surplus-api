@@ -2,6 +2,7 @@ import ejs from 'ejs';
 import path from 'path';
 import fs from 'fs/promises';
 import { AppError } from '../response/appError';
+import { getAmericanSurplusLogoDataUri } from '@/documents/assets/get-american-surplus-logo';
 
 interface RenderEmailOptions {
     templateName: string;
@@ -16,13 +17,18 @@ export async function renderEmail({ templateName, data }: RenderEmailOptions): P
         const footerPath = path.join(baseDir, 'partials', 'footer.ejs');
         const contentPath = path.join(baseDir, 'partials/content', `${templateName}.ejs`);
 
+        const emailData = {
+            ...data,
+            AmericanSurplusLogo: getAmericanSurplusLogoDataUri(),
+        };
+
         // Render each part individually
-        const header = await ejs.renderFile(headerPath, data, { async: true });
-        const content = await ejs.renderFile(contentPath, data, { async: true });
-        const footer = await ejs.renderFile(footerPath, data, { async: true });
+        const header = await ejs.renderFile(headerPath, emailData, { async: true });
+        const content = await ejs.renderFile(contentPath, emailData, { async: true });
+        const footer = await ejs.renderFile(footerPath, emailData, { async: true });
 
         const rendered = await ejs.renderFile(layoutPath, {
-            ...data,
+            ...emailData,
             header,
             content,
             footer

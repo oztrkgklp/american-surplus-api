@@ -16,6 +16,7 @@ import User from '@/authn/models/User';
 import { RequestAttachmentService } from '@/properties/services/requestAttachment';
 import { RequestAttachmentTypeEnum } from '@/properties/enums/requestAttachmentTypes';
 import fs from 'fs';
+import { getAmericanSurplusLogoDataUri } from '../assets/get-american-surplus-logo';
 import { PropertyDataService } from '@/ppms/services/propertyData';
 import { PropertyService } from '@/properties/services/property';
 import {
@@ -204,10 +205,7 @@ export default class DocumentFactory {
     }, { transaction }
     );
 
-    //american-surplus logo
-    const AmericanSurplusLogoPath = path.join(__dirname, `../assets/american-surplus-logo.svg`);
-    const AmericanSurplusLogoBase64 = fs.readFileSync(AmericanSurplusLogoPath, { encoding: 'base64' });
-    const AmericanSurplusLogo = `data:image/svg+xml;base64,${AmericanSurplusLogoBase64}`;
+    const AmericanSurplusLogo = getAmericanSurplusLogoDataUri();
 
     // DMS SASP logo
     const logoName = this.getLogoByStateId(request.doneeAccount?.stateId as number);
@@ -339,10 +337,7 @@ export default class DocumentFactory {
     const logoBase64 = fs.readFileSync(logoPath, { encoding: 'base64' });
     const DMSLogo = `data:image/png;base64,${logoBase64}`;
 
-    //american-surplus logo
-    const AmericanSurplusLogoPath = path.join(__dirname, `../assets/american-surplus-logo.svg`);
-    const AmericanSurplusLogoBase64 = fs.readFileSync(AmericanSurplusLogoPath, { encoding: 'base64' });
-    const AmericanSurplusLogo = `data:image/svg+xml;base64,${AmericanSurplusLogoBase64}`;
+    const AmericanSurplusLogo = getAmericanSurplusLogoDataUri();
     // Prepare data for EJS template
     const invoiceData = invoice.invoice_data as object;
     const renderData: IDocumentRenderOptions = {
