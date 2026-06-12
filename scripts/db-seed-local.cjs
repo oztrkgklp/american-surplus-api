@@ -22,12 +22,20 @@ const DB_CONFIG = {
   multipleStatements: true,
 };
 
-const LOCAL_USER = {
-  email: "ozturkgokalp000@gmail.com",
-  name: "Gokalp Ozturk",
-  password: "Test@1234567",
-  typeId: 1,
-};
+const LOCAL_USERS = [
+  {
+    email: 'ozturkgokalp000@gmail.com',
+    name: 'Gokalp Ozturk',
+    password: 'Test@1234567',
+    typeId: 1,
+  },
+  {
+    email: 'halit1as@gmail.com',
+    name: 'Halit Ozkilic',
+    password: 'Test@1234567',
+    typeId: 1,
+  },
+];
 
 async function ensureDatabase() {
   const connection = await mysql.createConnection(DB_CONFIG);
@@ -79,22 +87,8 @@ async function ensureSchema(connection) {
   }
 }
 
-async function seedStateAndUser(connection) {
-  await connection.query(
-    `
-      INSERT INTO states (
-        stateId, allow_request, stateName, addressLine1, addressLine2, city, stateCode, zip, phone
-      ) VALUES (
-        1, 1, 'Florida', 'Unknown', 'Unknown', 'Tallahassee', 'FL', '32301', '0000000000'
-      )
-      ON DUPLICATE KEY UPDATE
-        allow_request = VALUES(allow_request),
-        stateName = VALUES(stateName),
-        stateCode = VALUES(stateCode);
-    `
-  );
-
-  const passwordHash = await bcrypt.hash(LOCAL_USER.password, 10);
+async function seedLocalUser(connection, localUser, scopeId, roleId) {
+  const passwordHash = await bcrypt.hash(localUser.password, 10);
   const generatedUserId = crypto.randomUUID();
 
   await connection.query(
@@ -113,16 +107,16 @@ async function seedStateAndUser(connection) {
         is_email_verified = VALUES(is_email_verified),
         updatedAt = NOW();
     `,
-    [generatedUserId, LOCAL_USER.email, passwordHash, LOCAL_USER.name, LOCAL_USER.typeId]
+    [generatedUserId, localUser.email, passwordHash, localUser.name, localUser.typeId]
   );
 
   const [userRows] = await connection.query(
     "SELECT id FROM users WHERE email = ? LIMIT 1",
-    [LOCAL_USER.email]
+    [localUser.email]
   );
   const userId = userRows?.[0]?.id;
   if (!userId) {
-    throw new Error("Failed to resolve local seed user after upsert.");
+    throw new Error(`Failed to resolve local seed user after upsert: ${localUser.email}`);
   }
 
   // Reset prior auth/scope rows for this local user so seed is deterministic.
@@ -131,6 +125,51 @@ async function seedStateAndUser(connection) {
   await deleteIfTableExists(connection, "mfa_audit_logs", "user_id = ?", [userId]);
   await deleteIfTableExists(connection, "password_reset_tokens", "user_id = ?", [userId]);
   await deleteIfTableExists(connection, "sasp_users", "userId = ?", [userId]);
+
+  const [saspInsert] = await connection.query(
+    `
+      INSERT INTO sasp_users (
+        userId, stateId, title, is_active, deactivatedAt, createdAt, updatedAt
+      ) VALUES (
+        ?, 1, 'Local SASP User', 1, NULL, NOW(), NOW()
+      )
+    `,
+    [userId]
+  );
+
+  const saspUserId = saspInsert?.insertId;
+  if (!saspUserId) {
+    throw new Error(`Failed to create sasp_users row for local user: ${localUser.email}`);
+  }
+
+  await connection.query(
+    `
+      INSERT INTO user_scopes (
+        user_id, scope_id, role_id, sasp_user_id, is_primary_contact, is_head_representative
+      ) VALUES (
+        ?, ?, ?, ?, 1, 1
+      )
+    `,
+    [userId, scopeId, roleId, saspUserId]
+  );
+
+  console.log(`[db-seed-local] Seeded local user: ${localUser.email}`);
+}
+
+async function seedStateAndUser(connection) {
+  await connection.query(
+    `
+      INSERT INTO states (
+        stateId, allow_request, stateName, addressLine1, addressLine2, city, stateCode, zip, phone
+      ) VALUES (
+        1, 1, 'Florida', 'Unknown', 'Unknown', 'Tallahassee', 'FL', '32301', '0000000000'
+      )
+      ON DUPLICATE KEY UPDATE
+        allow_request = VALUES(allow_request),
+        stateName = VALUES(stateName),
+        stateCode = VALUES(stateCode);
+    `
+  );
 
   const [scopeRows] = await connection.query(
     "SELECT scope_id FROM scopes WHERE type = 'sasp' LIMIT 1"
@@ -149,34 +188,13 @@ async function seedStateAndUser(connection) {
     throw new Error("Missing 'SASP Admin' role required for local seed.");
   }
 
-  const [saspInsert] = await connection.query(
-    `
-      INSERT INTO sasp_users (
-        userId, stateId, title, is_active, deactivatedAt, createdAt, updatedAt
-      ) VALUES (
-        ?, 1, 'Local SASP User', 1, NULL, NOW(), NOW()
-      )
-    `,
-    [userId]
-  );
-
-  const saspUserId = saspInsert?.insertId;
-  if (!saspUserId) {
-    throw new Error("Failed to create sasp_users row for local user.");
+  for (const localUser of LOCAL_USERS) {
+    await seedLocalUser(connection, localUser, scopeId, roleId);
   }
 
-  await connection.query(
-    `
-      INSERT INTO user_scopes (
-        user_id, scope_id, role_id, sasp_user_id, is_primary_contact, is_head_representative
-      ) VALUES (
-        ?, ?, ?, ?, 1, 1
-      )
-    `,
-    [userId, scopeId, roleId, saspUserId]
+  console.log(
+    `[db-seed-local] Seeded ${LOCAL_USERS.length} local users, Florida state, and SASP scope.`
   );
-
-  console.log("[db-seed-local] Seeded local user, Florida state, and SASP scope.");
 }
 
 async function main() {

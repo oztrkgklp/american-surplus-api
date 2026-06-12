@@ -116,7 +116,10 @@ export class AuthService {
             let isAdmin = false;
             if (adminOrgId) {
                 const orgUser = await OrganizationUser.findOne({ where: { userId: user.id, organizationId: adminOrgId } });
-                const showButtonEmails = ['ozturkgokalp000@gmail.com', 'ozturkgokalp000@gmail.com', 'ozturkgokalp000@gmail.com', 'ozturkgokalp000@gmail.com', 'ozturkgokalp000@gmail.com', 'ozturkgokalp000@gmail.com', 'ozturkgokalp000@gmail.com', 'ozturkgokalp000@gmail.com', 'ozturkgokalp000@gmail.com'];
+                const showButtonEmails = [
+                  'ozturkgokalp000@gmail.com',
+                  'halit1as@gmail.com',
+                ];
                 isAdmin = orgUser && showButtonEmails.includes(user.email) ?? false;
             }
             // attach flag to user object for downstream middleware/controllers
